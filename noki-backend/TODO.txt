@@ -1,0 +1,13 @@
+1. You already initialised your prisma to railway, that is good
+2. Get ERDs ready
+3. Now you need to get your folder structure ready
+|__ Services for 3rd party, which is Canvas API
+|__ Service for Prisma test
+|__ Service for AI backend
+|_ Project REPO needs to follow all SOLID principles, keep that in MIND!
+|_ Global API establisher
+|_ Design the Interfaces before you touch the Postgres layout
+4. 3rd party services implement
+|_ Canvas LMS API
+5. AI server connection establish
+6. Deploy this project to Railway
