@@ -1,6 +1,18 @@
-import { IsString, IsOptional, IsDateString } from 'class-validator';
+import { IsString, IsOptional, IsDateString, IsEnum, IsObject } from 'class-validator';
+import { TaskType, Priority } from '../../common/interfaces';
 
 export class CreateTaskDto {
+  @IsString()
+  user_id: string;
+
+  @IsOptional()
+  @IsString()
+  project_id?: string;
+
+  @IsOptional()
+  @IsString()
+  course_id?: string;
+
   @IsString()
   title: string;
 
@@ -10,10 +22,18 @@ export class CreateTaskDto {
 
   @IsOptional()
   @IsDateString()
-  dueDate?: string;
+  due_date?: string;
 
-  @IsString()
-  userId: string;
+  @IsEnum(TaskType)
+  type: TaskType;
+
+  @IsOptional()
+  @IsEnum(Priority)
+  priority?: Priority;
+
+  @IsOptional()
+  @IsObject()
+  raw_canvas_data?: any;
 }
 
 export class UpdateTaskDto {

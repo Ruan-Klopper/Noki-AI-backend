@@ -94,26 +94,102 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
+  firstname: 'firstname',
+  lastname: 'lastname',
   email: 'email',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  password_hash: 'password_hash',
+  profile_image: 'profile_image',
+  google_id: 'google_id',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.AuthProviderScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  type: 'type',
+  base_url: 'base_url',
+  access_token_hash: 'access_token_hash',
+  refresh_token_hash: 'refresh_token_hash',
+  metadata: 'metadata',
+  created_at: 'created_at'
+};
+
+exports.Prisma.ProjectScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  title: 'title',
+  description: 'description',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.CourseScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  source: 'source',
+  external_id: 'external_id',
+  title: 'title',
+  course_code: 'course_code',
+  time_zone: 'time_zone',
+  start_at: 'start_at',
+  end_at: 'end_at',
+  raw_data: 'raw_data',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.TaskScalarFieldEnum = {
   id: 'id',
+  user_id: 'user_id',
+  project_id: 'project_id',
+  course_id: 'course_id',
   title: 'title',
   description: 'description',
-  dueDate: 'dueDate',
-  status: 'status',
-  userId: 'userId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  due_date: 'due_date',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  type: 'type',
+  priority: 'priority',
+  raw_canvas_data: 'raw_canvas_data'
+};
+
+exports.Prisma.TodoScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  task_id: 'task_id',
+  title: 'title',
+  description: 'description',
+  priority: 'priority',
+  due_date: 'due_date',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.ResourceScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  title: 'title',
+  description: 'description',
+  type: 'type',
+  url: 'url',
+  file_path: 'file_path',
+  metadata: 'metadata',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  task_id: 'task_id',
+  course_id: 'course_id',
+  project_id: 'project_id'
 };
 
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -126,10 +202,50 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+exports.AuthProviderType = exports.$Enums.AuthProviderType = {
+  Canvas: 'Canvas',
+  Google: 'Google',
+  Microsoft: 'Microsoft'
+};
+
+exports.CourseSource = exports.$Enums.CourseSource = {
+  Canvas: 'Canvas',
+  GoogleClassroom: 'GoogleClassroom'
+};
+
+exports.TaskType = exports.$Enums.TaskType = {
+  Canvas: 'Canvas',
+  Project: 'Project',
+  Personal: 'Personal'
+};
+
+exports.Priority = exports.$Enums.Priority = {
+  High: 'High',
+  Medium: 'Medium',
+  Low: 'Low'
+};
+
+exports.ResourceType = exports.$Enums.ResourceType = {
+  Document: 'Document',
+  Link: 'Link',
+  Note: 'Note',
+  Media: 'Media',
+  AI_Generated: 'AI_Generated'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Task: 'Task'
+  AuthProvider: 'AuthProvider',
+  Project: 'Project',
+  Course: 'Course',
+  Task: 'Task',
+  Todo: 'Todo',
+  Resource: 'Resource'
 };
 /**
  * Create the Client
@@ -142,7 +258,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/ruanklopper/Documents/Noki AI/Project/Noki-AI-backend/noki-backend/generated/prisma",
+      "value": "/Users/ruanklopper/Documents/Noki AI/Project/Noki-AI-backend/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -156,12 +272,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/ruanklopper/Documents/Noki AI/Project/Noki-AI-backend/noki-backend/prisma/schema.prisma",
+    "sourceFilePath": "/Users/ruanklopper/Documents/Noki AI/Project/Noki-AI-backend/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../.env",
-    "schemaEnvPath": "../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../prisma",
   "clientVersion": "6.16.2",
@@ -170,6 +285,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -178,13 +294,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  email     String   @unique\n  name      String?\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  tasks     Task[]\n}\n\nmodel Task {\n  id          String    @id @default(uuid())\n  title       String\n  description String?\n  dueDate     DateTime?\n  status      String    @default(\"pending\")\n  userId      String\n  user        User      @relation(fields: [userId], references: [id])\n  createdAt   DateTime  @default(now())\n  updatedAt   DateTime  @updatedAt\n}\n",
-  "inlineSchemaHash": "e9b683e70b18fb0c1d15e7568014c49cc3ba9e49c3db2a888c9d141f49256ddd",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum AuthProviderType {\n  Canvas\n  Google\n  Microsoft\n}\n\nenum CourseSource {\n  Canvas\n  GoogleClassroom\n}\n\nenum TaskType {\n  Canvas\n  Project\n  Personal\n}\n\nenum Priority {\n  High\n  Medium\n  Low\n}\n\nenum ResourceType {\n  Document\n  Link\n  Note\n  Media\n  AI_Generated\n}\n\nmodel User {\n  id            String   @id @default(uuid())\n  firstname     String\n  lastname      String\n  email         String   @unique\n  password_hash String\n  profile_image String?\n  google_id     String?  @unique\n  created_at    DateTime @default(now())\n  updated_at    DateTime @updatedAt\n\n  // Relations\n  auth_providers AuthProvider[]\n  projects       Project[]\n  courses        Course[]\n  tasks          Task[]\n  todos          Todo[]\n  resources      Resource[]\n\n  @@map(\"users\")\n}\n\nmodel AuthProvider {\n  id                 String           @id @default(uuid())\n  user_id            String\n  type               AuthProviderType\n  base_url           String?\n  access_token_hash  String\n  refresh_token_hash String?\n  metadata           Json?\n  created_at         DateTime         @default(now())\n\n  // Relations\n  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)\n\n  @@map(\"auth_providers\")\n}\n\nmodel Project {\n  id          String   @id @default(uuid())\n  user_id     String\n  title       String\n  description String?\n  created_at  DateTime @default(now())\n  updated_at  DateTime @updatedAt\n\n  // Relations\n  user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade)\n  tasks     Task[]\n  resources Resource[]\n\n  @@map(\"projects\")\n}\n\nmodel Course {\n  id          String       @id @default(uuid())\n  user_id     String\n  source      CourseSource\n  external_id String\n  title       String\n  course_code String?\n  time_zone   String?\n  start_at    DateTime?\n  end_at      DateTime?\n  raw_data    Json?\n  created_at  DateTime     @default(now())\n  updated_at  DateTime     @updatedAt\n\n  // Relations\n  user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade)\n  tasks     Task[]\n  resources Resource[]\n\n  @@unique([user_id, external_id, source])\n  @@map(\"courses\")\n}\n\nmodel Task {\n  id              String    @id @default(uuid())\n  user_id         String\n  project_id      String?\n  course_id       String?\n  title           String\n  description     String?\n  due_date        DateTime?\n  created_at      DateTime  @default(now())\n  updated_at      DateTime  @updatedAt\n  type            TaskType\n  priority        Priority?\n  raw_canvas_data Json?\n\n  // Relations\n  user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade)\n  project   Project?   @relation(fields: [project_id], references: [id], onDelete: SetNull)\n  course    Course?    @relation(fields: [course_id], references: [id], onDelete: SetNull)\n  todos     Todo[]\n  resources Resource[]\n\n  @@map(\"tasks\")\n}\n\nmodel Todo {\n  id          String    @id @default(uuid())\n  user_id     String\n  task_id     String\n  title       String\n  description String?\n  priority    Priority?\n  due_date    DateTime?\n  created_at  DateTime  @default(now())\n  updated_at  DateTime  @updatedAt\n\n  // Relations\n  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)\n  task Task @relation(fields: [task_id], references: [id], onDelete: Cascade)\n\n  @@map(\"todos\")\n}\n\nmodel Resource {\n  id          String       @id @default(uuid())\n  user_id     String\n  title       String\n  description String?\n  type        ResourceType\n  url         String?\n  file_path   String?\n  metadata    Json?\n  created_at  DateTime     @default(now())\n  updated_at  DateTime     @updatedAt\n\n  // Optional relations\n  task_id    String?\n  course_id  String?\n  project_id String?\n\n  // Relations\n  user    User     @relation(fields: [user_id], references: [id], onDelete: Cascade)\n  task    Task?    @relation(fields: [task_id], references: [id], onDelete: SetNull)\n  course  Course?  @relation(fields: [course_id], references: [id], onDelete: SetNull)\n  project Project? @relation(fields: [project_id], references: [id], onDelete: SetNull)\n\n  @@map(\"resources\")\n}\n",
+  "inlineSchemaHash": "caa3e1611613a9a8398fbec2ee8f8bf4b762802cde4ceb94c8d334abf72719de",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"tasks\",\"kind\":\"object\",\"type\":\"Task\",\"relationName\":\"TaskToUser\"}],\"dbName\":null},\"Task\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dueDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"TaskToUser\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastname\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password_hash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"profile_image\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"google_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"auth_providers\",\"kind\":\"object\",\"type\":\"AuthProvider\",\"relationName\":\"AuthProviderToUser\"},{\"name\":\"projects\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"ProjectToUser\"},{\"name\":\"courses\",\"kind\":\"object\",\"type\":\"Course\",\"relationName\":\"CourseToUser\"},{\"name\":\"tasks\",\"kind\":\"object\",\"type\":\"Task\",\"relationName\":\"TaskToUser\"},{\"name\":\"todos\",\"kind\":\"object\",\"type\":\"Todo\",\"relationName\":\"TodoToUser\"},{\"name\":\"resources\",\"kind\":\"object\",\"type\":\"Resource\",\"relationName\":\"ResourceToUser\"}],\"dbName\":\"users\"},\"AuthProvider\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"AuthProviderType\"},{\"name\":\"base_url\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"access_token_hash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"refresh_token_hash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AuthProviderToUser\"}],\"dbName\":\"auth_providers\"},\"Project\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ProjectToUser\"},{\"name\":\"tasks\",\"kind\":\"object\",\"type\":\"Task\",\"relationName\":\"ProjectToTask\"},{\"name\":\"resources\",\"kind\":\"object\",\"type\":\"Resource\",\"relationName\":\"ProjectToResource\"}],\"dbName\":\"projects\"},\"Course\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"source\",\"kind\":\"enum\",\"type\":\"CourseSource\"},{\"name\":\"external_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"course_code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"time_zone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"start_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"end_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"raw_data\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CourseToUser\"},{\"name\":\"tasks\",\"kind\":\"object\",\"type\":\"Task\",\"relationName\":\"CourseToTask\"},{\"name\":\"resources\",\"kind\":\"object\",\"type\":\"Resource\",\"relationName\":\"CourseToResource\"}],\"dbName\":\"courses\"},\"Task\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"project_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"course_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"due_date\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"TaskType\"},{\"name\":\"priority\",\"kind\":\"enum\",\"type\":\"Priority\"},{\"name\":\"raw_canvas_data\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"TaskToUser\"},{\"name\":\"project\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"ProjectToTask\"},{\"name\":\"course\",\"kind\":\"object\",\"type\":\"Course\",\"relationName\":\"CourseToTask\"},{\"name\":\"todos\",\"kind\":\"object\",\"type\":\"Todo\",\"relationName\":\"TaskToTodo\"},{\"name\":\"resources\",\"kind\":\"object\",\"type\":\"Resource\",\"relationName\":\"ResourceToTask\"}],\"dbName\":\"tasks\"},\"Todo\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"task_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"priority\",\"kind\":\"enum\",\"type\":\"Priority\"},{\"name\":\"due_date\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"TodoToUser\"},{\"name\":\"task\",\"kind\":\"object\",\"type\":\"Task\",\"relationName\":\"TaskToTodo\"}],\"dbName\":\"todos\"},\"Resource\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"ResourceType\"},{\"name\":\"url\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"file_path\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"task_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"course_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"project_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ResourceToUser\"},{\"name\":\"task\",\"kind\":\"object\",\"type\":\"Task\",\"relationName\":\"ResourceToTask\"},{\"name\":\"course\",\"kind\":\"object\",\"type\":\"Course\",\"relationName\":\"CourseToResource\"},{\"name\":\"project\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"ProjectToResource\"}],\"dbName\":\"resources\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

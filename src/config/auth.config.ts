@@ -1,9 +1,9 @@
-import { registerAs } from '@nestjs/config';
+import { registerAs } from "@nestjs/config";
 
-export default registerAs('auth', () => ({
+export default registerAs("auth", () => ({
   jwt: {
     secret: process.env.JWT_SECRET,
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    expiresIn: process.env.JWT_EXPIRES_IN || "7d",
   },
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID,
@@ -12,6 +12,6 @@ export default registerAs('auth', () => ({
   },
   session: {
     secret: process.env.SESSION_SECRET,
-    maxAge: parseInt(process.env.SESSION_MAX_AGE) || 86400000, // 24 hours
+    maxAge: parseInt(process.env.SESSION_MAX_AGE || "86400000"), // 24 hours
   },
 }));

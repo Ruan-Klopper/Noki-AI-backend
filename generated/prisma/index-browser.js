@@ -122,26 +122,102 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
+  firstname: 'firstname',
+  lastname: 'lastname',
   email: 'email',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  password_hash: 'password_hash',
+  profile_image: 'profile_image',
+  google_id: 'google_id',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.AuthProviderScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  type: 'type',
+  base_url: 'base_url',
+  access_token_hash: 'access_token_hash',
+  refresh_token_hash: 'refresh_token_hash',
+  metadata: 'metadata',
+  created_at: 'created_at'
+};
+
+exports.Prisma.ProjectScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  title: 'title',
+  description: 'description',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.CourseScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  source: 'source',
+  external_id: 'external_id',
+  title: 'title',
+  course_code: 'course_code',
+  time_zone: 'time_zone',
+  start_at: 'start_at',
+  end_at: 'end_at',
+  raw_data: 'raw_data',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.TaskScalarFieldEnum = {
   id: 'id',
+  user_id: 'user_id',
+  project_id: 'project_id',
+  course_id: 'course_id',
   title: 'title',
   description: 'description',
-  dueDate: 'dueDate',
-  status: 'status',
-  userId: 'userId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  due_date: 'due_date',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  type: 'type',
+  priority: 'priority',
+  raw_canvas_data: 'raw_canvas_data'
+};
+
+exports.Prisma.TodoScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  task_id: 'task_id',
+  title: 'title',
+  description: 'description',
+  priority: 'priority',
+  due_date: 'due_date',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.ResourceScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  title: 'title',
+  description: 'description',
+  type: 'type',
+  url: 'url',
+  file_path: 'file_path',
+  metadata: 'metadata',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  task_id: 'task_id',
+  course_id: 'course_id',
+  project_id: 'project_id'
 };
 
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -154,10 +230,50 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+exports.AuthProviderType = exports.$Enums.AuthProviderType = {
+  Canvas: 'Canvas',
+  Google: 'Google',
+  Microsoft: 'Microsoft'
+};
+
+exports.CourseSource = exports.$Enums.CourseSource = {
+  Canvas: 'Canvas',
+  GoogleClassroom: 'GoogleClassroom'
+};
+
+exports.TaskType = exports.$Enums.TaskType = {
+  Canvas: 'Canvas',
+  Project: 'Project',
+  Personal: 'Personal'
+};
+
+exports.Priority = exports.$Enums.Priority = {
+  High: 'High',
+  Medium: 'Medium',
+  Low: 'Low'
+};
+
+exports.ResourceType = exports.$Enums.ResourceType = {
+  Document: 'Document',
+  Link: 'Link',
+  Note: 'Note',
+  Media: 'Media',
+  AI_Generated: 'AI_Generated'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Task: 'Task'
+  AuthProvider: 'AuthProvider',
+  Project: 'Project',
+  Course: 'Course',
+  Task: 'Task',
+  Todo: 'Todo',
+  Resource: 'Resource'
 };
 
 /**

@@ -1,7 +1,7 @@
-import { IsOptional, IsString, IsDateString, IsEnum, IsObject } from 'class-validator';
+import { IsOptional, IsString, IsDateString, IsEnum } from 'class-validator';
 import { Priority } from '../../common/interfaces';
 
-export class UpdateTaskDto {
+export class UpdateTodoDto {
   @IsOptional()
   @IsString()
   title?: string;
@@ -11,14 +11,10 @@ export class UpdateTaskDto {
   description?: string;
 
   @IsOptional()
-  @IsDateString()
-  due_date?: string;
-
-  @IsOptional()
   @IsEnum(Priority)
   priority?: Priority;
 
   @IsOptional()
-  @IsObject()
-  raw_canvas_data?: any;
+  @IsDateString()
+  due_date?: string;
 }

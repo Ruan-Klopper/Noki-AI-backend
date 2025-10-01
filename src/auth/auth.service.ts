@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
-import { LoginDto } from './dtos/login.dto';
-import { RegisterDto } from './dtos/register.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../database/prisma.service";
+import { LoginDto } from "./dtos/login.dto";
+import { RegisterDto } from "./dtos/register.dto";
 
 @Injectable()
 export class AuthService {
@@ -11,8 +11,10 @@ export class AuthService {
     // Implement user registration logic
     const user = await this.prisma.user.create({
       data: {
+        firstname: registerDto.firstname,
+        lastname: registerDto.lastname,
         email: registerDto.email,
-        name: registerDto.name,
+        password_hash: registerDto.password, // This should be hashed in the users service
       },
     });
     return user;
@@ -30,10 +32,16 @@ export class AuthService {
     // Implement Google OAuth login
     const user = await this.prisma.user.upsert({
       where: { email: googleUser.email },
-      update: { name: googleUser.name },
+      update: {
+        firstname: googleUser.firstname || googleUser.name?.split(" ")[0],
+        lastname: googleUser.lastname || googleUser.name?.split(" ")[1],
+      },
       create: {
+        firstname: googleUser.firstname || googleUser.name?.split(" ")[0],
+        lastname: googleUser.lastname || googleUser.name?.split(" ")[1],
         email: googleUser.email,
-        name: googleUser.name,
+        password_hash: "", // Google users don't need password
+        google_id: googleUser.id,
       },
     });
     return user;
