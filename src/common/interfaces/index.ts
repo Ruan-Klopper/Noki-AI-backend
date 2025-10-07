@@ -1,33 +1,33 @@
 // Shared interfaces for all models
 export enum AuthProviderType {
-  Canvas = 'Canvas',
-  Google = 'Google',
-  Microsoft = 'Microsoft',
+  Canvas = "Canvas",
+  Google = "Google",
+  Microsoft = "Microsoft",
 }
 
-export enum CourseSource {
-  Canvas = 'Canvas',
-  GoogleClassroom = 'GoogleClassroom',
+export enum ProjectSource {
+  Personal = "Personal",
+  Canvas = "Canvas",
 }
 
 export enum TaskType {
-  Canvas = 'Canvas',
-  Project = 'Project',
-  Personal = 'Personal',
+  Canvas = "Canvas",
+  Project = "Project",
+  Personal = "Personal",
 }
 
 export enum Priority {
-  High = 'High',
-  Medium = 'Medium',
-  Low = 'Low',
+  High = "High",
+  Medium = "Medium",
+  Low = "Low",
 }
 
 export enum ResourceType {
-  Document = 'Document',
-  Link = 'Link',
-  Note = 'Note',
-  Media = 'Media',
-  AI_Generated = 'AI_Generated',
+  Document = "Document",
+  Link = "Link",
+  Note = "Note",
+  Media = "Media",
+  AI_Generated = "AI_Generated",
 }
 
 export interface User {
@@ -44,7 +44,6 @@ export interface User {
   // Relations
   auth_providers?: AuthProvider[];
   projects?: Project[];
-  courses?: Course[];
   tasks?: Task[];
   todos?: Todo[];
   resources?: Resource[];
@@ -69,26 +68,14 @@ export interface Project {
   user_id: string;
   title: string;
   description?: string;
-  created_at: Date;
-  updated_at: Date;
-
-  // Relations
-  user?: User;
-  tasks?: Task[];
-  resources?: Resource[];
-}
-
-export interface Course {
-  id: string;
-  user_id: string;
-  source: CourseSource;
-  external_id: string;
-  title: string;
+  source: ProjectSource;
+  external_id?: string;
   course_code?: string;
+  color_hex?: string;
   time_zone?: string;
   start_at?: Date;
   end_at?: Date;
-  raw_data?: any;
+  raw_canvas_data?: any;
   created_at: Date;
   updated_at: Date;
 
@@ -102,7 +89,6 @@ export interface Task {
   id: string;
   user_id: string;
   project_id?: string;
-  course_id?: string;
   title: string;
   description?: string;
   due_date?: Date;
@@ -115,7 +101,6 @@ export interface Task {
   // Relations
   user?: User;
   project?: Project;
-  course?: Course;
   todos?: Todo[];
   resources?: Resource[];
 }
@@ -150,12 +135,10 @@ export interface Resource {
 
   // Optional relations
   task_id?: string;
-  course_id?: string;
   project_id?: string;
 
   // Relations
   user?: User;
   task?: Task;
-  course?: Course;
   project?: Project;
 }

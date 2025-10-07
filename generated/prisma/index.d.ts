@@ -29,11 +29,6 @@ export type AuthProvider = $Result.DefaultSelection<Prisma.$AuthProviderPayload>
  */
 export type Project = $Result.DefaultSelection<Prisma.$ProjectPayload>
 /**
- * Model Course
- * 
- */
-export type Course = $Result.DefaultSelection<Prisma.$CoursePayload>
-/**
  * Model Task
  * 
  */
@@ -62,12 +57,12 @@ export namespace $Enums {
 export type AuthProviderType = (typeof AuthProviderType)[keyof typeof AuthProviderType]
 
 
-export const CourseSource: {
-  Canvas: 'Canvas',
-  GoogleClassroom: 'GoogleClassroom'
+export const ProjectSource: {
+  Personal: 'Personal',
+  Canvas: 'Canvas'
 };
 
-export type CourseSource = (typeof CourseSource)[keyof typeof CourseSource]
+export type ProjectSource = (typeof ProjectSource)[keyof typeof ProjectSource]
 
 
 export const TaskType: {
@@ -104,9 +99,9 @@ export type AuthProviderType = $Enums.AuthProviderType
 
 export const AuthProviderType: typeof $Enums.AuthProviderType
 
-export type CourseSource = $Enums.CourseSource
+export type ProjectSource = $Enums.ProjectSource
 
-export const CourseSource: typeof $Enums.CourseSource
+export const ProjectSource: typeof $Enums.ProjectSource
 
 export type TaskType = $Enums.TaskType
 
@@ -267,16 +262,6 @@ export class PrismaClient<
     * ```
     */
   get project(): Prisma.ProjectDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.course`: Exposes CRUD operations for the **Course** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Courses
-    * const courses = await prisma.course.findMany()
-    * ```
-    */
-  get course(): Prisma.CourseDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.task`: Exposes CRUD operations for the **Task** model.
@@ -750,7 +735,6 @@ export namespace Prisma {
     User: 'User',
     AuthProvider: 'AuthProvider',
     Project: 'Project',
-    Course: 'Course',
     Task: 'Task',
     Todo: 'Todo',
     Resource: 'Resource'
@@ -772,7 +756,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "authProvider" | "project" | "course" | "task" | "todo" | "resource"
+      modelProps: "user" | "authProvider" | "project" | "task" | "todo" | "resource"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -995,80 +979,6 @@ export namespace Prisma {
           count: {
             args: Prisma.ProjectCountArgs<ExtArgs>
             result: $Utils.Optional<ProjectCountAggregateOutputType> | number
-          }
-        }
-      }
-      Course: {
-        payload: Prisma.$CoursePayload<ExtArgs>
-        fields: Prisma.CourseFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.CourseFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CoursePayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.CourseFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CoursePayload>
-          }
-          findFirst: {
-            args: Prisma.CourseFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CoursePayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.CourseFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CoursePayload>
-          }
-          findMany: {
-            args: Prisma.CourseFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CoursePayload>[]
-          }
-          create: {
-            args: Prisma.CourseCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CoursePayload>
-          }
-          createMany: {
-            args: Prisma.CourseCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.CourseCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CoursePayload>[]
-          }
-          delete: {
-            args: Prisma.CourseDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CoursePayload>
-          }
-          update: {
-            args: Prisma.CourseUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CoursePayload>
-          }
-          deleteMany: {
-            args: Prisma.CourseDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.CourseUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.CourseUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CoursePayload>[]
-          }
-          upsert: {
-            args: Prisma.CourseUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$CoursePayload>
-          }
-          aggregate: {
-            args: Prisma.CourseAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateCourse>
-          }
-          groupBy: {
-            args: Prisma.CourseGroupByArgs<ExtArgs>
-            result: $Utils.Optional<CourseGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.CourseCountArgs<ExtArgs>
-            result: $Utils.Optional<CourseCountAggregateOutputType> | number
           }
         }
       }
@@ -1393,7 +1303,6 @@ export namespace Prisma {
     user?: UserOmit
     authProvider?: AuthProviderOmit
     project?: ProjectOmit
-    course?: CourseOmit
     task?: TaskOmit
     todo?: TodoOmit
     resource?: ResourceOmit
@@ -1479,7 +1388,6 @@ export namespace Prisma {
   export type UserCountOutputType = {
     auth_providers: number
     projects: number
-    courses: number
     tasks: number
     todos: number
     resources: number
@@ -1488,7 +1396,6 @@ export namespace Prisma {
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     auth_providers?: boolean | UserCountOutputTypeCountAuth_providersArgs
     projects?: boolean | UserCountOutputTypeCountProjectsArgs
-    courses?: boolean | UserCountOutputTypeCountCoursesArgs
     tasks?: boolean | UserCountOutputTypeCountTasksArgs
     todos?: boolean | UserCountOutputTypeCountTodosArgs
     resources?: boolean | UserCountOutputTypeCountResourcesArgs
@@ -1517,13 +1424,6 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountProjectsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProjectWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountCoursesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CourseWhereInput
   }
 
   /**
@@ -1584,46 +1484,6 @@ export namespace Prisma {
    * ProjectCountOutputType without action
    */
   export type ProjectCountOutputTypeCountResourcesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ResourceWhereInput
-  }
-
-
-  /**
-   * Count Type CourseCountOutputType
-   */
-
-  export type CourseCountOutputType = {
-    tasks: number
-    resources: number
-  }
-
-  export type CourseCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tasks?: boolean | CourseCountOutputTypeCountTasksArgs
-    resources?: boolean | CourseCountOutputTypeCountResourcesArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * CourseCountOutputType without action
-   */
-  export type CourseCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the CourseCountOutputType
-     */
-    select?: CourseCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * CourseCountOutputType without action
-   */
-  export type CourseCountOutputTypeCountTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TaskWhereInput
-  }
-
-  /**
-   * CourseCountOutputType without action
-   */
-  export type CourseCountOutputTypeCountResourcesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ResourceWhereInput
   }
 
@@ -1870,7 +1730,6 @@ export namespace Prisma {
     updated_at?: boolean
     auth_providers?: boolean | User$auth_providersArgs<ExtArgs>
     projects?: boolean | User$projectsArgs<ExtArgs>
-    courses?: boolean | User$coursesArgs<ExtArgs>
     tasks?: boolean | User$tasksArgs<ExtArgs>
     todos?: boolean | User$todosArgs<ExtArgs>
     resources?: boolean | User$resourcesArgs<ExtArgs>
@@ -1917,7 +1776,6 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     auth_providers?: boolean | User$auth_providersArgs<ExtArgs>
     projects?: boolean | User$projectsArgs<ExtArgs>
-    courses?: boolean | User$coursesArgs<ExtArgs>
     tasks?: boolean | User$tasksArgs<ExtArgs>
     todos?: boolean | User$todosArgs<ExtArgs>
     resources?: boolean | User$resourcesArgs<ExtArgs>
@@ -1931,7 +1789,6 @@ export namespace Prisma {
     objects: {
       auth_providers: Prisma.$AuthProviderPayload<ExtArgs>[]
       projects: Prisma.$ProjectPayload<ExtArgs>[]
-      courses: Prisma.$CoursePayload<ExtArgs>[]
       tasks: Prisma.$TaskPayload<ExtArgs>[]
       todos: Prisma.$TodoPayload<ExtArgs>[]
       resources: Prisma.$ResourcePayload<ExtArgs>[]
@@ -2342,7 +2199,6 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     auth_providers<T extends User$auth_providersArgs<ExtArgs> = {}>(args?: Subset<T, User$auth_providersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthProviderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     projects<T extends User$projectsArgs<ExtArgs> = {}>(args?: Subset<T, User$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    courses<T extends User$coursesArgs<ExtArgs> = {}>(args?: Subset<T, User$coursesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tasks<T extends User$tasksArgs<ExtArgs> = {}>(args?: Subset<T, User$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     todos<T extends User$todosArgs<ExtArgs> = {}>(args?: Subset<T, User$todosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TodoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     resources<T extends User$resourcesArgs<ExtArgs> = {}>(args?: Subset<T, User$resourcesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2817,30 +2673,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProjectScalarFieldEnum | ProjectScalarFieldEnum[]
-  }
-
-  /**
-   * User.courses
-   */
-  export type User$coursesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseInclude<ExtArgs> | null
-    where?: CourseWhereInput
-    orderBy?: CourseOrderByWithRelationInput | CourseOrderByWithRelationInput[]
-    cursor?: CourseWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: CourseScalarFieldEnum | CourseScalarFieldEnum[]
   }
 
   /**
@@ -4042,6 +3874,13 @@ export namespace Prisma {
     user_id: string | null
     title: string | null
     description: string | null
+    source: $Enums.ProjectSource | null
+    external_id: string | null
+    course_code: string | null
+    color_hex: string | null
+    time_zone: string | null
+    start_at: Date | null
+    end_at: Date | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -4051,6 +3890,13 @@ export namespace Prisma {
     user_id: string | null
     title: string | null
     description: string | null
+    source: $Enums.ProjectSource | null
+    external_id: string | null
+    course_code: string | null
+    color_hex: string | null
+    time_zone: string | null
+    start_at: Date | null
+    end_at: Date | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -4060,6 +3906,14 @@ export namespace Prisma {
     user_id: number
     title: number
     description: number
+    source: number
+    external_id: number
+    course_code: number
+    color_hex: number
+    time_zone: number
+    start_at: number
+    end_at: number
+    raw_canvas_data: number
     created_at: number
     updated_at: number
     _all: number
@@ -4071,6 +3925,13 @@ export namespace Prisma {
     user_id?: true
     title?: true
     description?: true
+    source?: true
+    external_id?: true
+    course_code?: true
+    color_hex?: true
+    time_zone?: true
+    start_at?: true
+    end_at?: true
     created_at?: true
     updated_at?: true
   }
@@ -4080,6 +3941,13 @@ export namespace Prisma {
     user_id?: true
     title?: true
     description?: true
+    source?: true
+    external_id?: true
+    course_code?: true
+    color_hex?: true
+    time_zone?: true
+    start_at?: true
+    end_at?: true
     created_at?: true
     updated_at?: true
   }
@@ -4089,6 +3957,14 @@ export namespace Prisma {
     user_id?: true
     title?: true
     description?: true
+    source?: true
+    external_id?: true
+    course_code?: true
+    color_hex?: true
+    time_zone?: true
+    start_at?: true
+    end_at?: true
+    raw_canvas_data?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -4171,6 +4047,14 @@ export namespace Prisma {
     user_id: string
     title: string
     description: string | null
+    source: $Enums.ProjectSource
+    external_id: string | null
+    course_code: string | null
+    color_hex: string | null
+    time_zone: string | null
+    start_at: Date | null
+    end_at: Date | null
+    raw_canvas_data: JsonValue | null
     created_at: Date
     updated_at: Date
     _count: ProjectCountAggregateOutputType | null
@@ -4197,6 +4081,14 @@ export namespace Prisma {
     user_id?: boolean
     title?: boolean
     description?: boolean
+    source?: boolean
+    external_id?: boolean
+    course_code?: boolean
+    color_hex?: boolean
+    time_zone?: boolean
+    start_at?: boolean
+    end_at?: boolean
+    raw_canvas_data?: boolean
     created_at?: boolean
     updated_at?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -4210,6 +4102,14 @@ export namespace Prisma {
     user_id?: boolean
     title?: boolean
     description?: boolean
+    source?: boolean
+    external_id?: boolean
+    course_code?: boolean
+    color_hex?: boolean
+    time_zone?: boolean
+    start_at?: boolean
+    end_at?: boolean
+    raw_canvas_data?: boolean
     created_at?: boolean
     updated_at?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -4220,6 +4120,14 @@ export namespace Prisma {
     user_id?: boolean
     title?: boolean
     description?: boolean
+    source?: boolean
+    external_id?: boolean
+    course_code?: boolean
+    color_hex?: boolean
+    time_zone?: boolean
+    start_at?: boolean
+    end_at?: boolean
+    raw_canvas_data?: boolean
     created_at?: boolean
     updated_at?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -4230,11 +4138,19 @@ export namespace Prisma {
     user_id?: boolean
     title?: boolean
     description?: boolean
+    source?: boolean
+    external_id?: boolean
+    course_code?: boolean
+    color_hex?: boolean
+    time_zone?: boolean
+    start_at?: boolean
+    end_at?: boolean
+    raw_canvas_data?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "title" | "description" | "created_at" | "updated_at", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "title" | "description" | "source" | "external_id" | "course_code" | "color_hex" | "time_zone" | "start_at" | "end_at" | "raw_canvas_data" | "created_at" | "updated_at", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     tasks?: boolean | Project$tasksArgs<ExtArgs>
@@ -4260,6 +4176,14 @@ export namespace Prisma {
       user_id: string
       title: string
       description: string | null
+      source: $Enums.ProjectSource
+      external_id: string | null
+      course_code: string | null
+      color_hex: string | null
+      time_zone: string | null
+      start_at: Date | null
+      end_at: Date | null
+      raw_canvas_data: Prisma.JsonValue | null
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["project"]>
@@ -4692,6 +4616,14 @@ export namespace Prisma {
     readonly user_id: FieldRef<"Project", 'String'>
     readonly title: FieldRef<"Project", 'String'>
     readonly description: FieldRef<"Project", 'String'>
+    readonly source: FieldRef<"Project", 'ProjectSource'>
+    readonly external_id: FieldRef<"Project", 'String'>
+    readonly course_code: FieldRef<"Project", 'String'>
+    readonly color_hex: FieldRef<"Project", 'String'>
+    readonly time_zone: FieldRef<"Project", 'String'>
+    readonly start_at: FieldRef<"Project", 'DateTime'>
+    readonly end_at: FieldRef<"Project", 'DateTime'>
+    readonly raw_canvas_data: FieldRef<"Project", 'Json'>
     readonly created_at: FieldRef<"Project", 'DateTime'>
     readonly updated_at: FieldRef<"Project", 'DateTime'>
   }
@@ -5157,1209 +5089,6 @@ export namespace Prisma {
 
 
   /**
-   * Model Course
-   */
-
-  export type AggregateCourse = {
-    _count: CourseCountAggregateOutputType | null
-    _min: CourseMinAggregateOutputType | null
-    _max: CourseMaxAggregateOutputType | null
-  }
-
-  export type CourseMinAggregateOutputType = {
-    id: string | null
-    user_id: string | null
-    source: $Enums.CourseSource | null
-    external_id: string | null
-    title: string | null
-    course_code: string | null
-    time_zone: string | null
-    start_at: Date | null
-    end_at: Date | null
-    created_at: Date | null
-    updated_at: Date | null
-  }
-
-  export type CourseMaxAggregateOutputType = {
-    id: string | null
-    user_id: string | null
-    source: $Enums.CourseSource | null
-    external_id: string | null
-    title: string | null
-    course_code: string | null
-    time_zone: string | null
-    start_at: Date | null
-    end_at: Date | null
-    created_at: Date | null
-    updated_at: Date | null
-  }
-
-  export type CourseCountAggregateOutputType = {
-    id: number
-    user_id: number
-    source: number
-    external_id: number
-    title: number
-    course_code: number
-    time_zone: number
-    start_at: number
-    end_at: number
-    raw_data: number
-    created_at: number
-    updated_at: number
-    _all: number
-  }
-
-
-  export type CourseMinAggregateInputType = {
-    id?: true
-    user_id?: true
-    source?: true
-    external_id?: true
-    title?: true
-    course_code?: true
-    time_zone?: true
-    start_at?: true
-    end_at?: true
-    created_at?: true
-    updated_at?: true
-  }
-
-  export type CourseMaxAggregateInputType = {
-    id?: true
-    user_id?: true
-    source?: true
-    external_id?: true
-    title?: true
-    course_code?: true
-    time_zone?: true
-    start_at?: true
-    end_at?: true
-    created_at?: true
-    updated_at?: true
-  }
-
-  export type CourseCountAggregateInputType = {
-    id?: true
-    user_id?: true
-    source?: true
-    external_id?: true
-    title?: true
-    course_code?: true
-    time_zone?: true
-    start_at?: true
-    end_at?: true
-    raw_data?: true
-    created_at?: true
-    updated_at?: true
-    _all?: true
-  }
-
-  export type CourseAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Course to aggregate.
-     */
-    where?: CourseWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Courses to fetch.
-     */
-    orderBy?: CourseOrderByWithRelationInput | CourseOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: CourseWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Courses from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Courses.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Courses
-    **/
-    _count?: true | CourseCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: CourseMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: CourseMaxAggregateInputType
-  }
-
-  export type GetCourseAggregateType<T extends CourseAggregateArgs> = {
-        [P in keyof T & keyof AggregateCourse]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateCourse[P]>
-      : GetScalarType<T[P], AggregateCourse[P]>
-  }
-
-
-
-
-  export type CourseGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CourseWhereInput
-    orderBy?: CourseOrderByWithAggregationInput | CourseOrderByWithAggregationInput[]
-    by: CourseScalarFieldEnum[] | CourseScalarFieldEnum
-    having?: CourseScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: CourseCountAggregateInputType | true
-    _min?: CourseMinAggregateInputType
-    _max?: CourseMaxAggregateInputType
-  }
-
-  export type CourseGroupByOutputType = {
-    id: string
-    user_id: string
-    source: $Enums.CourseSource
-    external_id: string
-    title: string
-    course_code: string | null
-    time_zone: string | null
-    start_at: Date | null
-    end_at: Date | null
-    raw_data: JsonValue | null
-    created_at: Date
-    updated_at: Date
-    _count: CourseCountAggregateOutputType | null
-    _min: CourseMinAggregateOutputType | null
-    _max: CourseMaxAggregateOutputType | null
-  }
-
-  type GetCourseGroupByPayload<T extends CourseGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<CourseGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof CourseGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], CourseGroupByOutputType[P]>
-            : GetScalarType<T[P], CourseGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type CourseSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    user_id?: boolean
-    source?: boolean
-    external_id?: boolean
-    title?: boolean
-    course_code?: boolean
-    time_zone?: boolean
-    start_at?: boolean
-    end_at?: boolean
-    raw_data?: boolean
-    created_at?: boolean
-    updated_at?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    tasks?: boolean | Course$tasksArgs<ExtArgs>
-    resources?: boolean | Course$resourcesArgs<ExtArgs>
-    _count?: boolean | CourseCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["course"]>
-
-  export type CourseSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    user_id?: boolean
-    source?: boolean
-    external_id?: boolean
-    title?: boolean
-    course_code?: boolean
-    time_zone?: boolean
-    start_at?: boolean
-    end_at?: boolean
-    raw_data?: boolean
-    created_at?: boolean
-    updated_at?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["course"]>
-
-  export type CourseSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    user_id?: boolean
-    source?: boolean
-    external_id?: boolean
-    title?: boolean
-    course_code?: boolean
-    time_zone?: boolean
-    start_at?: boolean
-    end_at?: boolean
-    raw_data?: boolean
-    created_at?: boolean
-    updated_at?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["course"]>
-
-  export type CourseSelectScalar = {
-    id?: boolean
-    user_id?: boolean
-    source?: boolean
-    external_id?: boolean
-    title?: boolean
-    course_code?: boolean
-    time_zone?: boolean
-    start_at?: boolean
-    end_at?: boolean
-    raw_data?: boolean
-    created_at?: boolean
-    updated_at?: boolean
-  }
-
-  export type CourseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "source" | "external_id" | "title" | "course_code" | "time_zone" | "start_at" | "end_at" | "raw_data" | "created_at" | "updated_at", ExtArgs["result"]["course"]>
-  export type CourseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    tasks?: boolean | Course$tasksArgs<ExtArgs>
-    resources?: boolean | Course$resourcesArgs<ExtArgs>
-    _count?: boolean | CourseCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type CourseIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type CourseIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $CoursePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Course"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-      tasks: Prisma.$TaskPayload<ExtArgs>[]
-      resources: Prisma.$ResourcePayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      user_id: string
-      source: $Enums.CourseSource
-      external_id: string
-      title: string
-      course_code: string | null
-      time_zone: string | null
-      start_at: Date | null
-      end_at: Date | null
-      raw_data: Prisma.JsonValue | null
-      created_at: Date
-      updated_at: Date
-    }, ExtArgs["result"]["course"]>
-    composites: {}
-  }
-
-  type CourseGetPayload<S extends boolean | null | undefined | CourseDefaultArgs> = $Result.GetResult<Prisma.$CoursePayload, S>
-
-  type CourseCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<CourseFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: CourseCountAggregateInputType | true
-    }
-
-  export interface CourseDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Course'], meta: { name: 'Course' } }
-    /**
-     * Find zero or one Course that matches the filter.
-     * @param {CourseFindUniqueArgs} args - Arguments to find a Course
-     * @example
-     * // Get one Course
-     * const course = await prisma.course.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends CourseFindUniqueArgs>(args: SelectSubset<T, CourseFindUniqueArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Course that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {CourseFindUniqueOrThrowArgs} args - Arguments to find a Course
-     * @example
-     * // Get one Course
-     * const course = await prisma.course.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends CourseFindUniqueOrThrowArgs>(args: SelectSubset<T, CourseFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Course that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CourseFindFirstArgs} args - Arguments to find a Course
-     * @example
-     * // Get one Course
-     * const course = await prisma.course.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends CourseFindFirstArgs>(args?: SelectSubset<T, CourseFindFirstArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Course that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CourseFindFirstOrThrowArgs} args - Arguments to find a Course
-     * @example
-     * // Get one Course
-     * const course = await prisma.course.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends CourseFindFirstOrThrowArgs>(args?: SelectSubset<T, CourseFindFirstOrThrowArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Courses that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CourseFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Courses
-     * const courses = await prisma.course.findMany()
-     * 
-     * // Get first 10 Courses
-     * const courses = await prisma.course.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const courseWithIdOnly = await prisma.course.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends CourseFindManyArgs>(args?: SelectSubset<T, CourseFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Course.
-     * @param {CourseCreateArgs} args - Arguments to create a Course.
-     * @example
-     * // Create one Course
-     * const Course = await prisma.course.create({
-     *   data: {
-     *     // ... data to create a Course
-     *   }
-     * })
-     * 
-     */
-    create<T extends CourseCreateArgs>(args: SelectSubset<T, CourseCreateArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Courses.
-     * @param {CourseCreateManyArgs} args - Arguments to create many Courses.
-     * @example
-     * // Create many Courses
-     * const course = await prisma.course.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends CourseCreateManyArgs>(args?: SelectSubset<T, CourseCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Courses and returns the data saved in the database.
-     * @param {CourseCreateManyAndReturnArgs} args - Arguments to create many Courses.
-     * @example
-     * // Create many Courses
-     * const course = await prisma.course.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Courses and only return the `id`
-     * const courseWithIdOnly = await prisma.course.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends CourseCreateManyAndReturnArgs>(args?: SelectSubset<T, CourseCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Course.
-     * @param {CourseDeleteArgs} args - Arguments to delete one Course.
-     * @example
-     * // Delete one Course
-     * const Course = await prisma.course.delete({
-     *   where: {
-     *     // ... filter to delete one Course
-     *   }
-     * })
-     * 
-     */
-    delete<T extends CourseDeleteArgs>(args: SelectSubset<T, CourseDeleteArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Course.
-     * @param {CourseUpdateArgs} args - Arguments to update one Course.
-     * @example
-     * // Update one Course
-     * const course = await prisma.course.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends CourseUpdateArgs>(args: SelectSubset<T, CourseUpdateArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Courses.
-     * @param {CourseDeleteManyArgs} args - Arguments to filter Courses to delete.
-     * @example
-     * // Delete a few Courses
-     * const { count } = await prisma.course.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends CourseDeleteManyArgs>(args?: SelectSubset<T, CourseDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Courses.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CourseUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Courses
-     * const course = await prisma.course.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends CourseUpdateManyArgs>(args: SelectSubset<T, CourseUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Courses and returns the data updated in the database.
-     * @param {CourseUpdateManyAndReturnArgs} args - Arguments to update many Courses.
-     * @example
-     * // Update many Courses
-     * const course = await prisma.course.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Courses and only return the `id`
-     * const courseWithIdOnly = await prisma.course.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends CourseUpdateManyAndReturnArgs>(args: SelectSubset<T, CourseUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Course.
-     * @param {CourseUpsertArgs} args - Arguments to update or create a Course.
-     * @example
-     * // Update or create a Course
-     * const course = await prisma.course.upsert({
-     *   create: {
-     *     // ... data to create a Course
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Course we want to update
-     *   }
-     * })
-     */
-    upsert<T extends CourseUpsertArgs>(args: SelectSubset<T, CourseUpsertArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Courses.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CourseCountArgs} args - Arguments to filter Courses to count.
-     * @example
-     * // Count the number of Courses
-     * const count = await prisma.course.count({
-     *   where: {
-     *     // ... the filter for the Courses we want to count
-     *   }
-     * })
-    **/
-    count<T extends CourseCountArgs>(
-      args?: Subset<T, CourseCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], CourseCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Course.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CourseAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends CourseAggregateArgs>(args: Subset<T, CourseAggregateArgs>): Prisma.PrismaPromise<GetCourseAggregateType<T>>
-
-    /**
-     * Group by Course.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CourseGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends CourseGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: CourseGroupByArgs['orderBy'] }
-        : { orderBy?: CourseGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, CourseGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCourseGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Course model
-   */
-  readonly fields: CourseFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Course.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__CourseClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    tasks<T extends Course$tasksArgs<ExtArgs> = {}>(args?: Subset<T, Course$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    resources<T extends Course$resourcesArgs<ExtArgs> = {}>(args?: Subset<T, Course$resourcesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Course model
-   */
-  interface CourseFieldRefs {
-    readonly id: FieldRef<"Course", 'String'>
-    readonly user_id: FieldRef<"Course", 'String'>
-    readonly source: FieldRef<"Course", 'CourseSource'>
-    readonly external_id: FieldRef<"Course", 'String'>
-    readonly title: FieldRef<"Course", 'String'>
-    readonly course_code: FieldRef<"Course", 'String'>
-    readonly time_zone: FieldRef<"Course", 'String'>
-    readonly start_at: FieldRef<"Course", 'DateTime'>
-    readonly end_at: FieldRef<"Course", 'DateTime'>
-    readonly raw_data: FieldRef<"Course", 'Json'>
-    readonly created_at: FieldRef<"Course", 'DateTime'>
-    readonly updated_at: FieldRef<"Course", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Course findUnique
-   */
-  export type CourseFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseInclude<ExtArgs> | null
-    /**
-     * Filter, which Course to fetch.
-     */
-    where: CourseWhereUniqueInput
-  }
-
-  /**
-   * Course findUniqueOrThrow
-   */
-  export type CourseFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseInclude<ExtArgs> | null
-    /**
-     * Filter, which Course to fetch.
-     */
-    where: CourseWhereUniqueInput
-  }
-
-  /**
-   * Course findFirst
-   */
-  export type CourseFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseInclude<ExtArgs> | null
-    /**
-     * Filter, which Course to fetch.
-     */
-    where?: CourseWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Courses to fetch.
-     */
-    orderBy?: CourseOrderByWithRelationInput | CourseOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Courses.
-     */
-    cursor?: CourseWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Courses from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Courses.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Courses.
-     */
-    distinct?: CourseScalarFieldEnum | CourseScalarFieldEnum[]
-  }
-
-  /**
-   * Course findFirstOrThrow
-   */
-  export type CourseFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseInclude<ExtArgs> | null
-    /**
-     * Filter, which Course to fetch.
-     */
-    where?: CourseWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Courses to fetch.
-     */
-    orderBy?: CourseOrderByWithRelationInput | CourseOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Courses.
-     */
-    cursor?: CourseWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Courses from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Courses.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Courses.
-     */
-    distinct?: CourseScalarFieldEnum | CourseScalarFieldEnum[]
-  }
-
-  /**
-   * Course findMany
-   */
-  export type CourseFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseInclude<ExtArgs> | null
-    /**
-     * Filter, which Courses to fetch.
-     */
-    where?: CourseWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Courses to fetch.
-     */
-    orderBy?: CourseOrderByWithRelationInput | CourseOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Courses.
-     */
-    cursor?: CourseWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Courses from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Courses.
-     */
-    skip?: number
-    distinct?: CourseScalarFieldEnum | CourseScalarFieldEnum[]
-  }
-
-  /**
-   * Course create
-   */
-  export type CourseCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseInclude<ExtArgs> | null
-    /**
-     * The data needed to create a Course.
-     */
-    data: XOR<CourseCreateInput, CourseUncheckedCreateInput>
-  }
-
-  /**
-   * Course createMany
-   */
-  export type CourseCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Courses.
-     */
-    data: CourseCreateManyInput | CourseCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Course createManyAndReturn
-   */
-  export type CourseCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * The data used to create many Courses.
-     */
-    data: CourseCreateManyInput | CourseCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Course update
-   */
-  export type CourseUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseInclude<ExtArgs> | null
-    /**
-     * The data needed to update a Course.
-     */
-    data: XOR<CourseUpdateInput, CourseUncheckedUpdateInput>
-    /**
-     * Choose, which Course to update.
-     */
-    where: CourseWhereUniqueInput
-  }
-
-  /**
-   * Course updateMany
-   */
-  export type CourseUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Courses.
-     */
-    data: XOR<CourseUpdateManyMutationInput, CourseUncheckedUpdateManyInput>
-    /**
-     * Filter which Courses to update
-     */
-    where?: CourseWhereInput
-    /**
-     * Limit how many Courses to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * Course updateManyAndReturn
-   */
-  export type CourseUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * The data used to update Courses.
-     */
-    data: XOR<CourseUpdateManyMutationInput, CourseUncheckedUpdateManyInput>
-    /**
-     * Filter which Courses to update
-     */
-    where?: CourseWhereInput
-    /**
-     * Limit how many Courses to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Course upsert
-   */
-  export type CourseUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseInclude<ExtArgs> | null
-    /**
-     * The filter to search for the Course to update in case it exists.
-     */
-    where: CourseWhereUniqueInput
-    /**
-     * In case the Course found by the `where` argument doesn't exist, create a new Course with this data.
-     */
-    create: XOR<CourseCreateInput, CourseUncheckedCreateInput>
-    /**
-     * In case the Course was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<CourseUpdateInput, CourseUncheckedUpdateInput>
-  }
-
-  /**
-   * Course delete
-   */
-  export type CourseDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseInclude<ExtArgs> | null
-    /**
-     * Filter which Course to delete.
-     */
-    where: CourseWhereUniqueInput
-  }
-
-  /**
-   * Course deleteMany
-   */
-  export type CourseDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Courses to delete
-     */
-    where?: CourseWhereInput
-    /**
-     * Limit how many Courses to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * Course.tasks
-   */
-  export type Course$tasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Task
-     */
-    select?: TaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Task
-     */
-    omit?: TaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskInclude<ExtArgs> | null
-    where?: TaskWhereInput
-    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
-    cursor?: TaskWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
-  }
-
-  /**
-   * Course.resources
-   */
-  export type Course$resourcesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Resource
-     */
-    select?: ResourceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Resource
-     */
-    omit?: ResourceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ResourceInclude<ExtArgs> | null
-    where?: ResourceWhereInput
-    orderBy?: ResourceOrderByWithRelationInput | ResourceOrderByWithRelationInput[]
-    cursor?: ResourceWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ResourceScalarFieldEnum | ResourceScalarFieldEnum[]
-  }
-
-  /**
-   * Course without action
-   */
-  export type CourseDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseInclude<ExtArgs> | null
-  }
-
-
-  /**
    * Model Task
    */
 
@@ -6373,7 +5102,6 @@ export namespace Prisma {
     id: string | null
     user_id: string | null
     project_id: string | null
-    course_id: string | null
     title: string | null
     description: string | null
     due_date: Date | null
@@ -6387,7 +5115,6 @@ export namespace Prisma {
     id: string | null
     user_id: string | null
     project_id: string | null
-    course_id: string | null
     title: string | null
     description: string | null
     due_date: Date | null
@@ -6401,7 +5128,6 @@ export namespace Prisma {
     id: number
     user_id: number
     project_id: number
-    course_id: number
     title: number
     description: number
     due_date: number
@@ -6418,7 +5144,6 @@ export namespace Prisma {
     id?: true
     user_id?: true
     project_id?: true
-    course_id?: true
     title?: true
     description?: true
     due_date?: true
@@ -6432,7 +5157,6 @@ export namespace Prisma {
     id?: true
     user_id?: true
     project_id?: true
-    course_id?: true
     title?: true
     description?: true
     due_date?: true
@@ -6446,7 +5170,6 @@ export namespace Prisma {
     id?: true
     user_id?: true
     project_id?: true
-    course_id?: true
     title?: true
     description?: true
     due_date?: true
@@ -6534,7 +5257,6 @@ export namespace Prisma {
     id: string
     user_id: string
     project_id: string | null
-    course_id: string | null
     title: string
     description: string | null
     due_date: Date | null
@@ -6566,7 +5288,6 @@ export namespace Prisma {
     id?: boolean
     user_id?: boolean
     project_id?: boolean
-    course_id?: boolean
     title?: boolean
     description?: boolean
     due_date?: boolean
@@ -6577,7 +5298,6 @@ export namespace Prisma {
     raw_canvas_data?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     project?: boolean | Task$projectArgs<ExtArgs>
-    course?: boolean | Task$courseArgs<ExtArgs>
     todos?: boolean | Task$todosArgs<ExtArgs>
     resources?: boolean | Task$resourcesArgs<ExtArgs>
     _count?: boolean | TaskCountOutputTypeDefaultArgs<ExtArgs>
@@ -6587,7 +5307,6 @@ export namespace Prisma {
     id?: boolean
     user_id?: boolean
     project_id?: boolean
-    course_id?: boolean
     title?: boolean
     description?: boolean
     due_date?: boolean
@@ -6598,14 +5317,12 @@ export namespace Prisma {
     raw_canvas_data?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     project?: boolean | Task$projectArgs<ExtArgs>
-    course?: boolean | Task$courseArgs<ExtArgs>
   }, ExtArgs["result"]["task"]>
 
   export type TaskSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     user_id?: boolean
     project_id?: boolean
-    course_id?: boolean
     title?: boolean
     description?: boolean
     due_date?: boolean
@@ -6616,14 +5333,12 @@ export namespace Prisma {
     raw_canvas_data?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     project?: boolean | Task$projectArgs<ExtArgs>
-    course?: boolean | Task$courseArgs<ExtArgs>
   }, ExtArgs["result"]["task"]>
 
   export type TaskSelectScalar = {
     id?: boolean
     user_id?: boolean
     project_id?: boolean
-    course_id?: boolean
     title?: boolean
     description?: boolean
     due_date?: boolean
@@ -6634,11 +5349,10 @@ export namespace Prisma {
     raw_canvas_data?: boolean
   }
 
-  export type TaskOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "project_id" | "course_id" | "title" | "description" | "due_date" | "created_at" | "updated_at" | "type" | "priority" | "raw_canvas_data", ExtArgs["result"]["task"]>
+  export type TaskOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "project_id" | "title" | "description" | "due_date" | "created_at" | "updated_at" | "type" | "priority" | "raw_canvas_data", ExtArgs["result"]["task"]>
   export type TaskInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     project?: boolean | Task$projectArgs<ExtArgs>
-    course?: boolean | Task$courseArgs<ExtArgs>
     todos?: boolean | Task$todosArgs<ExtArgs>
     resources?: boolean | Task$resourcesArgs<ExtArgs>
     _count?: boolean | TaskCountOutputTypeDefaultArgs<ExtArgs>
@@ -6646,12 +5360,10 @@ export namespace Prisma {
   export type TaskIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     project?: boolean | Task$projectArgs<ExtArgs>
-    course?: boolean | Task$courseArgs<ExtArgs>
   }
   export type TaskIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     project?: boolean | Task$projectArgs<ExtArgs>
-    course?: boolean | Task$courseArgs<ExtArgs>
   }
 
   export type $TaskPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6659,7 +5371,6 @@ export namespace Prisma {
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
       project: Prisma.$ProjectPayload<ExtArgs> | null
-      course: Prisma.$CoursePayload<ExtArgs> | null
       todos: Prisma.$TodoPayload<ExtArgs>[]
       resources: Prisma.$ResourcePayload<ExtArgs>[]
     }
@@ -6667,7 +5378,6 @@ export namespace Prisma {
       id: string
       user_id: string
       project_id: string | null
-      course_id: string | null
       title: string
       description: string | null
       due_date: Date | null
@@ -7072,7 +5782,6 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     project<T extends Task$projectArgs<ExtArgs> = {}>(args?: Subset<T, Task$projectArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    course<T extends Task$courseArgs<ExtArgs> = {}>(args?: Subset<T, Task$courseArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     todos<T extends Task$todosArgs<ExtArgs> = {}>(args?: Subset<T, Task$todosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TodoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     resources<T extends Task$resourcesArgs<ExtArgs> = {}>(args?: Subset<T, Task$resourcesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -7107,7 +5816,6 @@ export namespace Prisma {
     readonly id: FieldRef<"Task", 'String'>
     readonly user_id: FieldRef<"Task", 'String'>
     readonly project_id: FieldRef<"Task", 'String'>
-    readonly course_id: FieldRef<"Task", 'String'>
     readonly title: FieldRef<"Task", 'String'>
     readonly description: FieldRef<"Task", 'String'>
     readonly due_date: FieldRef<"Task", 'DateTime'>
@@ -7528,25 +6236,6 @@ export namespace Prisma {
      */
     include?: ProjectInclude<ExtArgs> | null
     where?: ProjectWhereInput
-  }
-
-  /**
-   * Task.course
-   */
-  export type Task$courseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseInclude<ExtArgs> | null
-    where?: CourseWhereInput
   }
 
   /**
@@ -8755,7 +7444,6 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     task_id: string | null
-    course_id: string | null
     project_id: string | null
   }
 
@@ -8770,7 +7458,6 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     task_id: string | null
-    course_id: string | null
     project_id: string | null
   }
 
@@ -8786,7 +7473,6 @@ export namespace Prisma {
     created_at: number
     updated_at: number
     task_id: number
-    course_id: number
     project_id: number
     _all: number
   }
@@ -8803,7 +7489,6 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     task_id?: true
-    course_id?: true
     project_id?: true
   }
 
@@ -8818,7 +7503,6 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     task_id?: true
-    course_id?: true
     project_id?: true
   }
 
@@ -8834,7 +7518,6 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     task_id?: true
-    course_id?: true
     project_id?: true
     _all?: true
   }
@@ -8923,7 +7606,6 @@ export namespace Prisma {
     created_at: Date
     updated_at: Date
     task_id: string | null
-    course_id: string | null
     project_id: string | null
     _count: ResourceCountAggregateOutputType | null
     _min: ResourceMinAggregateOutputType | null
@@ -8956,11 +7638,9 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     task_id?: boolean
-    course_id?: boolean
     project_id?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     task?: boolean | Resource$taskArgs<ExtArgs>
-    course?: boolean | Resource$courseArgs<ExtArgs>
     project?: boolean | Resource$projectArgs<ExtArgs>
   }, ExtArgs["result"]["resource"]>
 
@@ -8976,11 +7656,9 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     task_id?: boolean
-    course_id?: boolean
     project_id?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     task?: boolean | Resource$taskArgs<ExtArgs>
-    course?: boolean | Resource$courseArgs<ExtArgs>
     project?: boolean | Resource$projectArgs<ExtArgs>
   }, ExtArgs["result"]["resource"]>
 
@@ -8996,11 +7674,9 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     task_id?: boolean
-    course_id?: boolean
     project_id?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     task?: boolean | Resource$taskArgs<ExtArgs>
-    course?: boolean | Resource$courseArgs<ExtArgs>
     project?: boolean | Resource$projectArgs<ExtArgs>
   }, ExtArgs["result"]["resource"]>
 
@@ -9016,27 +7692,23 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     task_id?: boolean
-    course_id?: boolean
     project_id?: boolean
   }
 
-  export type ResourceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "title" | "description" | "type" | "url" | "file_path" | "metadata" | "created_at" | "updated_at" | "task_id" | "course_id" | "project_id", ExtArgs["result"]["resource"]>
+  export type ResourceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "title" | "description" | "type" | "url" | "file_path" | "metadata" | "created_at" | "updated_at" | "task_id" | "project_id", ExtArgs["result"]["resource"]>
   export type ResourceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     task?: boolean | Resource$taskArgs<ExtArgs>
-    course?: boolean | Resource$courseArgs<ExtArgs>
     project?: boolean | Resource$projectArgs<ExtArgs>
   }
   export type ResourceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     task?: boolean | Resource$taskArgs<ExtArgs>
-    course?: boolean | Resource$courseArgs<ExtArgs>
     project?: boolean | Resource$projectArgs<ExtArgs>
   }
   export type ResourceIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     task?: boolean | Resource$taskArgs<ExtArgs>
-    course?: boolean | Resource$courseArgs<ExtArgs>
     project?: boolean | Resource$projectArgs<ExtArgs>
   }
 
@@ -9045,7 +7717,6 @@ export namespace Prisma {
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
       task: Prisma.$TaskPayload<ExtArgs> | null
-      course: Prisma.$CoursePayload<ExtArgs> | null
       project: Prisma.$ProjectPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -9060,7 +7731,6 @@ export namespace Prisma {
       created_at: Date
       updated_at: Date
       task_id: string | null
-      course_id: string | null
       project_id: string | null
     }, ExtArgs["result"]["resource"]>
     composites: {}
@@ -9458,7 +8128,6 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     task<T extends Resource$taskArgs<ExtArgs> = {}>(args?: Subset<T, Resource$taskArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    course<T extends Resource$courseArgs<ExtArgs> = {}>(args?: Subset<T, Resource$courseArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     project<T extends Resource$projectArgs<ExtArgs> = {}>(args?: Subset<T, Resource$projectArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -9500,7 +8169,6 @@ export namespace Prisma {
     readonly created_at: FieldRef<"Resource", 'DateTime'>
     readonly updated_at: FieldRef<"Resource", 'DateTime'>
     readonly task_id: FieldRef<"Resource", 'String'>
-    readonly course_id: FieldRef<"Resource", 'String'>
     readonly project_id: FieldRef<"Resource", 'String'>
   }
     
@@ -9917,25 +8585,6 @@ export namespace Prisma {
   }
 
   /**
-   * Resource.course
-   */
-  export type Resource$courseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Course
-     */
-    select?: CourseSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Course
-     */
-    omit?: CourseOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CourseInclude<ExtArgs> | null
-    where?: CourseWhereInput
-  }
-
-  /**
    * Resource.project
    */
   export type Resource$projectArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10021,6 +8670,14 @@ export namespace Prisma {
     user_id: 'user_id',
     title: 'title',
     description: 'description',
+    source: 'source',
+    external_id: 'external_id',
+    course_code: 'course_code',
+    color_hex: 'color_hex',
+    time_zone: 'time_zone',
+    start_at: 'start_at',
+    end_at: 'end_at',
+    raw_canvas_data: 'raw_canvas_data',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -10028,29 +8685,10 @@ export namespace Prisma {
   export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
 
 
-  export const CourseScalarFieldEnum: {
-    id: 'id',
-    user_id: 'user_id',
-    source: 'source',
-    external_id: 'external_id',
-    title: 'title',
-    course_code: 'course_code',
-    time_zone: 'time_zone',
-    start_at: 'start_at',
-    end_at: 'end_at',
-    raw_data: 'raw_data',
-    created_at: 'created_at',
-    updated_at: 'updated_at'
-  };
-
-  export type CourseScalarFieldEnum = (typeof CourseScalarFieldEnum)[keyof typeof CourseScalarFieldEnum]
-
-
   export const TaskScalarFieldEnum: {
     id: 'id',
     user_id: 'user_id',
     project_id: 'project_id',
-    course_id: 'course_id',
     title: 'title',
     description: 'description',
     due_date: 'due_date',
@@ -10091,7 +8729,6 @@ export namespace Prisma {
     created_at: 'created_at',
     updated_at: 'updated_at',
     task_id: 'task_id',
-    course_id: 'course_id',
     project_id: 'project_id'
   };
 
@@ -10201,16 +8838,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'CourseSource'
+   * Reference to a field of type 'ProjectSource'
    */
-  export type EnumCourseSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourseSource'>
+  export type EnumProjectSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectSource'>
     
 
 
   /**
-   * Reference to a field of type 'CourseSource[]'
+   * Reference to a field of type 'ProjectSource[]'
    */
-  export type ListEnumCourseSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourseSource[]'>
+  export type ListEnumProjectSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectSource[]'>
     
 
 
@@ -10288,7 +8925,6 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"User"> | Date | string
     auth_providers?: AuthProviderListRelationFilter
     projects?: ProjectListRelationFilter
-    courses?: CourseListRelationFilter
     tasks?: TaskListRelationFilter
     todos?: TodoListRelationFilter
     resources?: ResourceListRelationFilter
@@ -10306,7 +8942,6 @@ export namespace Prisma {
     updated_at?: SortOrder
     auth_providers?: AuthProviderOrderByRelationAggregateInput
     projects?: ProjectOrderByRelationAggregateInput
-    courses?: CourseOrderByRelationAggregateInput
     tasks?: TaskOrderByRelationAggregateInput
     todos?: TodoOrderByRelationAggregateInput
     resources?: ResourceOrderByRelationAggregateInput
@@ -10327,7 +8962,6 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"User"> | Date | string
     auth_providers?: AuthProviderListRelationFilter
     projects?: ProjectListRelationFilter
-    courses?: CourseListRelationFilter
     tasks?: TaskListRelationFilter
     todos?: TodoListRelationFilter
     resources?: ResourceListRelationFilter
@@ -10441,6 +9075,14 @@ export namespace Prisma {
     user_id?: StringFilter<"Project"> | string
     title?: StringFilter<"Project"> | string
     description?: StringNullableFilter<"Project"> | string | null
+    source?: EnumProjectSourceFilter<"Project"> | $Enums.ProjectSource
+    external_id?: StringNullableFilter<"Project"> | string | null
+    course_code?: StringNullableFilter<"Project"> | string | null
+    color_hex?: StringNullableFilter<"Project"> | string | null
+    time_zone?: StringNullableFilter<"Project"> | string | null
+    start_at?: DateTimeNullableFilter<"Project"> | Date | string | null
+    end_at?: DateTimeNullableFilter<"Project"> | Date | string | null
+    raw_canvas_data?: JsonNullableFilter<"Project">
     created_at?: DateTimeFilter<"Project"> | Date | string
     updated_at?: DateTimeFilter<"Project"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -10453,6 +9095,14 @@ export namespace Prisma {
     user_id?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
+    source?: SortOrder
+    external_id?: SortOrderInput | SortOrder
+    course_code?: SortOrderInput | SortOrder
+    color_hex?: SortOrderInput | SortOrder
+    time_zone?: SortOrderInput | SortOrder
+    start_at?: SortOrderInput | SortOrder
+    end_at?: SortOrderInput | SortOrder
+    raw_canvas_data?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     user?: UserOrderByWithRelationInput
@@ -10462,24 +9112,41 @@ export namespace Prisma {
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    user_id_external_id_source?: ProjectUser_idExternal_idSourceCompoundUniqueInput
     AND?: ProjectWhereInput | ProjectWhereInput[]
     OR?: ProjectWhereInput[]
     NOT?: ProjectWhereInput | ProjectWhereInput[]
     user_id?: StringFilter<"Project"> | string
     title?: StringFilter<"Project"> | string
     description?: StringNullableFilter<"Project"> | string | null
+    source?: EnumProjectSourceFilter<"Project"> | $Enums.ProjectSource
+    external_id?: StringNullableFilter<"Project"> | string | null
+    course_code?: StringNullableFilter<"Project"> | string | null
+    color_hex?: StringNullableFilter<"Project"> | string | null
+    time_zone?: StringNullableFilter<"Project"> | string | null
+    start_at?: DateTimeNullableFilter<"Project"> | Date | string | null
+    end_at?: DateTimeNullableFilter<"Project"> | Date | string | null
+    raw_canvas_data?: JsonNullableFilter<"Project">
     created_at?: DateTimeFilter<"Project"> | Date | string
     updated_at?: DateTimeFilter<"Project"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     tasks?: TaskListRelationFilter
     resources?: ResourceListRelationFilter
-  }, "id">
+  }, "id" | "user_id_external_id_source">
 
   export type ProjectOrderByWithAggregationInput = {
     id?: SortOrder
     user_id?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
+    source?: SortOrder
+    external_id?: SortOrderInput | SortOrder
+    course_code?: SortOrderInput | SortOrder
+    color_hex?: SortOrderInput | SortOrder
+    time_zone?: SortOrderInput | SortOrder
+    start_at?: SortOrderInput | SortOrder
+    end_at?: SortOrderInput | SortOrder
+    raw_canvas_data?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: ProjectCountOrderByAggregateInput
@@ -10495,105 +9162,16 @@ export namespace Prisma {
     user_id?: StringWithAggregatesFilter<"Project"> | string
     title?: StringWithAggregatesFilter<"Project"> | string
     description?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    source?: EnumProjectSourceWithAggregatesFilter<"Project"> | $Enums.ProjectSource
+    external_id?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    course_code?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    color_hex?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    time_zone?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    start_at?: DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
+    end_at?: DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
+    raw_canvas_data?: JsonNullableWithAggregatesFilter<"Project">
     created_at?: DateTimeWithAggregatesFilter<"Project"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Project"> | Date | string
-  }
-
-  export type CourseWhereInput = {
-    AND?: CourseWhereInput | CourseWhereInput[]
-    OR?: CourseWhereInput[]
-    NOT?: CourseWhereInput | CourseWhereInput[]
-    id?: StringFilter<"Course"> | string
-    user_id?: StringFilter<"Course"> | string
-    source?: EnumCourseSourceFilter<"Course"> | $Enums.CourseSource
-    external_id?: StringFilter<"Course"> | string
-    title?: StringFilter<"Course"> | string
-    course_code?: StringNullableFilter<"Course"> | string | null
-    time_zone?: StringNullableFilter<"Course"> | string | null
-    start_at?: DateTimeNullableFilter<"Course"> | Date | string | null
-    end_at?: DateTimeNullableFilter<"Course"> | Date | string | null
-    raw_data?: JsonNullableFilter<"Course">
-    created_at?: DateTimeFilter<"Course"> | Date | string
-    updated_at?: DateTimeFilter<"Course"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    tasks?: TaskListRelationFilter
-    resources?: ResourceListRelationFilter
-  }
-
-  export type CourseOrderByWithRelationInput = {
-    id?: SortOrder
-    user_id?: SortOrder
-    source?: SortOrder
-    external_id?: SortOrder
-    title?: SortOrder
-    course_code?: SortOrderInput | SortOrder
-    time_zone?: SortOrderInput | SortOrder
-    start_at?: SortOrderInput | SortOrder
-    end_at?: SortOrderInput | SortOrder
-    raw_data?: SortOrderInput | SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-    user?: UserOrderByWithRelationInput
-    tasks?: TaskOrderByRelationAggregateInput
-    resources?: ResourceOrderByRelationAggregateInput
-  }
-
-  export type CourseWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    user_id_external_id_source?: CourseUser_idExternal_idSourceCompoundUniqueInput
-    AND?: CourseWhereInput | CourseWhereInput[]
-    OR?: CourseWhereInput[]
-    NOT?: CourseWhereInput | CourseWhereInput[]
-    user_id?: StringFilter<"Course"> | string
-    source?: EnumCourseSourceFilter<"Course"> | $Enums.CourseSource
-    external_id?: StringFilter<"Course"> | string
-    title?: StringFilter<"Course"> | string
-    course_code?: StringNullableFilter<"Course"> | string | null
-    time_zone?: StringNullableFilter<"Course"> | string | null
-    start_at?: DateTimeNullableFilter<"Course"> | Date | string | null
-    end_at?: DateTimeNullableFilter<"Course"> | Date | string | null
-    raw_data?: JsonNullableFilter<"Course">
-    created_at?: DateTimeFilter<"Course"> | Date | string
-    updated_at?: DateTimeFilter<"Course"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    tasks?: TaskListRelationFilter
-    resources?: ResourceListRelationFilter
-  }, "id" | "user_id_external_id_source">
-
-  export type CourseOrderByWithAggregationInput = {
-    id?: SortOrder
-    user_id?: SortOrder
-    source?: SortOrder
-    external_id?: SortOrder
-    title?: SortOrder
-    course_code?: SortOrderInput | SortOrder
-    time_zone?: SortOrderInput | SortOrder
-    start_at?: SortOrderInput | SortOrder
-    end_at?: SortOrderInput | SortOrder
-    raw_data?: SortOrderInput | SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-    _count?: CourseCountOrderByAggregateInput
-    _max?: CourseMaxOrderByAggregateInput
-    _min?: CourseMinOrderByAggregateInput
-  }
-
-  export type CourseScalarWhereWithAggregatesInput = {
-    AND?: CourseScalarWhereWithAggregatesInput | CourseScalarWhereWithAggregatesInput[]
-    OR?: CourseScalarWhereWithAggregatesInput[]
-    NOT?: CourseScalarWhereWithAggregatesInput | CourseScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Course"> | string
-    user_id?: StringWithAggregatesFilter<"Course"> | string
-    source?: EnumCourseSourceWithAggregatesFilter<"Course"> | $Enums.CourseSource
-    external_id?: StringWithAggregatesFilter<"Course"> | string
-    title?: StringWithAggregatesFilter<"Course"> | string
-    course_code?: StringNullableWithAggregatesFilter<"Course"> | string | null
-    time_zone?: StringNullableWithAggregatesFilter<"Course"> | string | null
-    start_at?: DateTimeNullableWithAggregatesFilter<"Course"> | Date | string | null
-    end_at?: DateTimeNullableWithAggregatesFilter<"Course"> | Date | string | null
-    raw_data?: JsonNullableWithAggregatesFilter<"Course">
-    created_at?: DateTimeWithAggregatesFilter<"Course"> | Date | string
-    updated_at?: DateTimeWithAggregatesFilter<"Course"> | Date | string
   }
 
   export type TaskWhereInput = {
@@ -10603,7 +9181,6 @@ export namespace Prisma {
     id?: StringFilter<"Task"> | string
     user_id?: StringFilter<"Task"> | string
     project_id?: StringNullableFilter<"Task"> | string | null
-    course_id?: StringNullableFilter<"Task"> | string | null
     title?: StringFilter<"Task"> | string
     description?: StringNullableFilter<"Task"> | string | null
     due_date?: DateTimeNullableFilter<"Task"> | Date | string | null
@@ -10614,7 +9191,6 @@ export namespace Prisma {
     raw_canvas_data?: JsonNullableFilter<"Task">
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     project?: XOR<ProjectNullableScalarRelationFilter, ProjectWhereInput> | null
-    course?: XOR<CourseNullableScalarRelationFilter, CourseWhereInput> | null
     todos?: TodoListRelationFilter
     resources?: ResourceListRelationFilter
   }
@@ -10623,7 +9199,6 @@ export namespace Prisma {
     id?: SortOrder
     user_id?: SortOrder
     project_id?: SortOrderInput | SortOrder
-    course_id?: SortOrderInput | SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
     due_date?: SortOrderInput | SortOrder
@@ -10634,7 +9209,6 @@ export namespace Prisma {
     raw_canvas_data?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
     project?: ProjectOrderByWithRelationInput
-    course?: CourseOrderByWithRelationInput
     todos?: TodoOrderByRelationAggregateInput
     resources?: ResourceOrderByRelationAggregateInput
   }
@@ -10646,7 +9220,6 @@ export namespace Prisma {
     NOT?: TaskWhereInput | TaskWhereInput[]
     user_id?: StringFilter<"Task"> | string
     project_id?: StringNullableFilter<"Task"> | string | null
-    course_id?: StringNullableFilter<"Task"> | string | null
     title?: StringFilter<"Task"> | string
     description?: StringNullableFilter<"Task"> | string | null
     due_date?: DateTimeNullableFilter<"Task"> | Date | string | null
@@ -10657,7 +9230,6 @@ export namespace Prisma {
     raw_canvas_data?: JsonNullableFilter<"Task">
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     project?: XOR<ProjectNullableScalarRelationFilter, ProjectWhereInput> | null
-    course?: XOR<CourseNullableScalarRelationFilter, CourseWhereInput> | null
     todos?: TodoListRelationFilter
     resources?: ResourceListRelationFilter
   }, "id">
@@ -10666,7 +9238,6 @@ export namespace Prisma {
     id?: SortOrder
     user_id?: SortOrder
     project_id?: SortOrderInput | SortOrder
-    course_id?: SortOrderInput | SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
     due_date?: SortOrderInput | SortOrder
@@ -10687,7 +9258,6 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Task"> | string
     user_id?: StringWithAggregatesFilter<"Task"> | string
     project_id?: StringNullableWithAggregatesFilter<"Task"> | string | null
-    course_id?: StringNullableWithAggregatesFilter<"Task"> | string | null
     title?: StringWithAggregatesFilter<"Task"> | string
     description?: StringNullableWithAggregatesFilter<"Task"> | string | null
     due_date?: DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
@@ -10791,11 +9361,9 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Resource"> | Date | string
     updated_at?: DateTimeFilter<"Resource"> | Date | string
     task_id?: StringNullableFilter<"Resource"> | string | null
-    course_id?: StringNullableFilter<"Resource"> | string | null
     project_id?: StringNullableFilter<"Resource"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     task?: XOR<TaskNullableScalarRelationFilter, TaskWhereInput> | null
-    course?: XOR<CourseNullableScalarRelationFilter, CourseWhereInput> | null
     project?: XOR<ProjectNullableScalarRelationFilter, ProjectWhereInput> | null
   }
 
@@ -10811,11 +9379,9 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     task_id?: SortOrderInput | SortOrder
-    course_id?: SortOrderInput | SortOrder
     project_id?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
     task?: TaskOrderByWithRelationInput
-    course?: CourseOrderByWithRelationInput
     project?: ProjectOrderByWithRelationInput
   }
 
@@ -10834,11 +9400,9 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Resource"> | Date | string
     updated_at?: DateTimeFilter<"Resource"> | Date | string
     task_id?: StringNullableFilter<"Resource"> | string | null
-    course_id?: StringNullableFilter<"Resource"> | string | null
     project_id?: StringNullableFilter<"Resource"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     task?: XOR<TaskNullableScalarRelationFilter, TaskWhereInput> | null
-    course?: XOR<CourseNullableScalarRelationFilter, CourseWhereInput> | null
     project?: XOR<ProjectNullableScalarRelationFilter, ProjectWhereInput> | null
   }, "id">
 
@@ -10854,7 +9418,6 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     task_id?: SortOrderInput | SortOrder
-    course_id?: SortOrderInput | SortOrder
     project_id?: SortOrderInput | SortOrder
     _count?: ResourceCountOrderByAggregateInput
     _max?: ResourceMaxOrderByAggregateInput
@@ -10876,7 +9439,6 @@ export namespace Prisma {
     created_at?: DateTimeWithAggregatesFilter<"Resource"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Resource"> | Date | string
     task_id?: StringNullableWithAggregatesFilter<"Resource"> | string | null
-    course_id?: StringNullableWithAggregatesFilter<"Resource"> | string | null
     project_id?: StringNullableWithAggregatesFilter<"Resource"> | string | null
   }
 
@@ -10892,7 +9454,6 @@ export namespace Prisma {
     updated_at?: Date | string
     auth_providers?: AuthProviderCreateNestedManyWithoutUserInput
     projects?: ProjectCreateNestedManyWithoutUserInput
-    courses?: CourseCreateNestedManyWithoutUserInput
     tasks?: TaskCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
     resources?: ResourceCreateNestedManyWithoutUserInput
@@ -10910,7 +9471,6 @@ export namespace Prisma {
     updated_at?: Date | string
     auth_providers?: AuthProviderUncheckedCreateNestedManyWithoutUserInput
     projects?: ProjectUncheckedCreateNestedManyWithoutUserInput
-    courses?: CourseUncheckedCreateNestedManyWithoutUserInput
     tasks?: TaskUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     resources?: ResourceUncheckedCreateNestedManyWithoutUserInput
@@ -10928,7 +9488,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     auth_providers?: AuthProviderUpdateManyWithoutUserNestedInput
     projects?: ProjectUpdateManyWithoutUserNestedInput
-    courses?: CourseUpdateManyWithoutUserNestedInput
     tasks?: TaskUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
     resources?: ResourceUpdateManyWithoutUserNestedInput
@@ -10946,7 +9505,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     auth_providers?: AuthProviderUncheckedUpdateManyWithoutUserNestedInput
     projects?: ProjectUncheckedUpdateManyWithoutUserNestedInput
-    courses?: CourseUncheckedUpdateManyWithoutUserNestedInput
     tasks?: TaskUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     resources?: ResourceUncheckedUpdateManyWithoutUserNestedInput
@@ -11068,6 +9626,14 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    source?: $Enums.ProjectSource
+    external_id?: string | null
+    course_code?: string | null
+    color_hex?: string | null
+    time_zone?: string | null
+    start_at?: Date | string | null
+    end_at?: Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string
     updated_at?: Date | string
     user: UserCreateNestedOneWithoutProjectsInput
@@ -11080,6 +9646,14 @@ export namespace Prisma {
     user_id: string
     title: string
     description?: string | null
+    source?: $Enums.ProjectSource
+    external_id?: string | null
+    course_code?: string | null
+    color_hex?: string | null
+    time_zone?: string | null
+    start_at?: Date | string | null
+    end_at?: Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string
     updated_at?: Date | string
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
@@ -11090,6 +9664,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumProjectSourceFieldUpdateOperationsInput | $Enums.ProjectSource
+    external_id?: NullableStringFieldUpdateOperationsInput | string | null
+    course_code?: NullableStringFieldUpdateOperationsInput | string | null
+    color_hex?: NullableStringFieldUpdateOperationsInput | string | null
+    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
+    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutProjectsNestedInput
@@ -11102,6 +9684,14 @@ export namespace Prisma {
     user_id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumProjectSourceFieldUpdateOperationsInput | $Enums.ProjectSource
+    external_id?: NullableStringFieldUpdateOperationsInput | string | null
+    course_code?: NullableStringFieldUpdateOperationsInput | string | null
+    color_hex?: NullableStringFieldUpdateOperationsInput | string | null
+    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
+    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
@@ -11113,6 +9703,14 @@ export namespace Prisma {
     user_id: string
     title: string
     description?: string | null
+    source?: $Enums.ProjectSource
+    external_id?: string | null
+    course_code?: string | null
+    color_hex?: string | null
+    time_zone?: string | null
+    start_at?: Date | string | null
+    end_at?: Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -11121,6 +9719,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumProjectSourceFieldUpdateOperationsInput | $Enums.ProjectSource
+    external_id?: NullableStringFieldUpdateOperationsInput | string | null
+    course_code?: NullableStringFieldUpdateOperationsInput | string | null
+    color_hex?: NullableStringFieldUpdateOperationsInput | string | null
+    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
+    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11130,118 +9736,14 @@ export namespace Prisma {
     user_id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CourseCreateInput = {
-    id?: string
-    source: $Enums.CourseSource
-    external_id: string
-    title: string
-    course_code?: string | null
-    time_zone?: string | null
-    start_at?: Date | string | null
-    end_at?: Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-    updated_at?: Date | string
-    user: UserCreateNestedOneWithoutCoursesInput
-    tasks?: TaskCreateNestedManyWithoutCourseInput
-    resources?: ResourceCreateNestedManyWithoutCourseInput
-  }
-
-  export type CourseUncheckedCreateInput = {
-    id?: string
-    user_id: string
-    source: $Enums.CourseSource
-    external_id: string
-    title: string
-    course_code?: string | null
-    time_zone?: string | null
-    start_at?: Date | string | null
-    end_at?: Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-    updated_at?: Date | string
-    tasks?: TaskUncheckedCreateNestedManyWithoutCourseInput
-    resources?: ResourceUncheckedCreateNestedManyWithoutCourseInput
-  }
-
-  export type CourseUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    source?: EnumCourseSourceFieldUpdateOperationsInput | $Enums.CourseSource
-    external_id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
+    source?: EnumProjectSourceFieldUpdateOperationsInput | $Enums.ProjectSource
+    external_id?: NullableStringFieldUpdateOperationsInput | string | null
     course_code?: NullableStringFieldUpdateOperationsInput | string | null
+    color_hex?: NullableStringFieldUpdateOperationsInput | string | null
     time_zone?: NullableStringFieldUpdateOperationsInput | string | null
     start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutCoursesNestedInput
-    tasks?: TaskUpdateManyWithoutCourseNestedInput
-    resources?: ResourceUpdateManyWithoutCourseNestedInput
-  }
-
-  export type CourseUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    source?: EnumCourseSourceFieldUpdateOperationsInput | $Enums.CourseSource
-    external_id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    course_code?: NullableStringFieldUpdateOperationsInput | string | null
-    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
-    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    tasks?: TaskUncheckedUpdateManyWithoutCourseNestedInput
-    resources?: ResourceUncheckedUpdateManyWithoutCourseNestedInput
-  }
-
-  export type CourseCreateManyInput = {
-    id?: string
-    user_id: string
-    source: $Enums.CourseSource
-    external_id: string
-    title: string
-    course_code?: string | null
-    time_zone?: string | null
-    start_at?: Date | string | null
-    end_at?: Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-    updated_at?: Date | string
-  }
-
-  export type CourseUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    source?: EnumCourseSourceFieldUpdateOperationsInput | $Enums.CourseSource
-    external_id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    course_code?: NullableStringFieldUpdateOperationsInput | string | null
-    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
-    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CourseUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    source?: EnumCourseSourceFieldUpdateOperationsInput | $Enums.CourseSource
-    external_id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    course_code?: NullableStringFieldUpdateOperationsInput | string | null
-    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
-    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11258,7 +9760,6 @@ export namespace Prisma {
     raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     user: UserCreateNestedOneWithoutTasksInput
     project?: ProjectCreateNestedOneWithoutTasksInput
-    course?: CourseCreateNestedOneWithoutTasksInput
     todos?: TodoCreateNestedManyWithoutTaskInput
     resources?: ResourceCreateNestedManyWithoutTaskInput
   }
@@ -11267,7 +9768,6 @@ export namespace Prisma {
     id?: string
     user_id: string
     project_id?: string | null
-    course_id?: string | null
     title: string
     description?: string | null
     due_date?: Date | string | null
@@ -11292,7 +9792,6 @@ export namespace Prisma {
     raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     user?: UserUpdateOneRequiredWithoutTasksNestedInput
     project?: ProjectUpdateOneWithoutTasksNestedInput
-    course?: CourseUpdateOneWithoutTasksNestedInput
     todos?: TodoUpdateManyWithoutTaskNestedInput
     resources?: ResourceUpdateManyWithoutTaskNestedInput
   }
@@ -11301,7 +9800,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     user_id?: StringFieldUpdateOperationsInput | string
     project_id?: NullableStringFieldUpdateOperationsInput | string | null
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     due_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11318,7 +9816,6 @@ export namespace Prisma {
     id?: string
     user_id: string
     project_id?: string | null
-    course_id?: string | null
     title: string
     description?: string | null
     due_date?: Date | string | null
@@ -11345,7 +9842,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     user_id?: StringFieldUpdateOperationsInput | string
     project_id?: NullableStringFieldUpdateOperationsInput | string | null
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     due_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11450,7 +9946,6 @@ export namespace Prisma {
     updated_at?: Date | string
     user: UserCreateNestedOneWithoutResourcesInput
     task?: TaskCreateNestedOneWithoutResourcesInput
-    course?: CourseCreateNestedOneWithoutResourcesInput
     project?: ProjectCreateNestedOneWithoutResourcesInput
   }
 
@@ -11466,7 +9961,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     task_id?: string | null
-    course_id?: string | null
     project_id?: string | null
   }
 
@@ -11482,7 +9976,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutResourcesNestedInput
     task?: TaskUpdateOneWithoutResourcesNestedInput
-    course?: CourseUpdateOneWithoutResourcesNestedInput
     project?: ProjectUpdateOneWithoutResourcesNestedInput
   }
 
@@ -11498,7 +9991,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     task_id?: NullableStringFieldUpdateOperationsInput | string | null
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     project_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -11514,7 +10006,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     task_id?: string | null
-    course_id?: string | null
     project_id?: string | null
   }
 
@@ -11542,7 +10033,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     task_id?: NullableStringFieldUpdateOperationsInput | string | null
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     project_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -11599,12 +10089,6 @@ export namespace Prisma {
     none?: ProjectWhereInput
   }
 
-  export type CourseListRelationFilter = {
-    every?: CourseWhereInput
-    some?: CourseWhereInput
-    none?: CourseWhereInput
-  }
-
   export type TaskListRelationFilter = {
     every?: TaskWhereInput
     some?: TaskWhereInput
@@ -11633,10 +10117,6 @@ export namespace Prisma {
   }
 
   export type ProjectOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type CourseOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -11840,38 +10320,11 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
-  export type ProjectCountOrderByAggregateInput = {
-    id?: SortOrder
-    user_id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-  }
-
-  export type ProjectMaxOrderByAggregateInput = {
-    id?: SortOrder
-    user_id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-  }
-
-  export type ProjectMinOrderByAggregateInput = {
-    id?: SortOrder
-    user_id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-  }
-
-  export type EnumCourseSourceFilter<$PrismaModel = never> = {
-    equals?: $Enums.CourseSource | EnumCourseSourceFieldRefInput<$PrismaModel>
-    in?: $Enums.CourseSource[] | ListEnumCourseSourceFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CourseSource[] | ListEnumCourseSourceFieldRefInput<$PrismaModel>
-    not?: NestedEnumCourseSourceFilter<$PrismaModel> | $Enums.CourseSource
+  export type EnumProjectSourceFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProjectSource | EnumProjectSourceFieldRefInput<$PrismaModel>
+    in?: $Enums.ProjectSource[] | ListEnumProjectSourceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProjectSource[] | ListEnumProjectSourceFieldRefInput<$PrismaModel>
+    not?: NestedEnumProjectSourceFilter<$PrismaModel> | $Enums.ProjectSource
   }
 
   export type DateTimeNullableFilter<$PrismaModel = never> = {
@@ -11885,48 +10338,38 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type CourseUser_idExternal_idSourceCompoundUniqueInput = {
+  export type ProjectUser_idExternal_idSourceCompoundUniqueInput = {
     user_id: string
     external_id: string
-    source: $Enums.CourseSource
+    source: $Enums.ProjectSource
   }
 
-  export type CourseCountOrderByAggregateInput = {
+  export type ProjectCountOrderByAggregateInput = {
     id?: SortOrder
     user_id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
     source?: SortOrder
     external_id?: SortOrder
-    title?: SortOrder
     course_code?: SortOrder
+    color_hex?: SortOrder
     time_zone?: SortOrder
     start_at?: SortOrder
     end_at?: SortOrder
-    raw_data?: SortOrder
+    raw_canvas_data?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
 
-  export type CourseMaxOrderByAggregateInput = {
+  export type ProjectMaxOrderByAggregateInput = {
     id?: SortOrder
     user_id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
     source?: SortOrder
     external_id?: SortOrder
-    title?: SortOrder
     course_code?: SortOrder
-    time_zone?: SortOrder
-    start_at?: SortOrder
-    end_at?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-  }
-
-  export type CourseMinOrderByAggregateInput = {
-    id?: SortOrder
-    user_id?: SortOrder
-    source?: SortOrder
-    external_id?: SortOrder
-    title?: SortOrder
-    course_code?: SortOrder
+    color_hex?: SortOrder
     time_zone?: SortOrder
     start_at?: SortOrder
     end_at?: SortOrder
@@ -11934,14 +10377,30 @@ export namespace Prisma {
     updated_at?: SortOrder
   }
 
-  export type EnumCourseSourceWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.CourseSource | EnumCourseSourceFieldRefInput<$PrismaModel>
-    in?: $Enums.CourseSource[] | ListEnumCourseSourceFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CourseSource[] | ListEnumCourseSourceFieldRefInput<$PrismaModel>
-    not?: NestedEnumCourseSourceWithAggregatesFilter<$PrismaModel> | $Enums.CourseSource
+  export type ProjectMinOrderByAggregateInput = {
+    id?: SortOrder
+    user_id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    source?: SortOrder
+    external_id?: SortOrder
+    course_code?: SortOrder
+    color_hex?: SortOrder
+    time_zone?: SortOrder
+    start_at?: SortOrder
+    end_at?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type EnumProjectSourceWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProjectSource | EnumProjectSourceFieldRefInput<$PrismaModel>
+    in?: $Enums.ProjectSource[] | ListEnumProjectSourceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProjectSource[] | ListEnumProjectSourceFieldRefInput<$PrismaModel>
+    not?: NestedEnumProjectSourceWithAggregatesFilter<$PrismaModel> | $Enums.ProjectSource
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumCourseSourceFilter<$PrismaModel>
-    _max?: NestedEnumCourseSourceFilter<$PrismaModel>
+    _min?: NestedEnumProjectSourceFilter<$PrismaModel>
+    _max?: NestedEnumProjectSourceFilter<$PrismaModel>
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -11977,16 +10436,10 @@ export namespace Prisma {
     isNot?: ProjectWhereInput | null
   }
 
-  export type CourseNullableScalarRelationFilter = {
-    is?: CourseWhereInput | null
-    isNot?: CourseWhereInput | null
-  }
-
   export type TaskCountOrderByAggregateInput = {
     id?: SortOrder
     user_id?: SortOrder
     project_id?: SortOrder
-    course_id?: SortOrder
     title?: SortOrder
     description?: SortOrder
     due_date?: SortOrder
@@ -12001,7 +10454,6 @@ export namespace Prisma {
     id?: SortOrder
     user_id?: SortOrder
     project_id?: SortOrder
-    course_id?: SortOrder
     title?: SortOrder
     description?: SortOrder
     due_date?: SortOrder
@@ -12015,7 +10467,6 @@ export namespace Prisma {
     id?: SortOrder
     user_id?: SortOrder
     project_id?: SortOrder
-    course_id?: SortOrder
     title?: SortOrder
     description?: SortOrder
     due_date?: SortOrder
@@ -12110,7 +10561,6 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     task_id?: SortOrder
-    course_id?: SortOrder
     project_id?: SortOrder
   }
 
@@ -12125,7 +10575,6 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     task_id?: SortOrder
-    course_id?: SortOrder
     project_id?: SortOrder
   }
 
@@ -12140,7 +10589,6 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     task_id?: SortOrder
-    course_id?: SortOrder
     project_id?: SortOrder
   }
 
@@ -12166,13 +10614,6 @@ export namespace Prisma {
     connectOrCreate?: ProjectCreateOrConnectWithoutUserInput | ProjectCreateOrConnectWithoutUserInput[]
     createMany?: ProjectCreateManyUserInputEnvelope
     connect?: ProjectWhereUniqueInput | ProjectWhereUniqueInput[]
-  }
-
-  export type CourseCreateNestedManyWithoutUserInput = {
-    create?: XOR<CourseCreateWithoutUserInput, CourseUncheckedCreateWithoutUserInput> | CourseCreateWithoutUserInput[] | CourseUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CourseCreateOrConnectWithoutUserInput | CourseCreateOrConnectWithoutUserInput[]
-    createMany?: CourseCreateManyUserInputEnvelope
-    connect?: CourseWhereUniqueInput | CourseWhereUniqueInput[]
   }
 
   export type TaskCreateNestedManyWithoutUserInput = {
@@ -12208,13 +10649,6 @@ export namespace Prisma {
     connectOrCreate?: ProjectCreateOrConnectWithoutUserInput | ProjectCreateOrConnectWithoutUserInput[]
     createMany?: ProjectCreateManyUserInputEnvelope
     connect?: ProjectWhereUniqueInput | ProjectWhereUniqueInput[]
-  }
-
-  export type CourseUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<CourseCreateWithoutUserInput, CourseUncheckedCreateWithoutUserInput> | CourseCreateWithoutUserInput[] | CourseUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CourseCreateOrConnectWithoutUserInput | CourseCreateOrConnectWithoutUserInput[]
-    createMany?: CourseCreateManyUserInputEnvelope
-    connect?: CourseWhereUniqueInput | CourseWhereUniqueInput[]
   }
 
   export type TaskUncheckedCreateNestedManyWithoutUserInput = {
@@ -12276,20 +10710,6 @@ export namespace Prisma {
     update?: ProjectUpdateWithWhereUniqueWithoutUserInput | ProjectUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: ProjectUpdateManyWithWhereWithoutUserInput | ProjectUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: ProjectScalarWhereInput | ProjectScalarWhereInput[]
-  }
-
-  export type CourseUpdateManyWithoutUserNestedInput = {
-    create?: XOR<CourseCreateWithoutUserInput, CourseUncheckedCreateWithoutUserInput> | CourseCreateWithoutUserInput[] | CourseUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CourseCreateOrConnectWithoutUserInput | CourseCreateOrConnectWithoutUserInput[]
-    upsert?: CourseUpsertWithWhereUniqueWithoutUserInput | CourseUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: CourseCreateManyUserInputEnvelope
-    set?: CourseWhereUniqueInput | CourseWhereUniqueInput[]
-    disconnect?: CourseWhereUniqueInput | CourseWhereUniqueInput[]
-    delete?: CourseWhereUniqueInput | CourseWhereUniqueInput[]
-    connect?: CourseWhereUniqueInput | CourseWhereUniqueInput[]
-    update?: CourseUpdateWithWhereUniqueWithoutUserInput | CourseUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: CourseUpdateManyWithWhereWithoutUserInput | CourseUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: CourseScalarWhereInput | CourseScalarWhereInput[]
   }
 
   export type TaskUpdateManyWithoutUserNestedInput = {
@@ -12360,20 +10780,6 @@ export namespace Prisma {
     update?: ProjectUpdateWithWhereUniqueWithoutUserInput | ProjectUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: ProjectUpdateManyWithWhereWithoutUserInput | ProjectUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: ProjectScalarWhereInput | ProjectScalarWhereInput[]
-  }
-
-  export type CourseUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<CourseCreateWithoutUserInput, CourseUncheckedCreateWithoutUserInput> | CourseCreateWithoutUserInput[] | CourseUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CourseCreateOrConnectWithoutUserInput | CourseCreateOrConnectWithoutUserInput[]
-    upsert?: CourseUpsertWithWhereUniqueWithoutUserInput | CourseUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: CourseCreateManyUserInputEnvelope
-    set?: CourseWhereUniqueInput | CourseWhereUniqueInput[]
-    disconnect?: CourseWhereUniqueInput | CourseWhereUniqueInput[]
-    delete?: CourseWhereUniqueInput | CourseWhereUniqueInput[]
-    connect?: CourseWhereUniqueInput | CourseWhereUniqueInput[]
-    update?: CourseUpdateWithWhereUniqueWithoutUserInput | CourseUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: CourseUpdateManyWithWhereWithoutUserInput | CourseUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: CourseScalarWhereInput | CourseScalarWhereInput[]
   }
 
   export type TaskUncheckedUpdateManyWithoutUserNestedInput = {
@@ -12470,6 +10876,14 @@ export namespace Prisma {
     connect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
   }
 
+  export type EnumProjectSourceFieldUpdateOperationsInput = {
+    set?: $Enums.ProjectSource
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type UserUpdateOneRequiredWithoutProjectsNestedInput = {
     create?: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
     connectOrCreate?: UserCreateOrConnectWithoutProjectsInput
@@ -12534,112 +10948,6 @@ export namespace Prisma {
     deleteMany?: ResourceScalarWhereInput | ResourceScalarWhereInput[]
   }
 
-  export type UserCreateNestedOneWithoutCoursesInput = {
-    create?: XOR<UserCreateWithoutCoursesInput, UserUncheckedCreateWithoutCoursesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCoursesInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type TaskCreateNestedManyWithoutCourseInput = {
-    create?: XOR<TaskCreateWithoutCourseInput, TaskUncheckedCreateWithoutCourseInput> | TaskCreateWithoutCourseInput[] | TaskUncheckedCreateWithoutCourseInput[]
-    connectOrCreate?: TaskCreateOrConnectWithoutCourseInput | TaskCreateOrConnectWithoutCourseInput[]
-    createMany?: TaskCreateManyCourseInputEnvelope
-    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
-  }
-
-  export type ResourceCreateNestedManyWithoutCourseInput = {
-    create?: XOR<ResourceCreateWithoutCourseInput, ResourceUncheckedCreateWithoutCourseInput> | ResourceCreateWithoutCourseInput[] | ResourceUncheckedCreateWithoutCourseInput[]
-    connectOrCreate?: ResourceCreateOrConnectWithoutCourseInput | ResourceCreateOrConnectWithoutCourseInput[]
-    createMany?: ResourceCreateManyCourseInputEnvelope
-    connect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-  }
-
-  export type TaskUncheckedCreateNestedManyWithoutCourseInput = {
-    create?: XOR<TaskCreateWithoutCourseInput, TaskUncheckedCreateWithoutCourseInput> | TaskCreateWithoutCourseInput[] | TaskUncheckedCreateWithoutCourseInput[]
-    connectOrCreate?: TaskCreateOrConnectWithoutCourseInput | TaskCreateOrConnectWithoutCourseInput[]
-    createMany?: TaskCreateManyCourseInputEnvelope
-    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
-  }
-
-  export type ResourceUncheckedCreateNestedManyWithoutCourseInput = {
-    create?: XOR<ResourceCreateWithoutCourseInput, ResourceUncheckedCreateWithoutCourseInput> | ResourceCreateWithoutCourseInput[] | ResourceUncheckedCreateWithoutCourseInput[]
-    connectOrCreate?: ResourceCreateOrConnectWithoutCourseInput | ResourceCreateOrConnectWithoutCourseInput[]
-    createMany?: ResourceCreateManyCourseInputEnvelope
-    connect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-  }
-
-  export type EnumCourseSourceFieldUpdateOperationsInput = {
-    set?: $Enums.CourseSource
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
-  export type UserUpdateOneRequiredWithoutCoursesNestedInput = {
-    create?: XOR<UserCreateWithoutCoursesInput, UserUncheckedCreateWithoutCoursesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCoursesInput
-    upsert?: UserUpsertWithoutCoursesInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCoursesInput, UserUpdateWithoutCoursesInput>, UserUncheckedUpdateWithoutCoursesInput>
-  }
-
-  export type TaskUpdateManyWithoutCourseNestedInput = {
-    create?: XOR<TaskCreateWithoutCourseInput, TaskUncheckedCreateWithoutCourseInput> | TaskCreateWithoutCourseInput[] | TaskUncheckedCreateWithoutCourseInput[]
-    connectOrCreate?: TaskCreateOrConnectWithoutCourseInput | TaskCreateOrConnectWithoutCourseInput[]
-    upsert?: TaskUpsertWithWhereUniqueWithoutCourseInput | TaskUpsertWithWhereUniqueWithoutCourseInput[]
-    createMany?: TaskCreateManyCourseInputEnvelope
-    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
-    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
-    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
-    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
-    update?: TaskUpdateWithWhereUniqueWithoutCourseInput | TaskUpdateWithWhereUniqueWithoutCourseInput[]
-    updateMany?: TaskUpdateManyWithWhereWithoutCourseInput | TaskUpdateManyWithWhereWithoutCourseInput[]
-    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
-  }
-
-  export type ResourceUpdateManyWithoutCourseNestedInput = {
-    create?: XOR<ResourceCreateWithoutCourseInput, ResourceUncheckedCreateWithoutCourseInput> | ResourceCreateWithoutCourseInput[] | ResourceUncheckedCreateWithoutCourseInput[]
-    connectOrCreate?: ResourceCreateOrConnectWithoutCourseInput | ResourceCreateOrConnectWithoutCourseInput[]
-    upsert?: ResourceUpsertWithWhereUniqueWithoutCourseInput | ResourceUpsertWithWhereUniqueWithoutCourseInput[]
-    createMany?: ResourceCreateManyCourseInputEnvelope
-    set?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    disconnect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    delete?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    connect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    update?: ResourceUpdateWithWhereUniqueWithoutCourseInput | ResourceUpdateWithWhereUniqueWithoutCourseInput[]
-    updateMany?: ResourceUpdateManyWithWhereWithoutCourseInput | ResourceUpdateManyWithWhereWithoutCourseInput[]
-    deleteMany?: ResourceScalarWhereInput | ResourceScalarWhereInput[]
-  }
-
-  export type TaskUncheckedUpdateManyWithoutCourseNestedInput = {
-    create?: XOR<TaskCreateWithoutCourseInput, TaskUncheckedCreateWithoutCourseInput> | TaskCreateWithoutCourseInput[] | TaskUncheckedCreateWithoutCourseInput[]
-    connectOrCreate?: TaskCreateOrConnectWithoutCourseInput | TaskCreateOrConnectWithoutCourseInput[]
-    upsert?: TaskUpsertWithWhereUniqueWithoutCourseInput | TaskUpsertWithWhereUniqueWithoutCourseInput[]
-    createMany?: TaskCreateManyCourseInputEnvelope
-    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
-    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
-    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
-    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
-    update?: TaskUpdateWithWhereUniqueWithoutCourseInput | TaskUpdateWithWhereUniqueWithoutCourseInput[]
-    updateMany?: TaskUpdateManyWithWhereWithoutCourseInput | TaskUpdateManyWithWhereWithoutCourseInput[]
-    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
-  }
-
-  export type ResourceUncheckedUpdateManyWithoutCourseNestedInput = {
-    create?: XOR<ResourceCreateWithoutCourseInput, ResourceUncheckedCreateWithoutCourseInput> | ResourceCreateWithoutCourseInput[] | ResourceUncheckedCreateWithoutCourseInput[]
-    connectOrCreate?: ResourceCreateOrConnectWithoutCourseInput | ResourceCreateOrConnectWithoutCourseInput[]
-    upsert?: ResourceUpsertWithWhereUniqueWithoutCourseInput | ResourceUpsertWithWhereUniqueWithoutCourseInput[]
-    createMany?: ResourceCreateManyCourseInputEnvelope
-    set?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    disconnect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    delete?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    connect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    update?: ResourceUpdateWithWhereUniqueWithoutCourseInput | ResourceUpdateWithWhereUniqueWithoutCourseInput[]
-    updateMany?: ResourceUpdateManyWithWhereWithoutCourseInput | ResourceUpdateManyWithWhereWithoutCourseInput[]
-    deleteMany?: ResourceScalarWhereInput | ResourceScalarWhereInput[]
-  }
-
   export type UserCreateNestedOneWithoutTasksInput = {
     create?: XOR<UserCreateWithoutTasksInput, UserUncheckedCreateWithoutTasksInput>
     connectOrCreate?: UserCreateOrConnectWithoutTasksInput
@@ -12650,12 +10958,6 @@ export namespace Prisma {
     create?: XOR<ProjectCreateWithoutTasksInput, ProjectUncheckedCreateWithoutTasksInput>
     connectOrCreate?: ProjectCreateOrConnectWithoutTasksInput
     connect?: ProjectWhereUniqueInput
-  }
-
-  export type CourseCreateNestedOneWithoutTasksInput = {
-    create?: XOR<CourseCreateWithoutTasksInput, CourseUncheckedCreateWithoutTasksInput>
-    connectOrCreate?: CourseCreateOrConnectWithoutTasksInput
-    connect?: CourseWhereUniqueInput
   }
 
   export type TodoCreateNestedManyWithoutTaskInput = {
@@ -12710,16 +11012,6 @@ export namespace Prisma {
     delete?: ProjectWhereInput | boolean
     connect?: ProjectWhereUniqueInput
     update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutTasksInput, ProjectUpdateWithoutTasksInput>, ProjectUncheckedUpdateWithoutTasksInput>
-  }
-
-  export type CourseUpdateOneWithoutTasksNestedInput = {
-    create?: XOR<CourseCreateWithoutTasksInput, CourseUncheckedCreateWithoutTasksInput>
-    connectOrCreate?: CourseCreateOrConnectWithoutTasksInput
-    upsert?: CourseUpsertWithoutTasksInput
-    disconnect?: CourseWhereInput | boolean
-    delete?: CourseWhereInput | boolean
-    connect?: CourseWhereUniqueInput
-    update?: XOR<XOR<CourseUpdateToOneWithWhereWithoutTasksInput, CourseUpdateWithoutTasksInput>, CourseUncheckedUpdateWithoutTasksInput>
   }
 
   export type TodoUpdateManyWithoutTaskNestedInput = {
@@ -12818,12 +11110,6 @@ export namespace Prisma {
     connect?: TaskWhereUniqueInput
   }
 
-  export type CourseCreateNestedOneWithoutResourcesInput = {
-    create?: XOR<CourseCreateWithoutResourcesInput, CourseUncheckedCreateWithoutResourcesInput>
-    connectOrCreate?: CourseCreateOrConnectWithoutResourcesInput
-    connect?: CourseWhereUniqueInput
-  }
-
   export type ProjectCreateNestedOneWithoutResourcesInput = {
     create?: XOR<ProjectCreateWithoutResourcesInput, ProjectUncheckedCreateWithoutResourcesInput>
     connectOrCreate?: ProjectCreateOrConnectWithoutResourcesInput
@@ -12850,16 +11136,6 @@ export namespace Prisma {
     delete?: TaskWhereInput | boolean
     connect?: TaskWhereUniqueInput
     update?: XOR<XOR<TaskUpdateToOneWithWhereWithoutResourcesInput, TaskUpdateWithoutResourcesInput>, TaskUncheckedUpdateWithoutResourcesInput>
-  }
-
-  export type CourseUpdateOneWithoutResourcesNestedInput = {
-    create?: XOR<CourseCreateWithoutResourcesInput, CourseUncheckedCreateWithoutResourcesInput>
-    connectOrCreate?: CourseCreateOrConnectWithoutResourcesInput
-    upsert?: CourseUpsertWithoutResourcesInput
-    disconnect?: CourseWhereInput | boolean
-    delete?: CourseWhereInput | boolean
-    connect?: CourseWhereUniqueInput
-    update?: XOR<XOR<CourseUpdateToOneWithWhereWithoutResourcesInput, CourseUpdateWithoutResourcesInput>, CourseUncheckedUpdateWithoutResourcesInput>
   }
 
   export type ProjectUpdateOneWithoutResourcesNestedInput = {
@@ -13021,11 +11297,11 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type NestedEnumCourseSourceFilter<$PrismaModel = never> = {
-    equals?: $Enums.CourseSource | EnumCourseSourceFieldRefInput<$PrismaModel>
-    in?: $Enums.CourseSource[] | ListEnumCourseSourceFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CourseSource[] | ListEnumCourseSourceFieldRefInput<$PrismaModel>
-    not?: NestedEnumCourseSourceFilter<$PrismaModel> | $Enums.CourseSource
+  export type NestedEnumProjectSourceFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProjectSource | EnumProjectSourceFieldRefInput<$PrismaModel>
+    in?: $Enums.ProjectSource[] | ListEnumProjectSourceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProjectSource[] | ListEnumProjectSourceFieldRefInput<$PrismaModel>
+    not?: NestedEnumProjectSourceFilter<$PrismaModel> | $Enums.ProjectSource
   }
 
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
@@ -13039,14 +11315,14 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type NestedEnumCourseSourceWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.CourseSource | EnumCourseSourceFieldRefInput<$PrismaModel>
-    in?: $Enums.CourseSource[] | ListEnumCourseSourceFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CourseSource[] | ListEnumCourseSourceFieldRefInput<$PrismaModel>
-    not?: NestedEnumCourseSourceWithAggregatesFilter<$PrismaModel> | $Enums.CourseSource
+  export type NestedEnumProjectSourceWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProjectSource | EnumProjectSourceFieldRefInput<$PrismaModel>
+    in?: $Enums.ProjectSource[] | ListEnumProjectSourceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProjectSource[] | ListEnumProjectSourceFieldRefInput<$PrismaModel>
+    not?: NestedEnumProjectSourceWithAggregatesFilter<$PrismaModel> | $Enums.ProjectSource
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumCourseSourceFilter<$PrismaModel>
-    _max?: NestedEnumCourseSourceFilter<$PrismaModel>
+    _min?: NestedEnumProjectSourceFilter<$PrismaModel>
+    _max?: NestedEnumProjectSourceFilter<$PrismaModel>
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -13148,6 +11424,14 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    source?: $Enums.ProjectSource
+    external_id?: string | null
+    course_code?: string | null
+    color_hex?: string | null
+    time_zone?: string | null
+    start_at?: Date | string | null
+    end_at?: Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string
     updated_at?: Date | string
     tasks?: TaskCreateNestedManyWithoutProjectInput
@@ -13158,6 +11442,14 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    source?: $Enums.ProjectSource
+    external_id?: string | null
+    course_code?: string | null
+    color_hex?: string | null
+    time_zone?: string | null
+    start_at?: Date | string | null
+    end_at?: Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string
     updated_at?: Date | string
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
@@ -13174,48 +11466,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type CourseCreateWithoutUserInput = {
-    id?: string
-    source: $Enums.CourseSource
-    external_id: string
-    title: string
-    course_code?: string | null
-    time_zone?: string | null
-    start_at?: Date | string | null
-    end_at?: Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-    updated_at?: Date | string
-    tasks?: TaskCreateNestedManyWithoutCourseInput
-    resources?: ResourceCreateNestedManyWithoutCourseInput
-  }
-
-  export type CourseUncheckedCreateWithoutUserInput = {
-    id?: string
-    source: $Enums.CourseSource
-    external_id: string
-    title: string
-    course_code?: string | null
-    time_zone?: string | null
-    start_at?: Date | string | null
-    end_at?: Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-    updated_at?: Date | string
-    tasks?: TaskUncheckedCreateNestedManyWithoutCourseInput
-    resources?: ResourceUncheckedCreateNestedManyWithoutCourseInput
-  }
-
-  export type CourseCreateOrConnectWithoutUserInput = {
-    where: CourseWhereUniqueInput
-    create: XOR<CourseCreateWithoutUserInput, CourseUncheckedCreateWithoutUserInput>
-  }
-
-  export type CourseCreateManyUserInputEnvelope = {
-    data: CourseCreateManyUserInput | CourseCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
   export type TaskCreateWithoutUserInput = {
     id?: string
     title: string
@@ -13227,7 +11477,6 @@ export namespace Prisma {
     priority?: $Enums.Priority | null
     raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     project?: ProjectCreateNestedOneWithoutTasksInput
-    course?: CourseCreateNestedOneWithoutTasksInput
     todos?: TodoCreateNestedManyWithoutTaskInput
     resources?: ResourceCreateNestedManyWithoutTaskInput
   }
@@ -13235,7 +11484,6 @@ export namespace Prisma {
   export type TaskUncheckedCreateWithoutUserInput = {
     id?: string
     project_id?: string | null
-    course_id?: string | null
     title: string
     description?: string | null
     due_date?: Date | string | null
@@ -13301,7 +11549,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     task?: TaskCreateNestedOneWithoutResourcesInput
-    course?: CourseCreateNestedOneWithoutResourcesInput
     project?: ProjectCreateNestedOneWithoutResourcesInput
   }
 
@@ -13316,7 +11563,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     task_id?: string | null
-    course_id?: string | null
     project_id?: string | null
   }
 
@@ -13384,42 +11630,16 @@ export namespace Prisma {
     user_id?: StringFilter<"Project"> | string
     title?: StringFilter<"Project"> | string
     description?: StringNullableFilter<"Project"> | string | null
+    source?: EnumProjectSourceFilter<"Project"> | $Enums.ProjectSource
+    external_id?: StringNullableFilter<"Project"> | string | null
+    course_code?: StringNullableFilter<"Project"> | string | null
+    color_hex?: StringNullableFilter<"Project"> | string | null
+    time_zone?: StringNullableFilter<"Project"> | string | null
+    start_at?: DateTimeNullableFilter<"Project"> | Date | string | null
+    end_at?: DateTimeNullableFilter<"Project"> | Date | string | null
+    raw_canvas_data?: JsonNullableFilter<"Project">
     created_at?: DateTimeFilter<"Project"> | Date | string
     updated_at?: DateTimeFilter<"Project"> | Date | string
-  }
-
-  export type CourseUpsertWithWhereUniqueWithoutUserInput = {
-    where: CourseWhereUniqueInput
-    update: XOR<CourseUpdateWithoutUserInput, CourseUncheckedUpdateWithoutUserInput>
-    create: XOR<CourseCreateWithoutUserInput, CourseUncheckedCreateWithoutUserInput>
-  }
-
-  export type CourseUpdateWithWhereUniqueWithoutUserInput = {
-    where: CourseWhereUniqueInput
-    data: XOR<CourseUpdateWithoutUserInput, CourseUncheckedUpdateWithoutUserInput>
-  }
-
-  export type CourseUpdateManyWithWhereWithoutUserInput = {
-    where: CourseScalarWhereInput
-    data: XOR<CourseUpdateManyMutationInput, CourseUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type CourseScalarWhereInput = {
-    AND?: CourseScalarWhereInput | CourseScalarWhereInput[]
-    OR?: CourseScalarWhereInput[]
-    NOT?: CourseScalarWhereInput | CourseScalarWhereInput[]
-    id?: StringFilter<"Course"> | string
-    user_id?: StringFilter<"Course"> | string
-    source?: EnumCourseSourceFilter<"Course"> | $Enums.CourseSource
-    external_id?: StringFilter<"Course"> | string
-    title?: StringFilter<"Course"> | string
-    course_code?: StringNullableFilter<"Course"> | string | null
-    time_zone?: StringNullableFilter<"Course"> | string | null
-    start_at?: DateTimeNullableFilter<"Course"> | Date | string | null
-    end_at?: DateTimeNullableFilter<"Course"> | Date | string | null
-    raw_data?: JsonNullableFilter<"Course">
-    created_at?: DateTimeFilter<"Course"> | Date | string
-    updated_at?: DateTimeFilter<"Course"> | Date | string
   }
 
   export type TaskUpsertWithWhereUniqueWithoutUserInput = {
@@ -13445,7 +11665,6 @@ export namespace Prisma {
     id?: StringFilter<"Task"> | string
     user_id?: StringFilter<"Task"> | string
     project_id?: StringNullableFilter<"Task"> | string | null
-    course_id?: StringNullableFilter<"Task"> | string | null
     title?: StringFilter<"Task"> | string
     description?: StringNullableFilter<"Task"> | string | null
     due_date?: DateTimeNullableFilter<"Task"> | Date | string | null
@@ -13518,7 +11737,6 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Resource"> | Date | string
     updated_at?: DateTimeFilter<"Resource"> | Date | string
     task_id?: StringNullableFilter<"Resource"> | string | null
-    course_id?: StringNullableFilter<"Resource"> | string | null
     project_id?: StringNullableFilter<"Resource"> | string | null
   }
 
@@ -13533,7 +11751,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     projects?: ProjectCreateNestedManyWithoutUserInput
-    courses?: CourseCreateNestedManyWithoutUserInput
     tasks?: TaskCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
     resources?: ResourceCreateNestedManyWithoutUserInput
@@ -13550,7 +11767,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     projects?: ProjectUncheckedCreateNestedManyWithoutUserInput
-    courses?: CourseUncheckedCreateNestedManyWithoutUserInput
     tasks?: TaskUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     resources?: ResourceUncheckedCreateNestedManyWithoutUserInput
@@ -13583,7 +11799,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     projects?: ProjectUpdateManyWithoutUserNestedInput
-    courses?: CourseUpdateManyWithoutUserNestedInput
     tasks?: TaskUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
     resources?: ResourceUpdateManyWithoutUserNestedInput
@@ -13600,7 +11815,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     projects?: ProjectUncheckedUpdateManyWithoutUserNestedInput
-    courses?: CourseUncheckedUpdateManyWithoutUserNestedInput
     tasks?: TaskUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     resources?: ResourceUncheckedUpdateManyWithoutUserNestedInput
@@ -13617,7 +11831,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     auth_providers?: AuthProviderCreateNestedManyWithoutUserInput
-    courses?: CourseCreateNestedManyWithoutUserInput
     tasks?: TaskCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
     resources?: ResourceCreateNestedManyWithoutUserInput
@@ -13634,7 +11847,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     auth_providers?: AuthProviderUncheckedCreateNestedManyWithoutUserInput
-    courses?: CourseUncheckedCreateNestedManyWithoutUserInput
     tasks?: TaskUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     resources?: ResourceUncheckedCreateNestedManyWithoutUserInput
@@ -13656,7 +11868,6 @@ export namespace Prisma {
     priority?: $Enums.Priority | null
     raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     user: UserCreateNestedOneWithoutTasksInput
-    course?: CourseCreateNestedOneWithoutTasksInput
     todos?: TodoCreateNestedManyWithoutTaskInput
     resources?: ResourceCreateNestedManyWithoutTaskInput
   }
@@ -13664,7 +11875,6 @@ export namespace Prisma {
   export type TaskUncheckedCreateWithoutProjectInput = {
     id?: string
     user_id: string
-    course_id?: string | null
     title: string
     description?: string | null
     due_date?: Date | string | null
@@ -13699,7 +11909,6 @@ export namespace Prisma {
     updated_at?: Date | string
     user: UserCreateNestedOneWithoutResourcesInput
     task?: TaskCreateNestedOneWithoutResourcesInput
-    course?: CourseCreateNestedOneWithoutResourcesInput
   }
 
   export type ResourceUncheckedCreateWithoutProjectInput = {
@@ -13714,7 +11923,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     task_id?: string | null
-    course_id?: string | null
   }
 
   export type ResourceCreateOrConnectWithoutProjectInput = {
@@ -13749,7 +11957,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     auth_providers?: AuthProviderUpdateManyWithoutUserNestedInput
-    courses?: CourseUpdateManyWithoutUserNestedInput
     tasks?: TaskUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
     resources?: ResourceUpdateManyWithoutUserNestedInput
@@ -13766,7 +11973,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     auth_providers?: AuthProviderUncheckedUpdateManyWithoutUserNestedInput
-    courses?: CourseUncheckedUpdateManyWithoutUserNestedInput
     tasks?: TaskUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     resources?: ResourceUncheckedUpdateManyWithoutUserNestedInput
@@ -13804,204 +12010,6 @@ export namespace Prisma {
     data: XOR<ResourceUpdateManyMutationInput, ResourceUncheckedUpdateManyWithoutProjectInput>
   }
 
-  export type UserCreateWithoutCoursesInput = {
-    id?: string
-    firstname: string
-    lastname: string
-    email: string
-    password_hash: string
-    profile_image?: string | null
-    google_id?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    auth_providers?: AuthProviderCreateNestedManyWithoutUserInput
-    projects?: ProjectCreateNestedManyWithoutUserInput
-    tasks?: TaskCreateNestedManyWithoutUserInput
-    todos?: TodoCreateNestedManyWithoutUserInput
-    resources?: ResourceCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutCoursesInput = {
-    id?: string
-    firstname: string
-    lastname: string
-    email: string
-    password_hash: string
-    profile_image?: string | null
-    google_id?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    auth_providers?: AuthProviderUncheckedCreateNestedManyWithoutUserInput
-    projects?: ProjectUncheckedCreateNestedManyWithoutUserInput
-    tasks?: TaskUncheckedCreateNestedManyWithoutUserInput
-    todos?: TodoUncheckedCreateNestedManyWithoutUserInput
-    resources?: ResourceUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutCoursesInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutCoursesInput, UserUncheckedCreateWithoutCoursesInput>
-  }
-
-  export type TaskCreateWithoutCourseInput = {
-    id?: string
-    title: string
-    description?: string | null
-    due_date?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    type: $Enums.TaskType
-    priority?: $Enums.Priority | null
-    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutTasksInput
-    project?: ProjectCreateNestedOneWithoutTasksInput
-    todos?: TodoCreateNestedManyWithoutTaskInput
-    resources?: ResourceCreateNestedManyWithoutTaskInput
-  }
-
-  export type TaskUncheckedCreateWithoutCourseInput = {
-    id?: string
-    user_id: string
-    project_id?: string | null
-    title: string
-    description?: string | null
-    due_date?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    type: $Enums.TaskType
-    priority?: $Enums.Priority | null
-    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
-    todos?: TodoUncheckedCreateNestedManyWithoutTaskInput
-    resources?: ResourceUncheckedCreateNestedManyWithoutTaskInput
-  }
-
-  export type TaskCreateOrConnectWithoutCourseInput = {
-    where: TaskWhereUniqueInput
-    create: XOR<TaskCreateWithoutCourseInput, TaskUncheckedCreateWithoutCourseInput>
-  }
-
-  export type TaskCreateManyCourseInputEnvelope = {
-    data: TaskCreateManyCourseInput | TaskCreateManyCourseInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type ResourceCreateWithoutCourseInput = {
-    id?: string
-    title: string
-    description?: string | null
-    type: $Enums.ResourceType
-    url?: string | null
-    file_path?: string | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-    updated_at?: Date | string
-    user: UserCreateNestedOneWithoutResourcesInput
-    task?: TaskCreateNestedOneWithoutResourcesInput
-    project?: ProjectCreateNestedOneWithoutResourcesInput
-  }
-
-  export type ResourceUncheckedCreateWithoutCourseInput = {
-    id?: string
-    user_id: string
-    title: string
-    description?: string | null
-    type: $Enums.ResourceType
-    url?: string | null
-    file_path?: string | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-    updated_at?: Date | string
-    task_id?: string | null
-    project_id?: string | null
-  }
-
-  export type ResourceCreateOrConnectWithoutCourseInput = {
-    where: ResourceWhereUniqueInput
-    create: XOR<ResourceCreateWithoutCourseInput, ResourceUncheckedCreateWithoutCourseInput>
-  }
-
-  export type ResourceCreateManyCourseInputEnvelope = {
-    data: ResourceCreateManyCourseInput | ResourceCreateManyCourseInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type UserUpsertWithoutCoursesInput = {
-    update: XOR<UserUpdateWithoutCoursesInput, UserUncheckedUpdateWithoutCoursesInput>
-    create: XOR<UserCreateWithoutCoursesInput, UserUncheckedCreateWithoutCoursesInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutCoursesInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutCoursesInput, UserUncheckedUpdateWithoutCoursesInput>
-  }
-
-  export type UserUpdateWithoutCoursesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    firstname?: StringFieldUpdateOperationsInput | string
-    lastname?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
-    profile_image?: NullableStringFieldUpdateOperationsInput | string | null
-    google_id?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    auth_providers?: AuthProviderUpdateManyWithoutUserNestedInput
-    projects?: ProjectUpdateManyWithoutUserNestedInput
-    tasks?: TaskUpdateManyWithoutUserNestedInput
-    todos?: TodoUpdateManyWithoutUserNestedInput
-    resources?: ResourceUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutCoursesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    firstname?: StringFieldUpdateOperationsInput | string
-    lastname?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
-    profile_image?: NullableStringFieldUpdateOperationsInput | string | null
-    google_id?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    auth_providers?: AuthProviderUncheckedUpdateManyWithoutUserNestedInput
-    projects?: ProjectUncheckedUpdateManyWithoutUserNestedInput
-    tasks?: TaskUncheckedUpdateManyWithoutUserNestedInput
-    todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
-    resources?: ResourceUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type TaskUpsertWithWhereUniqueWithoutCourseInput = {
-    where: TaskWhereUniqueInput
-    update: XOR<TaskUpdateWithoutCourseInput, TaskUncheckedUpdateWithoutCourseInput>
-    create: XOR<TaskCreateWithoutCourseInput, TaskUncheckedCreateWithoutCourseInput>
-  }
-
-  export type TaskUpdateWithWhereUniqueWithoutCourseInput = {
-    where: TaskWhereUniqueInput
-    data: XOR<TaskUpdateWithoutCourseInput, TaskUncheckedUpdateWithoutCourseInput>
-  }
-
-  export type TaskUpdateManyWithWhereWithoutCourseInput = {
-    where: TaskScalarWhereInput
-    data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyWithoutCourseInput>
-  }
-
-  export type ResourceUpsertWithWhereUniqueWithoutCourseInput = {
-    where: ResourceWhereUniqueInput
-    update: XOR<ResourceUpdateWithoutCourseInput, ResourceUncheckedUpdateWithoutCourseInput>
-    create: XOR<ResourceCreateWithoutCourseInput, ResourceUncheckedCreateWithoutCourseInput>
-  }
-
-  export type ResourceUpdateWithWhereUniqueWithoutCourseInput = {
-    where: ResourceWhereUniqueInput
-    data: XOR<ResourceUpdateWithoutCourseInput, ResourceUncheckedUpdateWithoutCourseInput>
-  }
-
-  export type ResourceUpdateManyWithWhereWithoutCourseInput = {
-    where: ResourceScalarWhereInput
-    data: XOR<ResourceUpdateManyMutationInput, ResourceUncheckedUpdateManyWithoutCourseInput>
-  }
-
   export type UserCreateWithoutTasksInput = {
     id?: string
     firstname: string
@@ -14014,7 +12022,6 @@ export namespace Prisma {
     updated_at?: Date | string
     auth_providers?: AuthProviderCreateNestedManyWithoutUserInput
     projects?: ProjectCreateNestedManyWithoutUserInput
-    courses?: CourseCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
     resources?: ResourceCreateNestedManyWithoutUserInput
   }
@@ -14031,7 +12038,6 @@ export namespace Prisma {
     updated_at?: Date | string
     auth_providers?: AuthProviderUncheckedCreateNestedManyWithoutUserInput
     projects?: ProjectUncheckedCreateNestedManyWithoutUserInput
-    courses?: CourseUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
     resources?: ResourceUncheckedCreateNestedManyWithoutUserInput
   }
@@ -14045,6 +12051,14 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    source?: $Enums.ProjectSource
+    external_id?: string | null
+    course_code?: string | null
+    color_hex?: string | null
+    time_zone?: string | null
+    start_at?: Date | string | null
+    end_at?: Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string
     updated_at?: Date | string
     user: UserCreateNestedOneWithoutProjectsInput
@@ -14056,6 +12070,14 @@ export namespace Prisma {
     user_id: string
     title: string
     description?: string | null
+    source?: $Enums.ProjectSource
+    external_id?: string | null
+    course_code?: string | null
+    color_hex?: string | null
+    time_zone?: string | null
+    start_at?: Date | string | null
+    end_at?: Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string
     updated_at?: Date | string
     resources?: ResourceUncheckedCreateNestedManyWithoutProjectInput
@@ -14064,43 +12086,6 @@ export namespace Prisma {
   export type ProjectCreateOrConnectWithoutTasksInput = {
     where: ProjectWhereUniqueInput
     create: XOR<ProjectCreateWithoutTasksInput, ProjectUncheckedCreateWithoutTasksInput>
-  }
-
-  export type CourseCreateWithoutTasksInput = {
-    id?: string
-    source: $Enums.CourseSource
-    external_id: string
-    title: string
-    course_code?: string | null
-    time_zone?: string | null
-    start_at?: Date | string | null
-    end_at?: Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-    updated_at?: Date | string
-    user: UserCreateNestedOneWithoutCoursesInput
-    resources?: ResourceCreateNestedManyWithoutCourseInput
-  }
-
-  export type CourseUncheckedCreateWithoutTasksInput = {
-    id?: string
-    user_id: string
-    source: $Enums.CourseSource
-    external_id: string
-    title: string
-    course_code?: string | null
-    time_zone?: string | null
-    start_at?: Date | string | null
-    end_at?: Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-    updated_at?: Date | string
-    resources?: ResourceUncheckedCreateNestedManyWithoutCourseInput
-  }
-
-  export type CourseCreateOrConnectWithoutTasksInput = {
-    where: CourseWhereUniqueInput
-    create: XOR<CourseCreateWithoutTasksInput, CourseUncheckedCreateWithoutTasksInput>
   }
 
   export type TodoCreateWithoutTaskInput = {
@@ -14146,7 +12131,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     user: UserCreateNestedOneWithoutResourcesInput
-    course?: CourseCreateNestedOneWithoutResourcesInput
     project?: ProjectCreateNestedOneWithoutResourcesInput
   }
 
@@ -14161,7 +12145,6 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string
     updated_at?: Date | string
-    course_id?: string | null
     project_id?: string | null
   }
 
@@ -14198,7 +12181,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     auth_providers?: AuthProviderUpdateManyWithoutUserNestedInput
     projects?: ProjectUpdateManyWithoutUserNestedInput
-    courses?: CourseUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
     resources?: ResourceUpdateManyWithoutUserNestedInput
   }
@@ -14215,7 +12197,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     auth_providers?: AuthProviderUncheckedUpdateManyWithoutUserNestedInput
     projects?: ProjectUncheckedUpdateManyWithoutUserNestedInput
-    courses?: CourseUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
     resources?: ResourceUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -14235,6 +12216,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumProjectSourceFieldUpdateOperationsInput | $Enums.ProjectSource
+    external_id?: NullableStringFieldUpdateOperationsInput | string | null
+    course_code?: NullableStringFieldUpdateOperationsInput | string | null
+    color_hex?: NullableStringFieldUpdateOperationsInput | string | null
+    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
+    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutProjectsNestedInput
@@ -14246,52 +12235,17 @@ export namespace Prisma {
     user_id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumProjectSourceFieldUpdateOperationsInput | $Enums.ProjectSource
+    external_id?: NullableStringFieldUpdateOperationsInput | string | null
+    course_code?: NullableStringFieldUpdateOperationsInput | string | null
+    color_hex?: NullableStringFieldUpdateOperationsInput | string | null
+    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
+    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resources?: ResourceUncheckedUpdateManyWithoutProjectNestedInput
-  }
-
-  export type CourseUpsertWithoutTasksInput = {
-    update: XOR<CourseUpdateWithoutTasksInput, CourseUncheckedUpdateWithoutTasksInput>
-    create: XOR<CourseCreateWithoutTasksInput, CourseUncheckedCreateWithoutTasksInput>
-    where?: CourseWhereInput
-  }
-
-  export type CourseUpdateToOneWithWhereWithoutTasksInput = {
-    where?: CourseWhereInput
-    data: XOR<CourseUpdateWithoutTasksInput, CourseUncheckedUpdateWithoutTasksInput>
-  }
-
-  export type CourseUpdateWithoutTasksInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    source?: EnumCourseSourceFieldUpdateOperationsInput | $Enums.CourseSource
-    external_id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    course_code?: NullableStringFieldUpdateOperationsInput | string | null
-    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
-    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutCoursesNestedInput
-    resources?: ResourceUpdateManyWithoutCourseNestedInput
-  }
-
-  export type CourseUncheckedUpdateWithoutTasksInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    source?: EnumCourseSourceFieldUpdateOperationsInput | $Enums.CourseSource
-    external_id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    course_code?: NullableStringFieldUpdateOperationsInput | string | null
-    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
-    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    resources?: ResourceUncheckedUpdateManyWithoutCourseNestedInput
   }
 
   export type TodoUpsertWithWhereUniqueWithoutTaskInput = {
@@ -14338,7 +12292,6 @@ export namespace Prisma {
     updated_at?: Date | string
     auth_providers?: AuthProviderCreateNestedManyWithoutUserInput
     projects?: ProjectCreateNestedManyWithoutUserInput
-    courses?: CourseCreateNestedManyWithoutUserInput
     tasks?: TaskCreateNestedManyWithoutUserInput
     resources?: ResourceCreateNestedManyWithoutUserInput
   }
@@ -14355,7 +12308,6 @@ export namespace Prisma {
     updated_at?: Date | string
     auth_providers?: AuthProviderUncheckedCreateNestedManyWithoutUserInput
     projects?: ProjectUncheckedCreateNestedManyWithoutUserInput
-    courses?: CourseUncheckedCreateNestedManyWithoutUserInput
     tasks?: TaskUncheckedCreateNestedManyWithoutUserInput
     resources?: ResourceUncheckedCreateNestedManyWithoutUserInput
   }
@@ -14377,7 +12329,6 @@ export namespace Prisma {
     raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     user: UserCreateNestedOneWithoutTasksInput
     project?: ProjectCreateNestedOneWithoutTasksInput
-    course?: CourseCreateNestedOneWithoutTasksInput
     resources?: ResourceCreateNestedManyWithoutTaskInput
   }
 
@@ -14385,7 +12336,6 @@ export namespace Prisma {
     id?: string
     user_id: string
     project_id?: string | null
-    course_id?: string | null
     title: string
     description?: string | null
     due_date?: Date | string | null
@@ -14425,7 +12375,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     auth_providers?: AuthProviderUpdateManyWithoutUserNestedInput
     projects?: ProjectUpdateManyWithoutUserNestedInput
-    courses?: CourseUpdateManyWithoutUserNestedInput
     tasks?: TaskUpdateManyWithoutUserNestedInput
     resources?: ResourceUpdateManyWithoutUserNestedInput
   }
@@ -14442,7 +12391,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     auth_providers?: AuthProviderUncheckedUpdateManyWithoutUserNestedInput
     projects?: ProjectUncheckedUpdateManyWithoutUserNestedInput
-    courses?: CourseUncheckedUpdateManyWithoutUserNestedInput
     tasks?: TaskUncheckedUpdateManyWithoutUserNestedInput
     resources?: ResourceUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -14470,7 +12418,6 @@ export namespace Prisma {
     raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     user?: UserUpdateOneRequiredWithoutTasksNestedInput
     project?: ProjectUpdateOneWithoutTasksNestedInput
-    course?: CourseUpdateOneWithoutTasksNestedInput
     resources?: ResourceUpdateManyWithoutTaskNestedInput
   }
 
@@ -14478,7 +12425,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     user_id?: StringFieldUpdateOperationsInput | string
     project_id?: NullableStringFieldUpdateOperationsInput | string | null
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     due_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -14502,7 +12448,6 @@ export namespace Prisma {
     updated_at?: Date | string
     auth_providers?: AuthProviderCreateNestedManyWithoutUserInput
     projects?: ProjectCreateNestedManyWithoutUserInput
-    courses?: CourseCreateNestedManyWithoutUserInput
     tasks?: TaskCreateNestedManyWithoutUserInput
     todos?: TodoCreateNestedManyWithoutUserInput
   }
@@ -14519,7 +12464,6 @@ export namespace Prisma {
     updated_at?: Date | string
     auth_providers?: AuthProviderUncheckedCreateNestedManyWithoutUserInput
     projects?: ProjectUncheckedCreateNestedManyWithoutUserInput
-    courses?: CourseUncheckedCreateNestedManyWithoutUserInput
     tasks?: TaskUncheckedCreateNestedManyWithoutUserInput
     todos?: TodoUncheckedCreateNestedManyWithoutUserInput
   }
@@ -14541,7 +12485,6 @@ export namespace Prisma {
     raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     user: UserCreateNestedOneWithoutTasksInput
     project?: ProjectCreateNestedOneWithoutTasksInput
-    course?: CourseCreateNestedOneWithoutTasksInput
     todos?: TodoCreateNestedManyWithoutTaskInput
   }
 
@@ -14549,7 +12492,6 @@ export namespace Prisma {
     id?: string
     user_id: string
     project_id?: string | null
-    course_id?: string | null
     title: string
     description?: string | null
     due_date?: Date | string | null
@@ -14566,47 +12508,18 @@ export namespace Prisma {
     create: XOR<TaskCreateWithoutResourcesInput, TaskUncheckedCreateWithoutResourcesInput>
   }
 
-  export type CourseCreateWithoutResourcesInput = {
-    id?: string
-    source: $Enums.CourseSource
-    external_id: string
-    title: string
-    course_code?: string | null
-    time_zone?: string | null
-    start_at?: Date | string | null
-    end_at?: Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-    updated_at?: Date | string
-    user: UserCreateNestedOneWithoutCoursesInput
-    tasks?: TaskCreateNestedManyWithoutCourseInput
-  }
-
-  export type CourseUncheckedCreateWithoutResourcesInput = {
-    id?: string
-    user_id: string
-    source: $Enums.CourseSource
-    external_id: string
-    title: string
-    course_code?: string | null
-    time_zone?: string | null
-    start_at?: Date | string | null
-    end_at?: Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-    updated_at?: Date | string
-    tasks?: TaskUncheckedCreateNestedManyWithoutCourseInput
-  }
-
-  export type CourseCreateOrConnectWithoutResourcesInput = {
-    where: CourseWhereUniqueInput
-    create: XOR<CourseCreateWithoutResourcesInput, CourseUncheckedCreateWithoutResourcesInput>
-  }
-
   export type ProjectCreateWithoutResourcesInput = {
     id?: string
     title: string
     description?: string | null
+    source?: $Enums.ProjectSource
+    external_id?: string | null
+    course_code?: string | null
+    color_hex?: string | null
+    time_zone?: string | null
+    start_at?: Date | string | null
+    end_at?: Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string
     updated_at?: Date | string
     user: UserCreateNestedOneWithoutProjectsInput
@@ -14618,6 +12531,14 @@ export namespace Prisma {
     user_id: string
     title: string
     description?: string | null
+    source?: $Enums.ProjectSource
+    external_id?: string | null
+    course_code?: string | null
+    color_hex?: string | null
+    time_zone?: string | null
+    start_at?: Date | string | null
+    end_at?: Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string
     updated_at?: Date | string
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
@@ -14651,7 +12572,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     auth_providers?: AuthProviderUpdateManyWithoutUserNestedInput
     projects?: ProjectUpdateManyWithoutUserNestedInput
-    courses?: CourseUpdateManyWithoutUserNestedInput
     tasks?: TaskUpdateManyWithoutUserNestedInput
     todos?: TodoUpdateManyWithoutUserNestedInput
   }
@@ -14668,7 +12588,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     auth_providers?: AuthProviderUncheckedUpdateManyWithoutUserNestedInput
     projects?: ProjectUncheckedUpdateManyWithoutUserNestedInput
-    courses?: CourseUncheckedUpdateManyWithoutUserNestedInput
     tasks?: TaskUncheckedUpdateManyWithoutUserNestedInput
     todos?: TodoUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -14696,7 +12615,6 @@ export namespace Prisma {
     raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     user?: UserUpdateOneRequiredWithoutTasksNestedInput
     project?: ProjectUpdateOneWithoutTasksNestedInput
-    course?: CourseUpdateOneWithoutTasksNestedInput
     todos?: TodoUpdateManyWithoutTaskNestedInput
   }
 
@@ -14704,7 +12622,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     user_id?: StringFieldUpdateOperationsInput | string
     project_id?: NullableStringFieldUpdateOperationsInput | string | null
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     due_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -14714,49 +12631,6 @@ export namespace Prisma {
     priority?: NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
     raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     todos?: TodoUncheckedUpdateManyWithoutTaskNestedInput
-  }
-
-  export type CourseUpsertWithoutResourcesInput = {
-    update: XOR<CourseUpdateWithoutResourcesInput, CourseUncheckedUpdateWithoutResourcesInput>
-    create: XOR<CourseCreateWithoutResourcesInput, CourseUncheckedCreateWithoutResourcesInput>
-    where?: CourseWhereInput
-  }
-
-  export type CourseUpdateToOneWithWhereWithoutResourcesInput = {
-    where?: CourseWhereInput
-    data: XOR<CourseUpdateWithoutResourcesInput, CourseUncheckedUpdateWithoutResourcesInput>
-  }
-
-  export type CourseUpdateWithoutResourcesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    source?: EnumCourseSourceFieldUpdateOperationsInput | $Enums.CourseSource
-    external_id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    course_code?: NullableStringFieldUpdateOperationsInput | string | null
-    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
-    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutCoursesNestedInput
-    tasks?: TaskUpdateManyWithoutCourseNestedInput
-  }
-
-  export type CourseUncheckedUpdateWithoutResourcesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    source?: EnumCourseSourceFieldUpdateOperationsInput | $Enums.CourseSource
-    external_id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    course_code?: NullableStringFieldUpdateOperationsInput | string | null
-    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
-    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    tasks?: TaskUncheckedUpdateManyWithoutCourseNestedInput
   }
 
   export type ProjectUpsertWithoutResourcesInput = {
@@ -14774,6 +12648,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumProjectSourceFieldUpdateOperationsInput | $Enums.ProjectSource
+    external_id?: NullableStringFieldUpdateOperationsInput | string | null
+    course_code?: NullableStringFieldUpdateOperationsInput | string | null
+    color_hex?: NullableStringFieldUpdateOperationsInput | string | null
+    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
+    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutProjectsNestedInput
@@ -14785,6 +12667,14 @@ export namespace Prisma {
     user_id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumProjectSourceFieldUpdateOperationsInput | $Enums.ProjectSource
+    external_id?: NullableStringFieldUpdateOperationsInput | string | null
+    course_code?: NullableStringFieldUpdateOperationsInput | string | null
+    color_hex?: NullableStringFieldUpdateOperationsInput | string | null
+    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
+    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
@@ -14804,20 +12694,14 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-  }
-
-  export type CourseCreateManyUserInput = {
-    id?: string
-    source: $Enums.CourseSource
-    external_id: string
-    title: string
+    source?: $Enums.ProjectSource
+    external_id?: string | null
     course_code?: string | null
+    color_hex?: string | null
     time_zone?: string | null
     start_at?: Date | string | null
     end_at?: Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -14825,7 +12709,6 @@ export namespace Prisma {
   export type TaskCreateManyUserInput = {
     id?: string
     project_id?: string | null
-    course_id?: string | null
     title: string
     description?: string | null
     due_date?: Date | string | null
@@ -14858,7 +12741,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     task_id?: string | null
-    course_id?: string | null
     project_id?: string | null
   }
 
@@ -14896,6 +12778,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumProjectSourceFieldUpdateOperationsInput | $Enums.ProjectSource
+    external_id?: NullableStringFieldUpdateOperationsInput | string | null
+    course_code?: NullableStringFieldUpdateOperationsInput | string | null
+    color_hex?: NullableStringFieldUpdateOperationsInput | string | null
+    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
+    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUpdateManyWithoutProjectNestedInput
@@ -14906,6 +12796,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    source?: EnumProjectSourceFieldUpdateOperationsInput | $Enums.ProjectSource
+    external_id?: NullableStringFieldUpdateOperationsInput | string | null
+    course_code?: NullableStringFieldUpdateOperationsInput | string | null
+    color_hex?: NullableStringFieldUpdateOperationsInput | string | null
+    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
+    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
@@ -14916,52 +12814,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CourseUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    source?: EnumCourseSourceFieldUpdateOperationsInput | $Enums.CourseSource
-    external_id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
+    source?: EnumProjectSourceFieldUpdateOperationsInput | $Enums.ProjectSource
+    external_id?: NullableStringFieldUpdateOperationsInput | string | null
     course_code?: NullableStringFieldUpdateOperationsInput | string | null
+    color_hex?: NullableStringFieldUpdateOperationsInput | string | null
     time_zone?: NullableStringFieldUpdateOperationsInput | string | null
     start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    tasks?: TaskUpdateManyWithoutCourseNestedInput
-    resources?: ResourceUpdateManyWithoutCourseNestedInput
-  }
-
-  export type CourseUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    source?: EnumCourseSourceFieldUpdateOperationsInput | $Enums.CourseSource
-    external_id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    course_code?: NullableStringFieldUpdateOperationsInput | string | null
-    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
-    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    tasks?: TaskUncheckedUpdateManyWithoutCourseNestedInput
-    resources?: ResourceUncheckedUpdateManyWithoutCourseNestedInput
-  }
-
-  export type CourseUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    source?: EnumCourseSourceFieldUpdateOperationsInput | $Enums.CourseSource
-    external_id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    course_code?: NullableStringFieldUpdateOperationsInput | string | null
-    time_zone?: NullableStringFieldUpdateOperationsInput | string | null
-    start_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    end_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    raw_data?: NullableJsonNullValueInput | InputJsonValue
+    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -14977,7 +12837,6 @@ export namespace Prisma {
     priority?: NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
     raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     project?: ProjectUpdateOneWithoutTasksNestedInput
-    course?: CourseUpdateOneWithoutTasksNestedInput
     todos?: TodoUpdateManyWithoutTaskNestedInput
     resources?: ResourceUpdateManyWithoutTaskNestedInput
   }
@@ -14985,7 +12844,6 @@ export namespace Prisma {
   export type TaskUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     project_id?: NullableStringFieldUpdateOperationsInput | string | null
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     due_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -15001,7 +12859,6 @@ export namespace Prisma {
   export type TaskUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     project_id?: NullableStringFieldUpdateOperationsInput | string | null
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     due_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -15056,7 +12913,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     task?: TaskUpdateOneWithoutResourcesNestedInput
-    course?: CourseUpdateOneWithoutResourcesNestedInput
     project?: ProjectUpdateOneWithoutResourcesNestedInput
   }
 
@@ -15071,7 +12927,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     task_id?: NullableStringFieldUpdateOperationsInput | string | null
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     project_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -15086,14 +12941,12 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     task_id?: NullableStringFieldUpdateOperationsInput | string | null
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     project_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TaskCreateManyProjectInput = {
     id?: string
     user_id: string
-    course_id?: string | null
     title: string
     description?: string | null
     due_date?: Date | string | null
@@ -15116,7 +12969,6 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     task_id?: string | null
-    course_id?: string | null
   }
 
   export type TaskUpdateWithoutProjectInput = {
@@ -15130,7 +12982,6 @@ export namespace Prisma {
     priority?: NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
     raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
     user?: UserUpdateOneRequiredWithoutTasksNestedInput
-    course?: CourseUpdateOneWithoutTasksNestedInput
     todos?: TodoUpdateManyWithoutTaskNestedInput
     resources?: ResourceUpdateManyWithoutTaskNestedInput
   }
@@ -15138,7 +12989,6 @@ export namespace Prisma {
   export type TaskUncheckedUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
     user_id?: StringFieldUpdateOperationsInput | string
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     due_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -15154,7 +13004,6 @@ export namespace Prisma {
   export type TaskUncheckedUpdateManyWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
     user_id?: StringFieldUpdateOperationsInput | string
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     due_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -15177,7 +13026,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutResourcesNestedInput
     task?: TaskUpdateOneWithoutResourcesNestedInput
-    course?: CourseUpdateOneWithoutResourcesNestedInput
   }
 
   export type ResourceUncheckedUpdateWithoutProjectInput = {
@@ -15192,7 +13040,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     task_id?: NullableStringFieldUpdateOperationsInput | string | null
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ResourceUncheckedUpdateManyWithoutProjectInput = {
@@ -15207,127 +13054,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     task_id?: NullableStringFieldUpdateOperationsInput | string | null
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type TaskCreateManyCourseInput = {
-    id?: string
-    user_id: string
-    project_id?: string | null
-    title: string
-    description?: string | null
-    due_date?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    type: $Enums.TaskType
-    priority?: $Enums.Priority | null
-    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type ResourceCreateManyCourseInput = {
-    id?: string
-    user_id: string
-    title: string
-    description?: string | null
-    type: $Enums.ResourceType
-    url?: string | null
-    file_path?: string | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-    updated_at?: Date | string
-    task_id?: string | null
-    project_id?: string | null
-  }
-
-  export type TaskUpdateWithoutCourseInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    due_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
-    priority?: NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
-    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutTasksNestedInput
-    project?: ProjectUpdateOneWithoutTasksNestedInput
-    todos?: TodoUpdateManyWithoutTaskNestedInput
-    resources?: ResourceUpdateManyWithoutTaskNestedInput
-  }
-
-  export type TaskUncheckedUpdateWithoutCourseInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    project_id?: NullableStringFieldUpdateOperationsInput | string | null
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    due_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
-    priority?: NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
-    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
-    todos?: TodoUncheckedUpdateManyWithoutTaskNestedInput
-    resources?: ResourceUncheckedUpdateManyWithoutTaskNestedInput
-  }
-
-  export type TaskUncheckedUpdateManyWithoutCourseInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    project_id?: NullableStringFieldUpdateOperationsInput | string | null
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    due_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: EnumTaskTypeFieldUpdateOperationsInput | $Enums.TaskType
-    priority?: NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
-    raw_canvas_data?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type ResourceUpdateWithoutCourseInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumResourceTypeFieldUpdateOperationsInput | $Enums.ResourceType
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    file_path?: NullableStringFieldUpdateOperationsInput | string | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutResourcesNestedInput
-    task?: TaskUpdateOneWithoutResourcesNestedInput
-    project?: ProjectUpdateOneWithoutResourcesNestedInput
-  }
-
-  export type ResourceUncheckedUpdateWithoutCourseInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumResourceTypeFieldUpdateOperationsInput | $Enums.ResourceType
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    file_path?: NullableStringFieldUpdateOperationsInput | string | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    task_id?: NullableStringFieldUpdateOperationsInput | string | null
-    project_id?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type ResourceUncheckedUpdateManyWithoutCourseInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumResourceTypeFieldUpdateOperationsInput | $Enums.ResourceType
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    file_path?: NullableStringFieldUpdateOperationsInput | string | null
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    task_id?: NullableStringFieldUpdateOperationsInput | string | null
-    project_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TodoCreateManyTaskInput = {
@@ -15352,7 +13078,6 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     created_at?: Date | string
     updated_at?: Date | string
-    course_id?: string | null
     project_id?: string | null
   }
 
@@ -15400,7 +13125,6 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutResourcesNestedInput
-    course?: CourseUpdateOneWithoutResourcesNestedInput
     project?: ProjectUpdateOneWithoutResourcesNestedInput
   }
 
@@ -15415,7 +13139,6 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     project_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -15430,7 +13153,6 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    course_id?: NullableStringFieldUpdateOperationsInput | string | null
     project_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 

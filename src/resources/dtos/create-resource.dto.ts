@@ -1,5 +1,5 @@
-import { IsString, IsOptional, IsEnum, IsObject } from 'class-validator';
-import { ResourceType } from '../../common/interfaces';
+import { IsString, IsOptional, IsEnum, IsObject } from "class-validator";
+import { ResourceType } from "../../common/interfaces";
 
 export class CreateResourceDto {
   @IsString()
@@ -30,10 +30,6 @@ export class CreateResourceDto {
   @IsOptional()
   @IsString()
   task_id?: string;
-
-  @IsOptional()
-  @IsString()
-  course_id?: string;
 
   @IsOptional()
   @IsString()

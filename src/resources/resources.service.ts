@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
-import { CreateResourceDto } from './dtos/create-resource.dto';
-import { UpdateResourceDto } from './dtos/update-resource.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../database/prisma.service";
+import { CreateResourceDto } from "./dtos/create-resource.dto";
+import { UpdateResourceDto } from "./dtos/update-resource.dto";
 
 @Injectable()
 export class ResourcesService {
@@ -22,10 +22,8 @@ export class ResourcesService {
         task: {
           include: {
             project: true,
-            course: true,
           },
         },
-        course: true,
         project: true,
       },
     });
@@ -45,10 +43,8 @@ export class ResourcesService {
         task: {
           include: {
             project: true,
-            course: true,
           },
         },
-        course: true,
         project: true,
       },
     });
@@ -69,10 +65,8 @@ export class ResourcesService {
         task: {
           include: {
             project: true,
-            course: true,
           },
         },
-        course: true,
         project: true,
       },
     });
@@ -85,10 +79,8 @@ export class ResourcesService {
         task: {
           include: {
             project: true,
-            course: true,
           },
         },
-        course: true,
         project: true,
       },
     });
@@ -104,29 +96,6 @@ export class ResourcesService {
             firstname: true,
             lastname: true,
             email: true,
-          },
-        },
-        course: true,
-        project: true,
-      },
-    });
-  }
-
-  async findByCourse(courseId: string) {
-    return this.prisma.resource.findMany({
-      where: { course_id: courseId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            firstname: true,
-            lastname: true,
-            email: true,
-          },
-        },
-        task: {
-          include: {
-            project: true,
           },
         },
         project: true,
@@ -146,12 +115,7 @@ export class ResourcesService {
             email: true,
           },
         },
-        task: {
-          include: {
-            course: true,
-          },
-        },
-        course: true,
+        task: true,
       },
     });
   }
@@ -172,10 +136,8 @@ export class ResourcesService {
         task: {
           include: {
             project: true,
-            course: true,
           },
         },
-        course: true,
         project: true,
       },
     });

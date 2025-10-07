@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
-import { CreateTaskDto } from './dtos/create-task.dto';
-import { UpdateTaskDto } from './dtos/update-task.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../database/prisma.service";
+import { CreateTaskDto } from "./dtos/create-task.dto";
+import { UpdateTaskDto } from "./dtos/update-task.dto";
 
 @Injectable()
 export class TasksService {
@@ -20,7 +20,6 @@ export class TasksService {
           },
         },
         project: true,
-        course: true,
         todos: true,
         resources: true,
       },
@@ -39,7 +38,6 @@ export class TasksService {
           },
         },
         project: true,
-        course: true,
         todos: true,
         resources: true,
       },
@@ -59,7 +57,6 @@ export class TasksService {
           },
         },
         project: true,
-        course: true,
         todos: true,
         resources: true,
       },
@@ -71,7 +68,6 @@ export class TasksService {
       where: { user_id: userId },
       include: {
         project: true,
-        course: true,
         todos: true,
         resources: true,
       },
@@ -90,26 +86,6 @@ export class TasksService {
             email: true,
           },
         },
-        course: true,
-        todos: true,
-        resources: true,
-      },
-    });
-  }
-
-  async findByCourse(courseId: string) {
-    return this.prisma.task.findMany({
-      where: { course_id: courseId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            firstname: true,
-            lastname: true,
-            email: true,
-          },
-        },
-        project: true,
         todos: true,
         resources: true,
       },
@@ -130,7 +106,6 @@ export class TasksService {
           },
         },
         project: true,
-        course: true,
         todos: true,
         resources: true,
       },

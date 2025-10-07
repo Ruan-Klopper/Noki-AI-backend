@@ -1,5 +1,11 @@
-import { IsString, IsOptional, IsDateString, IsEnum, IsObject } from 'class-validator';
-import { TaskType, Priority } from '../../common/interfaces';
+import {
+  IsString,
+  IsOptional,
+  IsDateString,
+  IsEnum,
+  IsObject,
+} from "class-validator";
+import { TaskType, Priority } from "../../common/interfaces";
 
 export class CreateTaskDto {
   @IsString()
@@ -8,10 +14,6 @@ export class CreateTaskDto {
   @IsOptional()
   @IsString()
   project_id?: string;
-
-  @IsOptional()
-  @IsString()
-  course_id?: string;
 
   @IsString()
   title: string;

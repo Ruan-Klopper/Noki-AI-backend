@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
-import { CreateProjectDto } from './dtos/create-project.dto';
-import { UpdateProjectDto } from './dtos/update-project.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../database/prisma.service";
+import { CreateProjectDto } from "./dtos/create-project.dto";
+import { UpdateProjectDto } from "./dtos/update-project.dto";
 
 @Injectable()
 export class ProjectsService {
@@ -63,6 +63,20 @@ export class ProjectsService {
   async findByUser(userId: string) {
     return this.prisma.project.findMany({
       where: { user_id: userId },
+      include: {
+        tasks: true,
+        resources: true,
+      },
+    });
+  }
+
+  async findByExternalId(userId: string, externalId: string, source: string) {
+    return this.prisma.project.findFirst({
+      where: {
+        user_id: userId,
+        external_id: externalId,
+        source: source as any,
+      },
       include: {
         tasks: true,
         resources: true,

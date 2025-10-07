@@ -1,4 +1,12 @@
-import { IsOptional, IsString, MinLength } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  MinLength,
+  IsEnum,
+  IsDateString,
+  IsHexColor,
+} from "class-validator";
+import { ProjectSource } from "../../common/interfaces";
 
 export class UpdateProjectDto {
   @IsOptional()
@@ -9,4 +17,35 @@ export class UpdateProjectDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsEnum(ProjectSource)
+  source?: ProjectSource;
+
+  @IsOptional()
+  @IsString()
+  external_id?: string;
+
+  @IsOptional()
+  @IsString()
+  course_code?: string;
+
+  @IsOptional()
+  @IsHexColor()
+  color_hex?: string;
+
+  @IsOptional()
+  @IsString()
+  time_zone?: string;
+
+  @IsOptional()
+  @IsDateString()
+  start_at?: string;
+
+  @IsOptional()
+  @IsDateString()
+  end_at?: string;
+
+  @IsOptional()
+  raw_canvas_data?: any;
 }

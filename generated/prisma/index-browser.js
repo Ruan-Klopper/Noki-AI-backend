@@ -148,21 +148,14 @@ exports.Prisma.ProjectScalarFieldEnum = {
   user_id: 'user_id',
   title: 'title',
   description: 'description',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
-};
-
-exports.Prisma.CourseScalarFieldEnum = {
-  id: 'id',
-  user_id: 'user_id',
   source: 'source',
   external_id: 'external_id',
-  title: 'title',
   course_code: 'course_code',
+  color_hex: 'color_hex',
   time_zone: 'time_zone',
   start_at: 'start_at',
   end_at: 'end_at',
-  raw_data: 'raw_data',
+  raw_canvas_data: 'raw_canvas_data',
   created_at: 'created_at',
   updated_at: 'updated_at'
 };
@@ -171,7 +164,6 @@ exports.Prisma.TaskScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
   project_id: 'project_id',
-  course_id: 'course_id',
   title: 'title',
   description: 'description',
   due_date: 'due_date',
@@ -206,7 +198,6 @@ exports.Prisma.ResourceScalarFieldEnum = {
   created_at: 'created_at',
   updated_at: 'updated_at',
   task_id: 'task_id',
-  course_id: 'course_id',
   project_id: 'project_id'
 };
 
@@ -241,9 +232,9 @@ exports.AuthProviderType = exports.$Enums.AuthProviderType = {
   Microsoft: 'Microsoft'
 };
 
-exports.CourseSource = exports.$Enums.CourseSource = {
-  Canvas: 'Canvas',
-  GoogleClassroom: 'GoogleClassroom'
+exports.ProjectSource = exports.$Enums.ProjectSource = {
+  Personal: 'Personal',
+  Canvas: 'Canvas'
 };
 
 exports.TaskType = exports.$Enums.TaskType = {
@@ -270,7 +261,6 @@ exports.Prisma.ModelName = {
   User: 'User',
   AuthProvider: 'AuthProvider',
   Project: 'Project',
-  Course: 'Course',
   Task: 'Task',
   Todo: 'Todo',
   Resource: 'Resource'
