@@ -10,6 +10,9 @@ import { TodosModule } from "./todos/todos.module";
 import { ResourcesModule } from "./resources/resources.module";
 import { CanvasModule } from "./canvas/canvas.module";
 import { AiModule } from "./ai/ai.module";
+import { ConversationsModule } from "./conversations/conversations.module";
+import { ChatMessagesModule } from "./chat-messages/chat-messages.module";
+import { ChatModule } from "./chat/chat.module";
 import { GoogleModule } from "./integrations/google/google.module";
 import prismaConfig from "./config/prisma.config";
 import authConfig from "./config/auth.config";
@@ -30,6 +33,9 @@ import aiConfig from "./config/ai.config";
     ResourcesModule,
     CanvasModule,
     AiModule,
+    ConversationsModule,
+    ChatMessagesModule,
+    ChatModule,
     GoogleModule,
   ],
   providers: [PrismaService],

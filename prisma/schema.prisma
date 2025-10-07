@@ -45,6 +45,19 @@ enum ResourceType {
   AI_Generated
 }
 
+enum MessageRole {
+  User
+  Assistant
+  System
+}
+
+enum ChatStage {
+  Thinking
+  Intent
+  Response
+  Complete
+}
+
 model User {
   id            String   @id @default(uuid())
   firstname     String
@@ -62,6 +75,8 @@ model User {
   tasks          Task[]
   todos          Todo[]
   resources      Resource[]
+  conversations  Conversation[]
+  chat_messages  ChatMessage[]
 
   @@map("users")
 }
@@ -102,6 +117,7 @@ model Project {
   user       User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
   tasks      Task[]
   resources  Resource[]
+  chat_messages ChatMessage[]
 
   @@unique([user_id, external_id, source])
   @@map("projects")
@@ -125,6 +141,7 @@ model Task {
   project   Project? @relation(fields: [project_id], references: [id], onDelete: SetNull)
   todos     Todo[]
   resources Resource[]
+  chat_messages ChatMessage[]
 
   @@map("tasks")
 }
@@ -169,4 +186,50 @@ model Resource {
   project Project? @relation(fields: [project_id], references: [id], onDelete: SetNull)
 
   @@map("resources")
+}
+
+model Conversation {
+  id             String       @id @default(uuid())
+  user_id        String
+  title          String?                     // Optional: short name (e.g. "Study Plan for Finals")
+  description    String?                     // Optional metadata or summary
+  ai_engine_id   String?                     // For syncing with AI engine conversation_id
+  context_source String?                     // e.g. "canvas", "project", "personal"
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+
+  // Relations
+  user     User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  messages ChatMessage[]
+
+  @@map("conversations")
+}
+
+model ChatMessage {
+  id              String      @id @default(uuid())
+  conversation_id String
+  user_id         String?
+  role            MessageRole
+  stage           ChatStage   @default(Thinking)
+  content         String
+  metadata        Json?
+  blocks          Json?                      // Structured UI blocks from AI
+  intent          Json?                      // AI intent object if present
+  token_usage     Json?                      // Token stats
+  project_id      String?                    // Optional contextual link
+  task_id         String?                    // Optional contextual link
+  embedding_id    String?                    // For vector DB reference (if embedded)
+  created_at      DateTime    @default(now())
+
+  // Relations
+  conversation Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  user         User?         @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  project      Project?      @relation(fields: [project_id], references: [id], onDelete: SetNull)
+  task         Task?         @relation(fields: [task_id], references: [id], onDelete: SetNull)
+
+  @@index([conversation_id])
+  @@index([user_id])
+  @@index([project_id])
+  @@index([task_id])
+  @@map("chat_messages")
 }
