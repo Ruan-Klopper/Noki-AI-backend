@@ -1,3 +1,6 @@
+// API Response interfaces
+export * from "./api-response.interface";
+
 // Shared interfaces for all models
 export enum AuthProviderType {
   Canvas = "Canvas",

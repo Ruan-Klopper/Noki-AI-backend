@@ -26,10 +26,12 @@ async function bootstrap() {
     .addTag("Projects", "Project management operations")
     .addTag("Tasks", "Task management operations")
     .addTag("Todos", "Todo management operations")
-    .addTag("Courses", "Course management operations")
     .addTag("Resources", "Resource management operations")
     .addTag("Canvas", "Canvas operations")
     .addTag("AI", "AI-powered features")
+    .addTag("Chat", "Chat and messaging operations")
+    .addTag("Chat Messages", "Chat message management operations")
+    .addTag("Conversations", "Conversation management operations")
     .addTag("Notifications", "Notification management")
     .addTag("Auth Provider", "External authentication providers")
     .build();
