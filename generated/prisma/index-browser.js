@@ -201,6 +201,34 @@ exports.Prisma.ResourceScalarFieldEnum = {
   project_id: 'project_id'
 };
 
+exports.Prisma.ConversationScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  title: 'title',
+  description: 'description',
+  ai_engine_id: 'ai_engine_id',
+  context_source: 'context_source',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.ChatMessageScalarFieldEnum = {
+  id: 'id',
+  conversation_id: 'conversation_id',
+  user_id: 'user_id',
+  role: 'role',
+  stage: 'stage',
+  content: 'content',
+  metadata: 'metadata',
+  blocks: 'blocks',
+  intent: 'intent',
+  token_usage: 'token_usage',
+  project_id: 'project_id',
+  task_id: 'task_id',
+  embedding_id: 'embedding_id',
+  created_at: 'created_at'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -257,13 +285,28 @@ exports.ResourceType = exports.$Enums.ResourceType = {
   AI_Generated: 'AI_Generated'
 };
 
+exports.MessageRole = exports.$Enums.MessageRole = {
+  User: 'User',
+  Assistant: 'Assistant',
+  System: 'System'
+};
+
+exports.ChatStage = exports.$Enums.ChatStage = {
+  Thinking: 'Thinking',
+  Intent: 'Intent',
+  Response: 'Response',
+  Complete: 'Complete'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   AuthProvider: 'AuthProvider',
   Project: 'Project',
   Task: 'Task',
   Todo: 'Todo',
-  Resource: 'Resource'
+  Resource: 'Resource',
+  Conversation: 'Conversation',
+  ChatMessage: 'ChatMessage'
 };
 
 /**

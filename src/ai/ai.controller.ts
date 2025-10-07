@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from "@nestjs/common";
+import { Controller, Post, Body, UseGuards, Request } from "@nestjs/common";
 import {
   ApiTags,
   ApiOperation,
@@ -6,7 +6,7 @@ import {
   ApiBearerAuth,
   ApiBody,
 } from "@nestjs/swagger";
-import { AiService } from "./ai.service";
+import { AiService, ChatInput } from "./ai.service";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 
 @ApiTags("AI")
@@ -16,40 +16,45 @@ import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 export class AiController {
   constructor(private readonly aiService: AiService) {}
 
-  @Post("generate")
-  @ApiOperation({ summary: "Generate AI content based on prompt" })
-  @ApiResponse({ status: 200, description: "Content generated successfully" })
-  @ApiResponse({ status: 400, description: "Bad request - Invalid prompt" })
+  @Post("chat")
+  @ApiOperation({ summary: "Send chat message to AI server" })
+  @ApiResponse({
+    status: 200,
+    description: "Chat response received successfully",
+  })
+  @ApiResponse({ status: 400, description: "Bad request - Invalid input" })
   @ApiBody({
     schema: {
       type: "object",
       properties: {
-        text: {
+        conversationId: {
           type: "string",
-          description: "The prompt text for content generation",
+          description: "The conversation ID",
+        },
+        prompt: {
+          type: "string",
+          description: "The user's message",
         },
       },
-      required: ["text"],
+      required: ["prompt"],
     },
   })
-  async generateContent(@Body() prompt: { text: string }) {
-    return this.aiService.generateContent(prompt.text);
+  async sendChatMessage(
+    @Request() req,
+    @Body() body: { conversationId?: string; prompt: string }
+  ) {
+    const chatInput: ChatInput = {
+      user_id: req.user.id,
+      conversation_id: body.conversationId || "temp-" + Date.now(),
+      prompt: body.prompt,
+    };
+    return this.aiService.sendChatMessage(chatInput);
   }
 
-  @Post("analyze")
-  @ApiOperation({ summary: "Analyze content using AI" })
-  @ApiResponse({ status: 200, description: "Content analyzed successfully" })
-  @ApiResponse({ status: 400, description: "Bad request - Invalid content" })
-  @ApiBody({
-    schema: {
-      type: "object",
-      properties: {
-        text: { type: "string", description: "The content text to analyze" },
-      },
-      required: ["text"],
-    },
-  })
-  async analyzeContent(@Body() content: { text: string }) {
-    return this.aiService.analyzeContent(content.text);
+  @Post("health")
+  @ApiOperation({ summary: "Check AI server health" })
+  @ApiResponse({ status: 200, description: "AI server health status" })
+  async healthCheck() {
+    return this.aiService.healthCheck();
   }
 }

@@ -38,11 +38,11 @@ export class CanvasService {
       color_hex: canvasCourseData.color,
       time_zone: canvasCourseData.time_zone,
       start_at: canvasCourseData.start_at
-        ? new Date(canvasCourseData.start_at)
-        : null,
+        ? new Date(canvasCourseData.start_at).toISOString()
+        : undefined,
       end_at: canvasCourseData.end_at
-        ? new Date(canvasCourseData.end_at)
-        : null,
+        ? new Date(canvasCourseData.end_at).toISOString()
+        : undefined,
       raw_canvas_data: canvasCourseData,
     };
 

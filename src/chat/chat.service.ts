@@ -9,7 +9,7 @@ import { ConversationsService } from "../conversations/conversations.service";
 import { ChatMessagesService } from "../chat-messages/chat-messages.service";
 import { ProjectsService } from "../projects/projects.service";
 import { TasksService } from "../tasks/tasks.service";
-import { MessageRole, ChatStage } from "../generated/prisma";
+import { MessageRole, ChatStage } from "../../generated/prisma";
 
 export interface SendMessageDto {
   conversationId?: string;

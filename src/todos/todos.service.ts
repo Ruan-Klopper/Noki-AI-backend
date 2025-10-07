@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
-import { CreateTodoDto } from './dtos/create-todo.dto';
-import { UpdateTodoDto } from './dtos/update-todo.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../database/prisma.service";
+import { CreateTodoDto } from "./dtos/create-todo.dto";
+import { UpdateTodoDto } from "./dtos/update-todo.dto";
 
 @Injectable()
 export class TodosService {
@@ -22,7 +22,6 @@ export class TodosService {
         task: {
           include: {
             project: true,
-            course: true,
           },
         },
       },
@@ -43,7 +42,6 @@ export class TodosService {
         task: {
           include: {
             project: true,
-            course: true,
           },
         },
       },
@@ -65,7 +63,6 @@ export class TodosService {
         task: {
           include: {
             project: true,
-            course: true,
           },
         },
       },
@@ -79,7 +76,6 @@ export class TodosService {
         task: {
           include: {
             project: true,
-            course: true,
           },
         },
       },
@@ -118,7 +114,6 @@ export class TodosService {
         task: {
           include: {
             project: true,
-            course: true,
           },
         },
       },
