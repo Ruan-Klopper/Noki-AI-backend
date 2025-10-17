@@ -1,15 +1,42 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import {
   AiService,
-  ChatInput,
-  ContextInput,
-  AIResponse,
+  // ChatInput,
+  // ContextInput,
+  // AIResponse,
 } from "../ai/ai.service";
 import { ConversationsService } from "../conversations/conversations.service";
 import { ChatMessagesService } from "../chat-messages/chat-messages.service";
 import { ProjectsService } from "../projects/projects.service";
 import { TasksService } from "../tasks/tasks.service";
-import { MessageRole, ChatStage } from "@prisma/client";
+import { MessageRole, ChatStage } from "../common/enums/prisma-enums";
+
+// Temporary interfaces until we implement them in AI service
+interface ChatInput {
+  user_id: string;
+  conversation_id: string;
+  prompt: string;
+  projects?: any[];
+  tasks?: any[];
+  stage?: string;
+}
+
+interface ContextInput {
+  conversation_id: string;
+  user_id: string;
+  context_data: any;
+  stage?: string;
+}
+
+interface AIResponse {
+  stage: string;
+  conversation_id: string;
+  text?: string;
+  blocks?: any[] | null;
+  intent?: any;
+  timestamp: string;
+  token_usage?: any;
+}
 
 export interface SendMessageDto {
   conversationId?: string;
@@ -93,7 +120,37 @@ export class ChatService {
       stage: "thinking",
     };
 
-    const aiResponse = await this.aiService.sendChatMessage(chatInput);
+    // Send to AI server
+    console.log(`🚀 Sending chat message to AI server:`, {
+      user_id: userId,
+      conversation_id: conversation.id,
+      prompt: message,
+      projects_count: contextData.projects?.length || 0,
+      tasks_count: contextData.tasks?.length || 0,
+      stage: "thinking",
+    });
+
+    const aiResponse: AIResponse = await this.aiService.sendChatMessage({
+      user_id: userId,
+      conversation_id: conversation.id,
+      prompt: message,
+      projects: contextData.projects || [],
+      tasks: contextData.tasks || [],
+      stage: "thinking",
+      metadata: {
+        project_id: projectId,
+        task_id: taskId,
+        context_source: contextSource,
+      },
+    });
+
+    console.log(`📥 AI server response received:`, {
+      stage: aiResponse.stage,
+      conversation_id: aiResponse.conversation_id,
+      has_intent: !!aiResponse.intent,
+      intent_type: aiResponse.intent?.type,
+      text: aiResponse.text,
+    });
 
     // Store AI response
     const aiMessage = await this.chatMessagesService.create(userId, {
@@ -124,9 +181,26 @@ export class ChatService {
       );
     }
 
-    // Check if AI needs backend context
-    const requiresContext =
-      aiResponse.intent && aiResponse.intent.type === "backend_query";
+    // Check if AI needs backend context and handle intent automatically
+    const requiresContext = aiResponse.intent && aiResponse.stage === "intent";
+
+    if (requiresContext) {
+      console.log(`🤖 AI response contains intent, automatically handling...`);
+      try {
+        // Automatically handle the intent
+        const contextResponse = await this.aiService.handleIntentResponse(
+          aiResponse as any,
+          userId
+        );
+        console.log(`✅ Intent handled automatically:`, contextResponse);
+      } catch (error) {
+        console.error(`❌ Error handling intent automatically:`, error.message);
+        this.logger.error(
+          `Failed to handle intent automatically:`,
+          error.message
+        );
+      }
+    }
 
     return {
       conversation,
@@ -154,7 +228,14 @@ export class ChatService {
       stage: "response",
     };
 
-    const aiResponse = await this.aiService.continueWithContext(contextInput);
+    // TODO: Implement continueWithContext in AI service
+    // const aiResponse = await this.aiService.continueWithContext(contextInput);
+    const aiResponse: AIResponse = {
+      stage: "response",
+      conversation_id: conversation.ai_engine_id || conversation.id,
+      text: "AI service not yet implemented",
+      timestamp: new Date().toISOString(),
+    };
 
     // Store AI response
     const aiMessage = await this.chatMessagesService.create(userId, {
@@ -213,7 +294,12 @@ export class ChatService {
       content: "Resource content...", // This should come from the resource
     };
 
-    return this.aiService.embedResource(embedInput);
+    // TODO: Implement embedResource in AI service
+    // return this.aiService.embedResource(embedInput);
+    return {
+      status: "not_implemented",
+      message: "AI service not yet implemented",
+    };
   }
 
   async embedMessage(
@@ -230,7 +316,12 @@ export class ChatService {
       message_content: message.content,
     };
 
-    return this.aiService.embedMessage(embedInput);
+    // TODO: Implement embedMessage in AI service
+    // return this.aiService.embedMessage(embedInput);
+    return {
+      status: "not_implemented",
+      message: "AI service not yet implemented",
+    };
   }
 
   private async prepareContextData(

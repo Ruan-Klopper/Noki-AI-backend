@@ -6,7 +6,7 @@ import {
 import { PrismaService } from "../database/prisma.service";
 import { CreateChatMessageDto } from "./dtos/create-chat-message.dto";
 import { UpdateChatMessageDto } from "./dtos/update-chat-message.dto";
-import { MessageRole, ChatStage } from "@prisma/client";
+import { MessageRole, ChatStage } from "../common/enums/prisma-enums";
 
 @Injectable()
 export class ChatMessagesService {

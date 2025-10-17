@@ -117,4 +117,41 @@ export class TasksService {
       where: { id },
     });
   }
+
+  /**
+   * Get all tasks for multiple projects
+   * Used by AI service for context gathering
+   */
+  async getAllTasksForProject(projectIds: string[]): Promise<any[]> {
+    return this.prisma.task.findMany({
+      where: {
+        project_id: {
+          in: projectIds,
+        },
+      },
+      include: {
+        project: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            course_code: true,
+          },
+        },
+        todos: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            priority: true,
+            due_date: true,
+            created_at: true,
+          },
+        },
+      },
+      orderBy: {
+        due_date: "asc",
+      },
+    });
+  }
 }

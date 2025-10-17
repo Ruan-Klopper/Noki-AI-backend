@@ -14,6 +14,7 @@ import { ConversationsModule } from "./conversations/conversations.module";
 import { ChatMessagesModule } from "./chat-messages/chat-messages.module";
 import { ChatModule } from "./chat/chat.module";
 import { GoogleModule } from "./integrations/google/google.module";
+import { EmailModule } from "./email/email.module";
 import prismaConfig from "./config/prisma.config";
 import authConfig from "./config/auth.config";
 import aiConfig from "./config/ai.config";
@@ -37,6 +38,7 @@ import aiConfig from "./config/ai.config";
     ChatMessagesModule,
     ChatModule,
     GoogleModule,
+    EmailModule,
   ],
   providers: [PrismaService],
 })
