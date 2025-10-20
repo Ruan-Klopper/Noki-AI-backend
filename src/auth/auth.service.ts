@@ -3,6 +3,8 @@ import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "../database/prisma.service";
 import { LoginDto } from "./dtos/login.dto";
 import { RegisterDto } from "./dtos/register.dto";
+import { EmailService } from "../email/email.service";
+import { ProjectSource, TaskType, Priority } from "../common/interfaces";
 
 @Injectable()
 export class AuthService {
@@ -10,7 +12,8 @@ export class AuthService {
 
   constructor(
     private prisma: PrismaService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private emailService: EmailService
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -32,6 +35,17 @@ export class AuthService {
         password_hash: registerDto.password, // This should be hashed in the users service
       },
     });
+
+    // Onboarding: create default General project and Explore task
+    await this.createOnboardingProjectAndTask(user.id);
+
+    // Send welcome email (non-blocking)
+    this.emailService
+      .sendWelcomeEmail(
+        user.email,
+        `${user.firstname} ${user.lastname}`.trim() || user.email
+      )
+      .catch(() => {});
 
     // Generate JWT token
     const payload = { email: user.email, sub: user.id };
@@ -116,6 +130,17 @@ export class AuthService {
         });
         isNewUser = true;
         this.logger.log(`New user created: ${user.email}`);
+
+        // Onboarding for new Google users
+        await this.createOnboardingProjectAndTask(user.id);
+
+        // Send welcome email (non-blocking)
+        this.emailService
+          .sendWelcomeEmail(
+            user.email,
+            `${user.firstname} ${user.lastname}`.trim() || user.email
+          )
+          .catch(() => {});
       }
 
       // Generate JWT token
@@ -146,6 +171,36 @@ export class AuthService {
       this.logger.error(`Google OAuth error: ${error.message}`, error.stack);
       throw new UnauthorizedException("Google authentication failed");
     }
+  }
+
+  private async createOnboardingProjectAndTask(userId: string): Promise<void> {
+    const today = new Date();
+    const startOfDay = new Date(today);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const project = await this.prisma.project.create({
+      data: {
+        user_id: userId,
+        title: "General",
+        description: "Your default project in Noki AI",
+        source: ProjectSource.Personal,
+        color_hex: "#1d72a6",
+      },
+    });
+
+    await this.prisma.task.create({
+      data: {
+        user_id: userId,
+        project_id: project.id,
+        title: "Explore Noki AI",
+        description:
+          "Take a quick tour and explore what Noki AI can do for you.",
+        due_date: startOfDay,
+        is_all_day: true,
+        type: TaskType.Personal,
+        priority: Priority.Medium,
+      },
+    });
   }
 
   async validateGoogleUser(googleUser: any) {

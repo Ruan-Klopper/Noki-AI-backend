@@ -4,6 +4,7 @@ import {
   IsDateString,
   IsEnum,
   IsObject,
+  IsBoolean,
 } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { TaskType, Priority } from "../../common/interfaces";
@@ -46,6 +47,14 @@ export class CreateTaskDto {
   @IsOptional()
   @IsDateString()
   due_date?: string;
+
+  @ApiPropertyOptional({
+    description: "Whether this task is an all-day task",
+    example: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  is_all_day?: boolean;
 
   @ApiProperty({
     description: "Type of the task",
@@ -97,6 +106,14 @@ export class UpdateTaskDto {
   @IsOptional()
   @IsDateString()
   dueDate?: string;
+
+  @ApiPropertyOptional({
+    description: "Whether this task is an all-day task",
+    example: true,
+  })
+  @IsOptional()
+  @IsBoolean()
+  is_all_day?: boolean;
 
   @ApiPropertyOptional({
     description: "Status of the task",

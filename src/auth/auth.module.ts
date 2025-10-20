@@ -6,11 +6,13 @@ import { AuthService } from "./auth.service";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { GoogleStrategy } from "./strategies/google.strategy";
 import { PrismaModule } from "../database/prisma.module";
+import { EmailModule } from "../email/email.module";
 
 @Module({
   imports: [
     PrismaModule,
     PassportModule,
+    EmailModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || "default-secret-key",
       signOptions: { expiresIn: "24h" },

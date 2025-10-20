@@ -151,4 +151,29 @@ export class CanvasController {
   async syncData(@Param("userId") userId: string) {
     return this.canvasService.syncData(userId);
   }
+
+  @Post("delete-all/:userId")
+  @ApiOperation({
+    summary: "Delete all Canvas data for a user",
+    description:
+      "Deletes all Canvas-linked data for the specified user in the order: todos -> tasks -> projects -> auth_providers.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "All Canvas data deleted successfully",
+    schema: {
+      example: {
+        message: "All Canvas data deleted successfully",
+        deleted: {
+          todos: 10,
+          tasks: 25,
+          projects: 5,
+          auth_providers: 1,
+        },
+      },
+    },
+  })
+  async deleteAllCanvasData(@Param("userId") userId: string) {
+    return this.canvasService.deleteAllCanvasData(userId);
+  }
 }

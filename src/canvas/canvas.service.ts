@@ -30,6 +30,26 @@ export class CanvasService {
     private authProviderService: AuthProviderService
   ) {}
 
+  private readonly projectColors: string[] = [
+    "#1d72a6", // bg-noki-primary (Blue)
+    "#fc692b", // bg-noki-tertiary (Orange)
+    "#fb923c", // Tailwind Orange 400
+    "#c084fc", // Tailwind Purple 400
+    "#60a5fa", // Tailwind Blue 400
+    "#4ade80", // Tailwind Green 400
+    "#f472b6", // Tailwind Pink 400
+    "#facc15", // Tailwind Yellow 400
+    "#f87171", // Tailwind Red 400
+    "#2dd4bf", // Tailwind Teal 400
+    "#22d3ee", // Tailwind Cyan 400
+    "#818cf8", // Tailwind Indigo 400
+  ];
+
+  private getRandomProjectColor(): string {
+    const idx = Math.floor(Math.random() * this.projectColors.length);
+    return this.projectColors[idx];
+  }
+
   async setupCanvasLink(
     setupCanvasDto: SetupCanvasDto
   ): Promise<SetupCanvasResponseDto> {
@@ -238,6 +258,16 @@ export class CanvasService {
       let coursesLinked = 0;
 
       for (const course of courses) {
+        // Check if project already exists
+        const existingProject = await this.projectsService.findByExternalId(
+          userId,
+          course.id.toString(),
+          ProjectSource.Canvas
+        );
+
+        const selectedColor =
+          existingProject?.color_hex || this.getRandomProjectColor();
+
         const projectData = {
           user_id: userId,
           title: course.name,
@@ -245,7 +275,7 @@ export class CanvasService {
           source: ProjectSource.Canvas,
           external_id: course.id.toString(),
           course_code: course.course_code,
-          color_hex: course.course_color,
+          color_hex: selectedColor,
           time_zone: course.time_zone,
           start_at: course.start_at
             ? new Date(course.start_at).toISOString()
@@ -256,19 +286,15 @@ export class CanvasService {
           raw_canvas_data: course,
         };
 
-        // Check if project already exists
-        const existingProject = await this.projectsService.findByExternalId(
-          userId,
-          course.id.toString(),
-          ProjectSource.Canvas
-        );
-
         if (existingProject) {
-          // Update existing project
-          await this.projectsService.update(existingProject.id, projectData);
+          // Update existing project but preserve its existing color
+          await this.projectsService.update(existingProject.id, {
+            ...projectData,
+            color_hex: existingProject.color_hex || selectedColor,
+          } as any);
         } else {
-          // Create new project
-          await this.projectsService.create(projectData);
+          // Create new project with a random color
+          await this.projectsService.create(projectData as any);
         }
         coursesLinked++;
       }
@@ -402,5 +428,73 @@ export class CanvasService {
     } else {
       return daysUntilDue <= 14 ? Priority.Medium : Priority.Low;
     }
+  }
+
+  async deleteAllCanvasData(userId: string): Promise<{
+    message: string;
+    deleted: {
+      todos: number;
+      tasks: number;
+      projects: number;
+      auth_providers: number;
+    };
+  }> {
+    // Delete in order: todos -> tasks -> projects -> auth_providers
+    return await this.prisma.$transaction(async (tx) => {
+      // Find all Canvas projects for user to scope task/todo deletion
+      const canvasProjects = await tx.project.findMany({
+        where: { user_id: userId, source: ProjectSource.Canvas as any },
+        select: { id: true },
+      });
+      const projectIds = canvasProjects.map((p) => p.id);
+
+      // Todos belonging to tasks in those projects or directly by user
+      const deleteTodos = await tx.todo.deleteMany({
+        where: {
+          OR: [
+            { user_id: userId },
+            {
+              task: {
+                project_id: {
+                  in: projectIds.length ? projectIds : ["__none__"],
+                },
+              },
+            },
+          ],
+        },
+      });
+
+      // Tasks within Canvas projects or Canvas-typed tasks by user
+      const deleteTasks = await tx.task.deleteMany({
+        where: {
+          OR: [
+            {
+              project_id: { in: projectIds.length ? projectIds : ["__none__"] },
+            },
+            { user_id: userId, type: TaskType.Canvas as any },
+          ],
+        },
+      });
+
+      // Canvas projects
+      const deleteProjects = await tx.project.deleteMany({
+        where: { user_id: userId, source: ProjectSource.Canvas as any },
+      });
+
+      // Canvas auth provider(s)
+      const deleteProviders = await tx.authProvider.deleteMany({
+        where: { user_id: userId, type: AuthProviderType.Canvas as any },
+      });
+
+      return {
+        message: "All Canvas data deleted successfully",
+        deleted: {
+          todos: deleteTodos.count,
+          tasks: deleteTasks.count,
+          projects: deleteProjects.count,
+          auth_providers: deleteProviders.count,
+        },
+      };
+    });
   }
 }
