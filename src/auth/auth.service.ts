@@ -11,6 +11,7 @@ import { RegisterDto } from "./dtos/register.dto";
 import { EmailService } from "../email/email.service";
 import { ProjectSource, TaskType, Priority } from "../common/interfaces";
 import axios from "axios";
+import * as bcrypt from "bcryptjs";
 
 @Injectable()
 export class AuthService {
@@ -32,13 +33,16 @@ export class AuthService {
       throw new UnauthorizedException("User already exists");
     }
 
+    // Hash password
+    const password_hash = await bcrypt.hash(registerDto.password, 10);
+
     // Create user
     const user = await this.prisma.user.create({
       data: {
         firstname: registerDto.firstname,
         lastname: registerDto.lastname,
         email: registerDto.email,
-        password_hash: registerDto.password, // This should be hashed in the users service
+        password_hash,
       },
     });
 
@@ -78,8 +82,12 @@ export class AuthService {
       throw new UnauthorizedException("Invalid credentials");
     }
 
-    // Simple password check (in production, use proper password hashing)
-    if (user.password_hash !== loginDto.password) {
+    // Validate password using bcrypt
+    const isPasswordValid = await bcrypt.compare(
+      loginDto.password,
+      user.password_hash
+    );
+    if (!isPasswordValid) {
       throw new UnauthorizedException("Invalid credentials");
     }
 
