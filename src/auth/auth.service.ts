@@ -1,10 +1,16 @@
-import { Injectable, UnauthorizedException, Logger } from "@nestjs/common";
+import {
+  Injectable,
+  UnauthorizedException,
+  Logger,
+  BadRequestException,
+} from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "../database/prisma.service";
 import { LoginDto } from "./dtos/login.dto";
 import { RegisterDto } from "./dtos/register.dto";
 import { EmailService } from "../email/email.service";
 import { ProjectSource, TaskType, Priority } from "../common/interfaces";
+import axios from "axios";
 
 @Injectable()
 export class AuthService {
@@ -173,6 +179,60 @@ export class AuthService {
     }
   }
 
+  async exchangeGoogleIdToken(idToken: string) {
+    if (!idToken || typeof idToken !== "string") {
+      throw new BadRequestException("Missing or invalid Google ID token");
+    }
+
+    try {
+      // Verify the ID token with Google tokeninfo endpoint
+      const tokenInfoUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(
+        idToken
+      )}`;
+      const { data } = await axios.get(tokenInfoUrl, { timeout: 8000 });
+
+      /* Expected fields from tokeninfo:
+         - sub: Google user ID
+         - email
+         - email_verified ("true" | "false")
+         - given_name, family_name, name, picture
+      */
+      const googleUser = {
+        googleId: data.sub,
+        email: data.email,
+        firstname: data.given_name || "",
+        lastname: data.family_name || "",
+        name: data.name || "",
+        picture: data.picture || "",
+        accessToken: "", // not applicable for ID token exchange
+        refreshToken: "", // not applicable
+        emailVerified: String(data.email_verified) === "true",
+      };
+
+      if (!googleUser.email) {
+        throw new UnauthorizedException("Invalid Google token: email missing");
+      }
+
+      return await this.googleAuth(googleUser);
+    } catch (error: any) {
+      this.logger.error(
+        `Google ID token verification failed: ${error?.message || error}`
+      );
+      if (error?.response?.data?.error_description) {
+        throw new UnauthorizedException(
+          `Invalid Google token: ${error.response.data.error_description}`
+        );
+      }
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      }
+      throw new UnauthorizedException("Invalid Google token");
+    }
+  }
+
   private async createOnboardingProjectAndTask(userId: string): Promise<void> {
     const today = new Date();
     const startOfDay = new Date(today);
@@ -196,7 +256,6 @@ export class AuthService {
         description:
           "Take a quick tour and explore what Noki AI can do for you.",
         due_date: startOfDay,
-        is_all_day: true,
         type: TaskType.Personal,
         priority: Priority.Medium,
       },

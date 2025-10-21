@@ -308,10 +308,7 @@ export class AuthController {
   async googleTokenExchange(
     @Body() body: { idToken: string }
   ): Promise<GoogleAuthResponseDto> {
-    // This would require additional Google token verification
-    // For now, we'll return a mock response
-    throw new Error(
-      "Google token exchange not implemented yet. Use the OAuth flow instead."
-    );
+    const { idToken } = body || ({} as any);
+    return this.authService.exchangeGoogleIdToken(idToken);
   }
 }
