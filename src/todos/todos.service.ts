@@ -259,4 +259,145 @@ export class TodosService {
 
     return createdTodos;
   }
+
+  async createByUser(createTodoDto: any, userId: string) {
+    // First verify the task exists and belongs to the user
+    const task = await this.prisma.task.findUnique({
+      where: { id: createTodoDto.task_id },
+    });
+
+    if (!task) {
+      throw new Error("Task not found");
+    }
+
+    if (task.user_id !== userId) {
+      throw new Error("You can only create todos for your own tasks");
+    }
+
+    return this.prisma.todo.create({
+      data: createTodoDto,
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            email: true,
+          },
+        },
+        task: {
+          include: {
+            project: true,
+          },
+        },
+      },
+    });
+  }
+
+  async updateManyByUser(
+    todoIds: string[],
+    userId: string,
+    updateTodoDto: any
+  ) {
+    // First verify all todos exist and belong to the user
+    const todos = await this.prisma.todo.findMany({
+      where: {
+        id: {
+          in: todoIds,
+        },
+      },
+    });
+
+    if (todos.length === 0) {
+      throw new Error("No todos found");
+    }
+
+    if (todos.length !== todoIds.length) {
+      throw new Error("Some todos not found");
+    }
+
+    // Check if all todos belong to the user
+    const allBelongToUser = todos.every((todo) => todo.user_id === userId);
+    if (!allBelongToUser) {
+      throw new Error("You can only update your own todos");
+    }
+
+    // Update all todos
+    await this.prisma.todo.updateMany({
+      where: {
+        id: {
+          in: todoIds,
+        },
+      },
+      data: updateTodoDto,
+    });
+
+    // Fetch and return the updated todos with relations
+    const updatedTodos = await this.prisma.todo.findMany({
+      where: {
+        id: {
+          in: todoIds,
+        },
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            email: true,
+          },
+        },
+        task: {
+          include: {
+            project: true,
+          },
+        },
+      },
+    });
+
+    return {
+      updated: updatedTodos.length,
+      todos: updatedTodos,
+    };
+  }
+
+  async removeManyByUser(todoIds: string[], userId: string) {
+    // First verify all todos exist and belong to the user
+    const todos = await this.prisma.todo.findMany({
+      where: {
+        id: {
+          in: todoIds,
+        },
+      },
+    });
+
+    if (todos.length === 0) {
+      throw new Error("No todos found");
+    }
+
+    if (todos.length !== todoIds.length) {
+      throw new Error("Some todos not found");
+    }
+
+    // Check if all todos belong to the user
+    const allBelongToUser = todos.every((todo) => todo.user_id === userId);
+    if (!allBelongToUser) {
+      throw new Error("You can only delete your own todos");
+    }
+
+    // Delete all todos
+    const result = await this.prisma.todo.deleteMany({
+      where: {
+        id: {
+          in: todoIds,
+        },
+      },
+    });
+
+    return {
+      deleted: result.count,
+      todoIds,
+    };
+  }
 }

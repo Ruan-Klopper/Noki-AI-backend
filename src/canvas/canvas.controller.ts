@@ -15,7 +15,7 @@ import { LinkCanvasDataResponseDto } from "./dtos/link-canvas-data-response.dto"
 @Controller("canvas")
 @UseGuards(JwtAuthGuard)
 @ApiTags("Canvas Integration")
-@ApiBearerAuth()
+@ApiBearerAuth("JWT-auth")
 export class CanvasController {
   constructor(private readonly canvasService: CanvasService) {}
 

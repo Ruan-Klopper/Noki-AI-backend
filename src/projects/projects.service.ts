@@ -108,4 +108,59 @@ export class ProjectsService {
       where: { id },
     });
   }
+
+  async updateByUser(
+    id: string,
+    userId: string,
+    updateProjectDto: UpdateProjectDto
+  ) {
+    // First check if project exists and belongs to user
+    const project = await this.prisma.project.findUnique({
+      where: { id },
+    });
+
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    if (project.user_id !== userId) {
+      throw new Error("You can only update your own projects");
+    }
+
+    return this.prisma.project.update({
+      where: { id },
+      data: updateProjectDto,
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            email: true,
+          },
+        },
+        tasks: true,
+        resources: true,
+      },
+    });
+  }
+
+  async removeByUser(id: string, userId: string) {
+    // First check if project exists and belongs to user
+    const project = await this.prisma.project.findUnique({
+      where: { id },
+    });
+
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    if (project.user_id !== userId) {
+      throw new Error("You can only delete your own projects");
+    }
+
+    return this.prisma.project.delete({
+      where: { id },
+    });
+  }
 }

@@ -200,4 +200,56 @@ export class MiscService {
       },
     };
   }
+
+  /**
+   * Gets all projects, tasks, and todos for a user in a hierarchical structure
+   * Projects contain tasks, and tasks contain todos
+   *
+   * @param userId - The ID of the user (from JWT token)
+   * @returns Promise<object> - All user data in hierarchical structure
+   */
+  async getAllUserData(userId: string): Promise<{
+    resultForUserId: string;
+    data: {
+      projects: any[];
+    };
+  }> {
+    // Verify the user exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    // Fetch all projects with nested tasks and todos
+    const projects = await this.prisma.project.findMany({
+      where: { user_id: userId },
+      include: {
+        tasks: {
+          include: {
+            todos: {
+              orderBy: [
+                { priority: "desc" },
+                { due_date: "asc" },
+                { created_at: "desc" },
+              ],
+            },
+          },
+          orderBy: [{ due_date: "asc" }, { created_at: "desc" }],
+        },
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+    });
+
+    return {
+      resultForUserId: userId,
+      data: {
+        projects,
+      },
+    };
+  }
 }

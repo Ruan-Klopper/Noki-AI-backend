@@ -34,6 +34,7 @@ async function bootstrap() {
     .addTag("Conversations", "Conversation management operations")
     .addTag("Notifications", "Notification management")
     .addTag("Auth Provider", "External authentication providers")
+    .addTag("Misc", "Miscellaneous utility operations")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
