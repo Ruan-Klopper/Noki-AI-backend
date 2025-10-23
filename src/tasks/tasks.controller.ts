@@ -203,4 +203,30 @@ export class TasksController {
   async deleteTask(@Param("id") id: string, @CurrentUser() currentUser: any) {
     return this.tasksService.removeByUser(id, currentUser.userId);
   }
+
+  @Put("complete_task/:id")
+  @ApiOperation({
+    summary: "Mark a task as complete (user from JWT token)",
+    description:
+      "Mark a task as submitted/complete by setting is_submitted to true. User ID is verified from the JWT token.",
+  })
+  @ApiParam({ name: "id", description: "Task ID" })
+  @ApiResponse({
+    status: 200,
+    description: "Task marked as complete successfully",
+    type: ApiResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: "Task not found",
+    type: ApiErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - You can only complete your own tasks",
+  })
+  @ApiResponse({ status: 401, description: "Unauthorized - Invalid token" })
+  async completeTask(@Param("id") id: string, @CurrentUser() currentUser: any) {
+    return this.tasksService.completeTask(id, currentUser.userId);
+  }
 }

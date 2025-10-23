@@ -290,4 +290,30 @@ export class TodosController {
   ) {
     return this.todosService.removeManyByUser(body.todoIds, currentUser.userId);
   }
+
+  @Put("complete_todo/:id")
+  @ApiOperation({
+    summary: "Mark a todo as complete (user from JWT token)",
+    description:
+      "Mark a todo as submitted/complete by setting is_submitted to true. User ID is verified from the JWT token.",
+  })
+  @ApiParam({ name: "id", description: "Todo ID" })
+  @ApiResponse({
+    status: 200,
+    description: "Todo marked as complete successfully",
+    type: ApiResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: "Todo not found",
+    type: ApiErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - You can only complete your own todos",
+  })
+  @ApiResponse({ status: 401, description: "Unauthorized - Invalid token" })
+  async completeTodo(@Param("id") id: string, @CurrentUser() currentUser: any) {
+    return this.todosService.completeTodo(id, currentUser.userId);
+  }
 }

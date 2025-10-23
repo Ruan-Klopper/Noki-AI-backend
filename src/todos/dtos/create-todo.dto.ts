@@ -1,4 +1,10 @@
-import { IsString, IsOptional, IsDateString, IsEnum } from "class-validator";
+import {
+  IsString,
+  IsOptional,
+  IsDateString,
+  IsEnum,
+  IsBoolean,
+} from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Priority } from "../../common/interfaces";
 
@@ -48,6 +54,22 @@ export class CreateTodoDto {
   @IsOptional()
   @IsDateString()
   due_date?: string;
+
+  @ApiPropertyOptional({
+    description: "Whether this todo is an all-day todo",
+    example: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  is_all_day?: boolean;
+
+  @ApiPropertyOptional({
+    description: "Whether this todo has been submitted",
+    example: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  is_submitted?: boolean;
 }
 
 export class UpdateTodoDto {
@@ -83,4 +105,20 @@ export class UpdateTodoDto {
   @IsOptional()
   @IsDateString()
   due_date?: string;
+
+  @ApiPropertyOptional({
+    description: "Whether this todo is an all-day todo",
+    example: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  is_all_day?: boolean;
+
+  @ApiPropertyOptional({
+    description: "Whether this todo has been submitted",
+    example: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  is_submitted?: boolean;
 }

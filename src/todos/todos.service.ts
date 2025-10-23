@@ -400,4 +400,39 @@ export class TodosService {
       todoIds,
     };
   }
+
+  async completeTodo(id: string, userId: string) {
+    // First check if todo exists and belongs to user
+    const todo = await this.prisma.todo.findUnique({
+      where: { id },
+    });
+
+    if (!todo) {
+      throw new Error("Todo not found");
+    }
+
+    if (todo.user_id !== userId) {
+      throw new Error("You can only complete your own todos");
+    }
+
+    return this.prisma.todo.update({
+      where: { id },
+      data: { is_submitted: true },
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            email: true,
+          },
+        },
+        task: {
+          include: {
+            project: true,
+          },
+        },
+      },
+    });
+  }
 }
