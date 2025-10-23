@@ -3,14 +3,6 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class SetupCanvasDto {
   @ApiProperty({
-    description: "User ID to link the Canvas account to",
-    example: "123e4567-e89b-12d3-a456-426614174000",
-  })
-  @IsString()
-  @IsNotEmpty()
-  user_id: string;
-
-  @ApiProperty({
     description: "Canvas institutional URL (base URL without /api/v1)",
     example: "https://uxi.instructure.com",
   })

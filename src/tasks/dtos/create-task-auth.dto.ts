@@ -53,6 +53,14 @@ export class CreateTaskAuthDto {
   @IsBoolean()
   is_all_day?: boolean;
 
+  @ApiPropertyOptional({
+    description: "Whether this task has been submitted",
+    example: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  is_submitted?: boolean;
+
   @ApiProperty({
     description: "Type of the task",
     enum: TaskType,

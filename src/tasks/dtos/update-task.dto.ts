@@ -4,6 +4,7 @@ import {
   IsDateString,
   IsEnum,
   IsObject,
+  IsBoolean,
 } from "class-validator";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Priority } from "../../common/interfaces";
@@ -32,6 +33,14 @@ export class UpdateTaskDto {
   @IsOptional()
   @IsDateString()
   due_date?: string;
+
+  @ApiPropertyOptional({
+    description: "Whether this task has been submitted",
+    example: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  is_submitted?: boolean;
 
   @ApiPropertyOptional({
     description: "Priority level of the task",

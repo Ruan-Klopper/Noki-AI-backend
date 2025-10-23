@@ -51,9 +51,10 @@ export class CanvasService {
   }
 
   async setupCanvasLink(
+    userId: string,
     setupCanvasDto: SetupCanvasDto
   ): Promise<SetupCanvasResponseDto> {
-    const { user_id, canvas_institutional_url, canvas_token } = setupCanvasDto;
+    const { canvas_institutional_url, canvas_token } = setupCanvasDto;
 
     try {
       // Step 1: Test the Canvas API connection and get user details
@@ -64,7 +65,7 @@ export class CanvasService {
 
       // Step 2: Save auth provider details
       const authProviderData = {
-        user_id,
+        user_id: userId,
         type: AuthProviderType.Canvas,
         base_url: canvas_institutional_url,
         access_token: canvas_token,
@@ -77,7 +78,7 @@ export class CanvasService {
 
       // Check if user already has a Canvas auth provider
       const existingCanvasProvider =
-        await this.authProviderService.findByUser(user_id);
+        await this.authProviderService.findByUser(userId);
       const canvasProvider = existingCanvasProvider.find(
         (provider) => provider.type === AuthProviderType.Canvas
       );
@@ -173,14 +174,10 @@ export class CanvasService {
     return { message: "Canvas data sync completed" };
   }
 
-  async linkCanvasData(
-    linkCanvasDataDto: LinkCanvasDataDto
-  ): Promise<LinkCanvasDataResponseDto> {
-    const { user_id } = linkCanvasDataDto;
-
+  async linkCanvasData(userId: string): Promise<LinkCanvasDataResponseDto> {
     try {
       // Step 1: Get Canvas auth provider for the user
-      const canvasProvider = await this.getCanvasAuthProvider(user_id);
+      const canvasProvider = await this.getCanvasAuthProvider(userId);
       if (!canvasProvider) {
         throw new BadRequestException(
           "Canvas account not found. Please setup Canvas integration first."
@@ -189,13 +186,13 @@ export class CanvasService {
 
       // Step 2: Fetch Canvas courses and link them to Projects
       const coursesLinked = await this.linkCanvasCourses(
-        user_id,
+        userId,
         canvasProvider
       );
 
       // Step 3: Fetch Canvas assignments and link them to Tasks
       const assignmentsLinked = await this.linkCanvasAssignments(
-        user_id,
+        userId,
         canvasProvider
       );
 
@@ -371,6 +368,8 @@ export class CanvasService {
                 assignment.points_possible,
                 assignment.due_at
               ),
+              // is submitted from canvas the field is has_submitted_submissions
+              is_submitted: assignment.has_submitted_submissions,
               raw_canvas_data: assignment,
             };
 

@@ -1,12 +1,3 @@
-import { IsString, IsNotEmpty } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
-
-export class LinkCanvasDataDto {
-  @ApiProperty({
-    description: "User ID to link Canvas data for",
-    example: "123e4567-e89b-12d3-a456-426614174000",
-  })
-  @IsString()
-  @IsNotEmpty()
-  user_id: string;
-}
+// This DTO is no longer needed as user_id comes from JWT token
+// Keeping file for backward compatibility, but it's now empty
+export class LinkCanvasDataDto {}

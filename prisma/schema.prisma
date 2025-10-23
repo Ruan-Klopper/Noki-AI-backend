@@ -130,6 +130,7 @@ model Task {
   description     String?
   due_date        DateTime?
   is_all_day      Boolean   @default(false)
+  is_submitted    Boolean   @default(false)
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
   type            TaskType

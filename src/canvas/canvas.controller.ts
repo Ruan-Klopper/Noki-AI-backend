@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards, Param, Body } from "@nestjs/common";
+import { Controller, Get, Post, UseGuards, Body, Delete } from "@nestjs/common";
 import {
   ApiTags,
   ApiOperation,
@@ -7,9 +7,9 @@ import {
 } from "@nestjs/swagger";
 import { CanvasService } from "./canvas.service";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
+import { CurrentUser } from "../common/decorators/current-user.decorator";
 import { SetupCanvasDto } from "./dtos/setup-canvas.dto";
 import { SetupCanvasResponseDto } from "./dtos/setup-canvas-response.dto";
-import { LinkCanvasDataDto } from "./dtos/link-canvas-data.dto";
 import { LinkCanvasDataResponseDto } from "./dtos/link-canvas-data-response.dto";
 
 @Controller("canvas")
@@ -23,7 +23,7 @@ export class CanvasController {
   @ApiOperation({
     summary: "Setup Canvas Integration",
     description:
-      "Link a Canvas account by providing institutional URL and bearer token. This endpoint will test the connection and save the auth details.",
+      "Link a Canvas account by providing institutional URL and bearer token. This endpoint will test the connection and save the auth details. User ID is automatically extracted from the JWT token.",
   })
   @ApiResponse({
     status: 201,
@@ -42,6 +42,10 @@ export class CanvasController {
     },
   })
   @ApiResponse({
+    status: 401,
+    description: "Unauthorized - Invalid or missing token",
+  })
+  @ApiResponse({
     status: 500,
     description: "Internal server error",
     schema: {
@@ -53,16 +57,20 @@ export class CanvasController {
     },
   })
   async setupCanvasLink(
-    @Body() setupCanvasDto: SetupCanvasDto
+    @Body() setupCanvasDto: SetupCanvasDto,
+    @CurrentUser() currentUser: any
   ): Promise<SetupCanvasResponseDto> {
-    return this.canvasService.setupCanvasLink(setupCanvasDto);
+    return this.canvasService.setupCanvasLink(
+      currentUser.userId,
+      setupCanvasDto
+    );
   }
 
   @Post("link-data")
   @ApiOperation({
     summary: "Link Canvas Data to Noki",
     description:
-      "Sync Canvas courses to Noki Projects and Canvas assignments to Noki Tasks. This endpoint fetches all active Canvas courses and their assignments, then creates corresponding Projects and Tasks in Noki.",
+      "Sync Canvas courses to Noki Projects and Canvas assignments to Noki Tasks. This endpoint fetches all active Canvas courses and their assignments, then creates corresponding Projects and Tasks in Noki. User ID is automatically extracted from the JWT token.",
   })
   @ApiResponse({
     status: 201,
@@ -82,6 +90,10 @@ export class CanvasController {
     },
   })
   @ApiResponse({
+    status: 401,
+    description: "Unauthorized - Invalid or missing token",
+  })
+  @ApiResponse({
     status: 500,
     description: "Internal server error",
     schema: {
@@ -93,9 +105,9 @@ export class CanvasController {
     },
   })
   async linkCanvasData(
-    @Body() linkCanvasDataDto: LinkCanvasDataDto
+    @CurrentUser() currentUser: any
   ): Promise<LinkCanvasDataResponseDto> {
-    return this.canvasService.linkCanvasData(linkCanvasDataDto);
+    return this.canvasService.linkCanvasData(currentUser.userId);
   }
 
   @Get("projects")
@@ -134,10 +146,11 @@ export class CanvasController {
     return this.canvasService.getAssignments();
   }
 
-  @Post("sync/:userId")
+  @Post("sync")
   @ApiOperation({
     summary: "Sync Canvas Data",
-    description: "Synchronize Canvas data for a specific user",
+    description:
+      "Synchronize Canvas data for the authenticated user. User ID is automatically extracted from the JWT token.",
   })
   @ApiResponse({
     status: 200,
@@ -148,15 +161,19 @@ export class CanvasController {
       },
     },
   })
-  async syncData(@Param("userId") userId: string) {
-    return this.canvasService.syncData(userId);
+  @ApiResponse({
+    status: 401,
+    description: "Unauthorized - Invalid or missing token",
+  })
+  async syncData(@CurrentUser() currentUser: any) {
+    return this.canvasService.syncData(currentUser.userId);
   }
 
-  @Post("delete-all/:userId")
+  @Delete("delete-all")
   @ApiOperation({
-    summary: "Delete all Canvas data for a user",
+    summary: "Delete all Canvas data",
     description:
-      "Deletes all Canvas-linked data for the specified user in the order: todos -> tasks -> projects -> auth_providers.",
+      "Deletes all Canvas-linked data for the authenticated user in the order: todos -> tasks -> projects -> auth_providers. User ID is automatically extracted from the JWT token.",
   })
   @ApiResponse({
     status: 200,
@@ -173,7 +190,11 @@ export class CanvasController {
       },
     },
   })
-  async deleteAllCanvasData(@Param("userId") userId: string) {
-    return this.canvasService.deleteAllCanvasData(userId);
+  @ApiResponse({
+    status: 401,
+    description: "Unauthorized - Invalid or missing token",
+  })
+  async deleteAllCanvasData(@CurrentUser() currentUser: any) {
+    return this.canvasService.deleteAllCanvasData(currentUser.userId);
   }
 }
