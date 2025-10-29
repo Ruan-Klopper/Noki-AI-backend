@@ -23,7 +23,7 @@ import { ChatMessagesService } from "./chat-messages.service";
 import { CreateChatMessageDto } from "./dtos/create-chat-message.dto";
 import { UpdateChatMessageDto } from "./dtos/update-chat-message.dto";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
-import { MessageRole, ChatStage } from "../common/enums/prisma-enums";
+import { MessageType } from "../common/enums/prisma-enums";
 import { ApiResponseDto, ApiErrorResponseDto } from "../common/interfaces";
 
 @ApiTags("Chat Messages")
@@ -169,7 +169,7 @@ export class ChatMessagesController {
       properties: {
         stage: {
           type: "string",
-          enum: Object.values(ChatStage),
+          enum: Object.values(MessageType),
           description: "New stage for the chat message",
         },
       },
@@ -179,18 +179,22 @@ export class ChatMessagesController {
   updateStage(
     @Request() req,
     @Param("id") id: string,
-    @Body("stage") stage: ChatStage
+    @Body("stage") stage: MessageType
   ) {
-    return this.chatMessagesService.updateStage(id, req.user.id, stage);
+    // DEPRECATED: updateStage method removed from service
+    // Messages are immutable - use type field instead
+    throw new Error(
+      "updateStage is deprecated - messages cannot change type after creation"
+    );
   }
 
-  @Get("conversation/:conversationId/role/:role")
-  @ApiOperation({ summary: "Get chat messages by conversation ID and role" })
+  @Get("conversation/:conversationId/type/:type")
+  @ApiOperation({ summary: "Get chat messages by conversation ID and type" })
   @ApiParam({ name: "conversationId", description: "Conversation ID" })
   @ApiParam({
-    name: "role",
-    description: "Message role",
-    enum: MessageRole,
+    name: "type",
+    description: "Message type (Prompt or Response)",
+    enum: MessageType,
   })
   @ApiResponse({
     status: 200,
@@ -202,15 +206,15 @@ export class ChatMessagesController {
     description: "Conversation not found",
     type: ApiErrorResponseDto,
   })
-  findByRole(
+  findByType(
     @Request() req,
     @Param("conversationId") conversationId: string,
-    @Param("role") role: MessageRole
+    @Param("type") type: MessageType
   ) {
-    return this.chatMessagesService.findByRole(
+    return this.chatMessagesService.findByType(
       conversationId,
       req.user.id,
-      role
+      type
     );
   }
 }

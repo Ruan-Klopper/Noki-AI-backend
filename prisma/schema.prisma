@@ -11,6 +11,9 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // Railway SSL configuration
+  // Uses direct connection for migrations to avoid SSL issues
+  directUrl = env("DATABASE_URL")
 }
 
 enum AuthProviderType {
@@ -55,6 +58,11 @@ enum ChatStage {
   Intent
   Response
   Complete
+}
+
+enum MessageType {
+  Prompt
+  Response
 }
 
 model User {
@@ -113,10 +121,9 @@ model Project {
   updated_at      DateTime      @updatedAt
 
   // Relations
-  user          User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  tasks         Task[]
-  resources     Resource[]
-  chat_messages ChatMessage[]
+  user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  tasks     Task[]
+  resources Resource[]
 
   @@unique([user_id, external_id, source])
   @@map("projects")
@@ -138,11 +145,10 @@ model Task {
   raw_canvas_data Json?
 
   // Relations
-  user          User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  project       Project?      @relation(fields: [project_id], references: [id], onDelete: SetNull)
-  todos         Todo[]
-  resources     Resource[]
-  chat_messages ChatMessage[]
+  user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  project   Project?   @relation(fields: [project_id], references: [id], onDelete: SetNull)
+  todos     Todo[]
+  resources Resource[]
 
   @@map("tasks")
 }
@@ -212,27 +218,30 @@ model ChatMessage {
   id              String      @id @default(uuid())
   conversation_id String
   user_id         String?
-  role            MessageRole
-  stage           ChatStage   @default(Thinking)
-  content         String
-  metadata        Json?
-  blocks          Json? // Structured UI blocks from AI
-  intent          Json? // AI intent object if present
-  token_usage     Json? // Token stats
-  project_id      String? // Optional contextual link
-  task_id         String? // Optional contextual link
-  embedding_id    String? // For vector DB reference (if embedded)
-  created_at      DateTime    @default(now())
+  type            MessageType // Prompt or Response
+  
+  // For Prompt type
+  prompt   String? // User's prompt/question
+  projects Json? // Array of project context
+  tasks    Json? // Array of task context
+  todos    Json? // Array of todo context
+  
+  // For Response type
+  text        String? // AI's text response
+  blocks      Json? // Structured UI blocks from AI
+  token_usage Json? // Token usage stats from AI
+  
+  // Common fields
+  metadata     Json? // Additional metadata
+  embedding_id String? // For vector DB reference (if embedded)
+  created_at   DateTime @default(now())
 
   // Relations
   conversation Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
   user         User?        @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  project      Project?     @relation(fields: [project_id], references: [id], onDelete: SetNull)
-  task         Task?        @relation(fields: [task_id], references: [id], onDelete: SetNull)
 
   @@index([conversation_id])
   @@index([user_id])
-  @@index([project_id])
-  @@index([task_id])
+  @@index([type])
   @@map("chat_messages")
 }

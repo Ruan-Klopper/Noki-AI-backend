@@ -94,13 +94,14 @@ export class ChatService {
       });
     }
 
-    // Store user message
+    // Store user message (DEPRECATED: This service is deprecated - use /ai/chat instead)
     const userMessage = await this.chatMessagesService.create(userId, {
       conversation_id: conversation.id,
-      role: MessageRole.User,
-      content: message,
-      project_id: projectId,
-      task_id: taskId,
+      type: "Prompt" as any,
+      prompt: message,
+      projects: [],
+      tasks: [],
+      todos: [],
     });
 
     // Prepare context data for AI
@@ -120,93 +121,38 @@ export class ChatService {
       stage: "thinking",
     };
 
-    // Send to AI server
-    console.log(`🚀 Sending chat message to AI server:`, {
-      user_id: userId,
+    // DEPRECATED: Old AI service methods have been removed
+    // The new simplified AI endpoint is at /ai/chat
+    // This chat service is now only for managing conversation/message records in the database
+
+    // TODO: Update this to use the new simplified AI endpoint if needed
+    // For now, return a placeholder response
+    const aiResponse: AIResponse = {
+      stage: "response",
       conversation_id: conversation.id,
-      prompt: message,
-      projects_count: contextData.projects?.length || 0,
-      tasks_count: contextData.tasks?.length || 0,
-      stage: "thinking",
-    });
+      text: "Chat service deprecated - please use /ai/chat endpoint directly",
+      timestamp: new Date().toISOString(),
+    };
 
-    const aiResponse: AIResponse = await this.aiService.sendChatMessage({
-      user_id: userId,
-      conversation_id: conversation.id,
-      prompt: message,
-      projects: contextData.projects || [],
-      tasks: contextData.tasks || [],
-      stage: "thinking",
-      metadata: {
-        project_id: projectId,
-        task_id: taskId,
-        context_source: contextSource,
-      },
-    });
-
-    console.log(`📥 AI server response received:`, {
-      stage: aiResponse.stage,
-      conversation_id: aiResponse.conversation_id,
-      has_intent: !!aiResponse.intent,
-      intent_type: aiResponse.intent?.type,
-      text: aiResponse.text,
-    });
-
-    // Store AI response
+    // Store AI response placeholder
     const aiMessage = await this.chatMessagesService.create(userId, {
       conversation_id: conversation.id,
-      role: MessageRole.Assistant,
-      stage: aiResponse.stage as ChatStage,
-      content: aiResponse.text || "",
+      type: "Response" as any,
+      text: aiResponse.text || "",
+      blocks: null,
+      token_usage: null,
       metadata: {
         timestamp: aiResponse.timestamp,
-        stage: aiResponse.stage,
+        deprecated: true,
+        note: "Please use /ai/chat endpoint",
       },
-      blocks: aiResponse.blocks,
-      intent: aiResponse.intent,
-      token_usage: aiResponse.token_usage,
-      project_id: projectId,
-      task_id: taskId,
     });
-
-    // Update conversation with AI engine ID if provided
-    if (
-      aiResponse.conversation_id &&
-      aiResponse.conversation_id !== conversation.id
-    ) {
-      await this.conversationsService.updateAiEngineId(
-        conversation.id,
-        userId,
-        aiResponse.conversation_id
-      );
-    }
-
-    // Check if AI needs backend context and handle intent automatically
-    const requiresContext = aiResponse.intent && aiResponse.stage === "intent";
-
-    if (requiresContext) {
-      console.log(`🤖 AI response contains intent, automatically handling...`);
-      try {
-        // Automatically handle the intent
-        const contextResponse = await this.aiService.handleIntentResponse(
-          aiResponse as any,
-          userId
-        );
-        console.log(`✅ Intent handled automatically:`, contextResponse);
-      } catch (error) {
-        console.error(`❌ Error handling intent automatically:`, error.message);
-        this.logger.error(
-          `Failed to handle intent automatically:`,
-          error.message
-        );
-      }
-    }
 
     return {
       conversation,
       message: aiMessage,
       aiResponse,
-      requiresContext,
+      requiresContext: false,
     };
   }
 
@@ -237,20 +183,18 @@ export class ChatService {
       timestamp: new Date().toISOString(),
     };
 
-    // Store AI response
+    // Store AI response (DEPRECATED)
     const aiMessage = await this.chatMessagesService.create(userId, {
       conversation_id: conversation.id,
-      role: MessageRole.Assistant,
-      stage: aiResponse.stage as ChatStage,
-      content: aiResponse.text || "",
+      type: "Response" as any,
+      text: aiResponse.text || "",
+      blocks: aiResponse.blocks,
+      token_usage: aiResponse.token_usage,
       metadata: {
         timestamp: aiResponse.timestamp,
-        stage: aiResponse.stage,
         context_provided: true,
+        deprecated: true,
       },
-      blocks: aiResponse.blocks,
-      intent: aiResponse.intent,
-      token_usage: aiResponse.token_usage,
     });
 
     return {
@@ -309,11 +253,15 @@ export class ChatService {
   ) {
     const message = await this.chatMessagesService.findOne(messageId, userId);
 
+    // Get content from new schema (either prompt or text depending on type)
+    const messageContent =
+      message.type === "Prompt" ? message.prompt : message.text;
+
     const embedInput = {
       user_id: userId,
       conversation_id: conversationId,
       message_id: messageId,
-      message_content: message.content,
+      message_content: messageContent,
     };
 
     // TODO: Implement embedMessage in AI service

@@ -1,57 +1,36 @@
-import {
-  IsString,
-  IsOptional,
-  IsUUID,
-  IsEnum,
-  IsObject,
-} from "class-validator";
+import { IsString, IsOptional, IsObject, IsArray } from "class-validator";
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { ChatStage } from "../../common/enums/prisma-enums";
 
 export class UpdateChatMessageDto {
-  @ApiPropertyOptional({
-    description: "The current stage of the chat",
-    enum: ChatStage,
-    example: ChatStage.Response,
-  })
-  @IsOptional()
-  @IsEnum(ChatStage)
-  stage?: ChatStage;
+  // NOTE: type, conversation_id, and user_id should NOT be updatable
+  // Only allow updating optional fields
 
   @ApiPropertyOptional({
-    description: "The content of the message",
-    example: "Updated message content",
+    description: "Update the prompt (only for Prompt type messages)",
+    example: "Updated question",
   })
   @IsOptional()
   @IsString()
-  content?: string;
+  prompt?: string;
 
   @ApiPropertyOptional({
-    description: "Additional metadata for the message",
-    example: { source: "web", version: "1.0" },
+    description: "Update the text response (only for Response type messages)",
+    example: "Updated response",
   })
   @IsOptional()
-  @IsObject()
-  metadata?: any;
+  @IsString()
+  text?: string;
 
   @ApiPropertyOptional({
-    description: "UI blocks for rich content display",
-    example: { type: "text", content: "Hello world" },
+    description: "Update UI blocks",
+    example: [{ type: "text", content: "Updated content" }],
   })
   @IsOptional()
   @IsObject()
   blocks?: any;
 
   @ApiPropertyOptional({
-    description: "AI intent information",
-    example: { type: "question", confidence: 0.95 },
-  })
-  @IsOptional()
-  @IsObject()
-  intent?: any;
-
-  @ApiPropertyOptional({
-    description: "Token usage information",
+    description: "Update token usage",
     example: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
   })
   @IsOptional()
@@ -59,23 +38,39 @@ export class UpdateChatMessageDto {
   token_usage?: any;
 
   @ApiPropertyOptional({
-    description: "Associated project ID",
-    example: "123e4567-e89b-12d3-a456-426614174000",
+    description: "Update projects context",
+    example: [{ project_id: "proj-1" }],
   })
   @IsOptional()
-  @IsUUID()
-  project_id?: string;
+  @IsArray()
+  projects?: any;
 
   @ApiPropertyOptional({
-    description: "Associated task ID",
-    example: "123e4567-e89b-12d3-a456-426614174000",
+    description: "Update tasks context",
+    example: [{ task_id: "task-1" }],
   })
   @IsOptional()
-  @IsUUID()
-  task_id?: string;
+  @IsArray()
+  tasks?: any;
 
   @ApiPropertyOptional({
-    description: "Embedding ID for semantic search",
+    description: "Update todos context",
+    example: [{ todo_id: "todo-1" }],
+  })
+  @IsOptional()
+  @IsArray()
+  todos?: any;
+
+  @ApiPropertyOptional({
+    description: "Update metadata",
+    example: { source: "web", version: "1.0" },
+  })
+  @IsOptional()
+  @IsObject()
+  metadata?: any;
+
+  @ApiPropertyOptional({
+    description: "Update embedding ID",
     example: "emb_123456789",
   })
   @IsOptional()

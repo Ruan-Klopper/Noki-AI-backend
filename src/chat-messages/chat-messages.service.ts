@@ -6,7 +6,7 @@ import {
 import { PrismaService } from "../database/prisma.service";
 import { CreateChatMessageDto } from "./dtos/create-chat-message.dto";
 import { UpdateChatMessageDto } from "./dtos/update-chat-message.dto";
-import { MessageRole, ChatStage } from "../common/enums/prisma-enums";
+import { MessageType } from "../common/enums/prisma-enums";
 
 @Injectable()
 export class ChatMessagesService {
@@ -41,20 +41,6 @@ export class ChatMessagesService {
             email: true,
           },
         },
-        project: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
-        task: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
       },
     });
   }
@@ -86,20 +72,6 @@ export class ChatMessagesService {
             email: true,
           },
         },
-        project: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
-        task: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
       },
       orderBy: {
         created_at: "asc",
@@ -125,20 +97,6 @@ export class ChatMessagesService {
             firstname: true,
             lastname: true,
             email: true,
-          },
-        },
-        project: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
-        task: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
           },
         },
       },
@@ -179,20 +137,6 @@ export class ChatMessagesService {
             firstname: true,
             lastname: true,
             email: true,
-          },
-        },
-        project: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
-        task: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
           },
         },
       },
@@ -241,20 +185,6 @@ export class ChatMessagesService {
             email: true,
           },
         },
-        project: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
-        task: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
       },
       orderBy: {
         created_at: "asc",
@@ -262,47 +192,11 @@ export class ChatMessagesService {
     });
   }
 
-  async updateStage(id: string, userId: string, stage: ChatStage) {
-    const message = await this.findOne(id, userId);
+  // Removed: updateStage() - 'stage' field no longer exists in new schema
+  // Removed: findByRole() - 'role' field no longer exists in new schema
+  // Use findByType() instead to filter by MessageType (Prompt/Response)
 
-    return this.prisma.chatMessage.update({
-      where: { id },
-      data: { stage },
-      include: {
-        conversation: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            firstname: true,
-            lastname: true,
-            email: true,
-          },
-        },
-        project: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
-        task: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
-      },
-    });
-  }
-
-  async findByRole(conversationId: string, userId: string, role: MessageRole) {
+  async findByType(conversationId: string, userId: string, type: MessageType) {
     // Verify conversation belongs to user
     const conversation = await this.prisma.conversation.findUnique({
       where: { id: conversationId },
@@ -319,7 +213,7 @@ export class ChatMessagesService {
     return this.prisma.chatMessage.findMany({
       where: {
         conversation_id: conversationId,
-        role,
+        type,
       },
       include: {
         conversation: {
@@ -335,20 +229,6 @@ export class ChatMessagesService {
             firstname: true,
             lastname: true,
             email: true,
-          },
-        },
-        project: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
-        task: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
           },
         },
       },

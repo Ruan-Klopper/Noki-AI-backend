@@ -89,6 +89,12 @@ export class ApiService {
           break;
 
         case "POST":
+          // Log the actual data being sent
+          console.log("=== API Service POST Data ===");
+          console.log("URL:", url);
+          console.log("Data:", JSON.stringify(config.data, null, 2));
+          console.log("============================");
+
           response = await firstValueFrom(
             this.httpService.post(url, config.data, {
               headers,

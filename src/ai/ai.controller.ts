@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from "@nestjs/swagger";
+import { Controller, Get, Post, Body, UseGuards } from "@nestjs/common";
 import {
-  AiService,
-  HealthResponse,
-  ChatRequest,
-  ChatResponse,
-  ContextRequest,
-  ContextResponse,
-} from "./ai.service";
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+} from "@nestjs/swagger";
+import { AiService, HealthResponse, AIServerChatResponse } from "./ai.service";
+import { ChatAiDto } from "./dtos/chat-ai.dto";
+import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
+import { CurrentUser } from "../common/decorators/current-user.decorator";
 
 @ApiTags("AI")
 @Controller("ai")
@@ -18,7 +20,7 @@ export class AiController {
   @ApiOperation({
     summary: "Check AI server health",
     description:
-      "Returns the health status of both this service and the AI server at http://localhost:8000/health",
+      "Returns the health status of both this service and the AI server",
   })
   @ApiResponse({
     status: 200,
@@ -47,96 +49,100 @@ export class AiController {
   }
 
   @Post("chat")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({
     summary: "Send chat message to AI server",
     description:
-      "Sends a chat message to the AI server. Creates a new conversation if conversation_id is empty.",
+      "Sends a chat message to the AI server with project, task, and todo context. " +
+      "User ID is automatically extracted from the JWT bearer token. " +
+      "The backend enriches the request by fetching full details for each provided project_id, task_id, and todo_id, " +
+      "then forwards the enriched data to the AI server's /chat/chat endpoint.",
   })
   @ApiBody({
+    type: ChatAiDto,
+    description:
+      "Chat request with conversation ID, prompt, and optional context IDs",
     schema: {
       type: "object",
+      required: ["conversation_id", "prompt"],
       properties: {
-        user_id: {
-          type: "string",
-          description: "User ID (required)",
-          example: "user123",
-        },
         conversation_id: {
           type: "string",
-          description: "Conversation ID (required)",
+          description: "Unique identifier for the conversation",
           example: "conv-1234567890-abc123",
         },
         prompt: {
           type: "string",
-          description: "User's message/prompt (required)",
-          example: "Hello, how can you help me today?",
+          description: "User's message/question to the AI",
+          example: "What tasks do I have due this week?",
         },
         projects: {
           type: "array",
+          description:
+            "Optional array of project IDs. Backend will fetch full project details (title, description, instructor) for each ID.",
           items: {
             type: "object",
+            required: ["project_id"],
             properties: {
-              project_id: { type: "string", example: "proj_photography_2025" },
-              title: { type: "string", example: "Photography Course 2025" },
-              description: {
+              project_id: {
                 type: "string",
-                example: "Advanced photography techniques",
+                description: "Project ID to include in context",
+                example: "proj_123",
               },
-              instructor: { type: "string", example: "Dr. Smith" },
             },
           },
-          description: "Array of projects (optional)",
+          example: [{ project_id: "proj_123" }, { project_id: "proj_456" }],
         },
         tasks: {
           type: "array",
+          description:
+            "Optional array of task IDs. Backend will fetch full task details (title, description, due_datetime, status, project_id) for each ID.",
           items: {
             type: "object",
+            required: ["task_id"],
             properties: {
-              task_id: { type: "string", example: "task_123" },
-              title: { type: "string", example: "Complete assignment" },
-              description: {
+              task_id: {
                 type: "string",
-                example: "Write a research paper",
+                description: "Task ID to include in context",
+                example: "task_123",
               },
-              due_datetime: {
-                type: "string",
-                example: "2025-10-16T15:35:25.051Z",
-              },
-              status: { type: "string", example: "not_started" },
-              project_id: { type: "string", example: "proj_photography_2025" },
             },
           },
-          description: "Array of tasks (optional)",
+          example: [{ task_id: "task_123" }],
         },
-        stage: {
-          type: "string",
-          description: "Chat stage (required)",
-          example: "thinking",
-        },
-        metadata: {
-          type: "object",
-          description: "Additional metadata (optional)",
+        todos: {
+          type: "array",
+          description:
+            "Optional array of todo IDs. Backend will fetch full todo details (title, description, due_date, status, project_id, task_id, priority) for each ID.",
+          items: {
+            type: "object",
+            required: ["todo_id"],
+            properties: {
+              todo_id: {
+                type: "string",
+                description: "Todo ID to include in context",
+                example: "todo_123",
+              },
+            },
+          },
+          example: [{ todo_id: "todo_123" }],
         },
       },
-      required: [
-        "user_id",
-        "conversation_id",
-        "prompt",
-        "projects",
-        "tasks",
-        "stage",
-      ],
     },
   })
   @ApiResponse({
     status: 200,
-    description: "Chat response received successfully",
+    description:
+      "Chat response received successfully from AI server. Returns the exact response from the AI server without modifications.",
     schema: {
       type: "object",
+      description:
+        "Response structure from AI server. The exact fields may vary based on the AI's response. Common fields are listed below.",
       properties: {
         stage: {
           type: "string",
-          description: "Response stage",
+          description: "Current stage of the AI response",
           example: "response",
         },
         conversation_id: {
@@ -146,181 +152,54 @@ export class AiController {
         },
         text: {
           type: "string",
-          description: "AI response text",
-          example: "I can help you with that!",
+          description: "AI's text response",
+          example: "You have 3 tasks due this week...",
         },
         blocks: {
           type: "array",
-          description: "Structured UI blocks from AI",
-        },
-        intent: {
-          type: "object",
-          description: "AI intent object if present",
+          description: "Structured UI blocks from AI (if any)",
+          items: { type: "object" },
         },
         timestamp: {
           type: "string",
           description: "Response timestamp",
-          example: "2025-10-16T15:37:51.909565",
+          example: "2025-10-29T09:10:06.034Z",
         },
         token_usage: {
           type: "object",
-          description: "Token usage statistics",
+          description: "Token usage statistics (if provided)",
+          properties: {
+            prompt_tokens: { type: "number", example: 150 },
+            completion_tokens: { type: "number", example: 200 },
+            total_tokens: { type: "number", example: 350 },
+            embedding_tokens: { type: "number", example: 0 },
+            cost_estimate_usd: { type: "number", example: 0.0052 },
+          },
         },
       },
-    },
-  })
-  @ApiResponse({ status: 400, description: "Bad request - Invalid input" })
-  @ApiResponse({ status: 502, description: "AI server is not available" })
-  async sendChatMessage(
-    @Body() chatRequest: ChatRequest
-  ): Promise<ChatResponse> {
-    return this.aiService.sendChatMessage(chatRequest);
-  }
-
-  @Post("chat/context")
-  @ApiOperation({
-    summary: "Send context data to AI server",
-    description:
-      "Sends context data to the AI server when an intent is present in the chat response.",
-  })
-  @ApiBody({
-    schema: {
-      type: "object",
-      properties: {
-        conversation_id: {
-          type: "string",
-          description: "Conversation ID (required)",
-          example: "conv-1234567890-abc123",
-        },
-        assignments: {
-          type: "array",
-          description: "Task assignments data (optional)",
-        },
-        schedule: {
-          type: "array",
-          description: "User's schedule data (optional)",
-        },
-        existing_todos: {
-          type: "array",
-          description: "Existing todos data (optional)",
-        },
-        tasks: {
-          type: "array",
-          description: "Tasks data (optional)",
-        },
-        schedule_accepted: {
-          type: "boolean",
-          description: "Whether schedule was accepted (optional)",
-        },
-        updated_schedule: {
-          type: "array",
-          description: "Updated schedule sessions (optional)",
-        },
-        tasks_accepted: {
-          type: "boolean",
-          description: "Whether tasks were accepted (optional)",
-        },
-        saved_tasks: {
-          type: "array",
-          description: "Saved tasks data (optional)",
-        },
-        todos_accepted: {
-          type: "boolean",
-          description: "Whether todos were accepted (optional)",
-        },
-        saved_todos: {
-          type: "array",
-          description: "Saved todos data (optional)",
-        },
-      },
-      required: ["conversation_id"],
     },
   })
   @ApiResponse({
-    status: 200,
-    description: "Context data sent successfully",
-    schema: {
-      type: "object",
-      properties: {
-        success: {
-          type: "boolean",
-          description: "Whether the operation was successful",
-          example: true,
-        },
-        message: {
-          type: "string",
-          description: "Response message",
-          example: "Context data processed successfully",
-        },
-        data: {
-          type: "object",
-          description: "Additional response data",
-        },
-      },
-    },
-  })
-  @ApiResponse({ status: 400, description: "Bad request - Invalid input" })
-  @ApiResponse({ status: 502, description: "AI server is not available" })
-  async sendContextData(
-    @Body() contextRequest: ContextRequest
-  ): Promise<ContextResponse> {
-    return this.aiService.sendContextData(contextRequest);
-  }
-
-  @Post("chat/handle-intent")
-  @ApiOperation({
-    summary: "Handle intent response automatically",
-    description:
-      "Automatically handles intent-based responses by gathering required context data and sending it to the AI server.",
-  })
-  @ApiBody({
-    schema: {
-      type: "object",
-      properties: {
-        chat_response: {
-          type: "object",
-          description: "Chat response containing intent",
-        },
-        user_id: {
-          type: "string",
-          description: "User ID (required)",
-          example: "user123",
-        },
-      },
-      required: ["chat_response", "user_id"],
-    },
+    status: 400,
+    description: "Bad request - Invalid input data or missing required fields",
   })
   @ApiResponse({
-    status: 200,
-    description: "Intent handled successfully",
-    schema: {
-      type: "object",
-      properties: {
-        success: {
-          type: "boolean",
-          description: "Whether the operation was successful",
-          example: true,
-        },
-        message: {
-          type: "string",
-          description: "Response message",
-          example: "Intent processed successfully",
-        },
-        data: {
-          type: "object",
-          description: "Additional response data",
-        },
-      },
-    },
+    status: 401,
+    description: "Unauthorized - Invalid or missing JWT token",
   })
-  @ApiResponse({ status: 400, description: "Bad request - Invalid input" })
-  @ApiResponse({ status: 502, description: "AI server is not available" })
-  async handleIntentResponse(
-    @Body() body: { chat_response: ChatResponse; user_id: string }
-  ): Promise<ContextResponse> {
-    return this.aiService.handleIntentResponse(
-      body.chat_response,
-      body.user_id
-    );
+  @ApiResponse({
+    status: 404,
+    description: "Not found - One or more project/task/todo IDs not found",
+  })
+  @ApiResponse({
+    status: 502,
+    description:
+      "Bad Gateway - AI server is not available or returned an error",
+  })
+  async chat(
+    @CurrentUser() currentUser: any,
+    @Body() chatDto: ChatAiDto
+  ): Promise<AIServerChatResponse> {
+    return this.aiService.chat(currentUser.userId, chatDto);
   }
 }
