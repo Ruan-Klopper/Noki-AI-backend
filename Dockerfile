@@ -1,11 +1,12 @@
-FROM node:18-alpine
+# Build stage
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install all dependencies (needed for build)
+# Install all dependencies
 RUN npm ci
 
 # Copy source code
@@ -17,17 +18,37 @@ RUN npx prisma generate
 # Build the application
 RUN npm run build
 
-# Verify dist directory was created
-RUN ls -la dist/ || (echo "Build failed - dist directory not found" && exit 1)
+# Verify build succeeded
+RUN test -f dist/main.js || (echo "ERROR: dist/main.js not found after build!" && exit 1)
 
-# Remove dev dependencies to reduce image size (but keep dist)
-RUN npm prune --production
+# Production stage
+FROM node:18-alpine
 
-# Verify dist still exists after prune
-RUN ls -la dist/ || (echo "Dist directory deleted after prune" && exit 1)
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install production dependencies only
+RUN npm ci --only=production
+
+# Copy Prisma files
+COPY prisma ./prisma
+
+# Generate Prisma client for production
+RUN npx prisma generate
+
+# Copy built application from builder stage
+COPY --from=builder /app/dist ./dist
+
+# Copy start script
+COPY start.sh ./
 
 # Make start script executable
 RUN chmod +x start.sh
+
+# Verify dist was copied correctly
+RUN test -f dist/main.js || (echo "ERROR: dist/main.js not found in production image!" && exit 1)
 
 # Expose port
 EXPOSE 3000
