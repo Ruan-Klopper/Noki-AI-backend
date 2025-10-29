@@ -18,8 +18,14 @@ RUN npx prisma generate
 # Build the application
 RUN npm run build
 
-# Verify build succeeded
-RUN test -f dist/main.js || (echo "ERROR: dist/main.js not found after build!" && exit 1)
+# Debug: Show what was actually built
+RUN echo "=== Contents of dist directory ===" && \
+    ls -la dist/ && \
+    echo "=== Looking for main files ===" && \
+    find dist -name "main.*" -type f
+
+# Verify build succeeded - check both possible locations
+RUN test -f dist/main.js || test -f dist/src/main.js || (echo "ERROR: main.js not found in dist/ or dist/src/!" && exit 1)
 
 # Production stage
 FROM node:18-alpine
