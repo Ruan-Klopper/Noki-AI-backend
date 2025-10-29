@@ -65,6 +65,7 @@ export class ApiErrorResponseDto {
       details: {
         type: "object",
         description: "Additional error details",
+        additionalProperties: true,
       },
     },
   })

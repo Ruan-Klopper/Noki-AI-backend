@@ -20,12 +20,113 @@ import { CurrentUser } from "../common/decorators/current-user.decorator";
 
 @ApiTags("Misc")
 @Controller("misc")
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth("JWT-auth")
 export class MiscController {
   constructor(private readonly miscService: MiscService) {}
 
+  @Get("health")
+  @ApiOperation({
+    summary: "System health check",
+    description:
+      "Checks the health of the backend, database connection, and AI service. " +
+      "This endpoint does not require authentication and can be used for monitoring.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Health check completed",
+    schema: {
+      type: "object",
+      properties: {
+        status: {
+          type: "string",
+          description: "Overall system status",
+          enum: ["healthy", "degraded", "unhealthy"],
+          example: "healthy",
+        },
+        timestamp: {
+          type: "string",
+          format: "date-time",
+          description: "Timestamp of the health check",
+          example: "2025-10-29T10:30:00.000Z",
+        },
+        services: {
+          type: "object",
+          properties: {
+            backend: {
+              type: "object",
+              properties: {
+                status: {
+                  type: "string",
+                  enum: ["up", "down"],
+                  example: "up",
+                },
+                uptime: {
+                  type: "number",
+                  description: "Backend uptime in seconds",
+                  example: 3600,
+                },
+                environment: {
+                  type: "string",
+                  example: "development",
+                },
+              },
+            },
+            database: {
+              type: "object",
+              properties: {
+                status: {
+                  type: "string",
+                  enum: ["connected", "disconnected", "error"],
+                  example: "connected",
+                },
+                responseTime: {
+                  type: "number",
+                  description: "Database response time in milliseconds",
+                  example: 15,
+                },
+                error: {
+                  type: "string",
+                  description: "Error message if connection failed",
+                  nullable: true,
+                },
+              },
+            },
+            ai_service: {
+              type: "object",
+              properties: {
+                status: {
+                  type: "string",
+                  enum: ["available", "unavailable", "error"],
+                  example: "available",
+                },
+                url: {
+                  type: "string",
+                  description: "AI service URL",
+                  example: "http://localhost:8000",
+                },
+                responseTime: {
+                  type: "number",
+                  description: "AI service response time in milliseconds",
+                  example: 125,
+                },
+                error: {
+                  type: "string",
+                  description: "Error message if AI service is unavailable",
+                  nullable: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+  async healthCheck() {
+    return this.miscService.healthCheck();
+  }
+
   @Get("all-user-data")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({
     summary: "Get all user data",
     description:
@@ -111,6 +212,8 @@ export class MiscController {
   }
 
   @Get("user-data-summary/:userId")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({
     summary: "Get user data summary",
     description:
@@ -165,6 +268,8 @@ export class MiscController {
   }
 
   @Delete("delete-all-user-data/:userId")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth("JWT-auth")
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: "Delete all user data",

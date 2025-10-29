@@ -2,12 +2,140 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  Logger,
 } from "@nestjs/common";
 import { PrismaService } from "../database/prisma.service";
+import { AiService } from "../ai/ai.service";
 
 @Injectable()
 export class MiscService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly logger = new Logger(MiscService.name);
+  private readonly startTime = Date.now();
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly aiService: AiService
+  ) {}
+
+  /**
+   * Comprehensive health check for the entire system
+   * Checks database, AI service, and backend status
+   */
+  async healthCheck() {
+    const timestamp = new Date().toISOString();
+    const uptime = Math.floor((Date.now() - this.startTime) / 1000); // in seconds
+
+    // Check backend health
+    const backendHealth = {
+      status: "up",
+      uptime,
+      environment: process.env.NODE_ENV || "development",
+    };
+
+    // Check database health
+    const databaseHealth = await this.checkDatabaseHealth();
+
+    // Check AI service health
+    const aiServiceHealth = await this.checkAiServiceHealth();
+
+    // Determine overall status
+    let overallStatus = "healthy";
+    if (
+      databaseHealth.status === "error" ||
+      aiServiceHealth.status === "error"
+    ) {
+      overallStatus = "unhealthy";
+    } else if (
+      databaseHealth.status === "disconnected" ||
+      aiServiceHealth.status === "unavailable"
+    ) {
+      overallStatus = "degraded";
+    }
+
+    return {
+      status: overallStatus,
+      timestamp,
+      services: {
+        backend: backendHealth,
+        database: databaseHealth,
+        ai_service: aiServiceHealth,
+      },
+    };
+  }
+
+  /**
+   * Check database connection health
+   */
+  private async checkDatabaseHealth() {
+    const startTime = Date.now();
+    try {
+      // Perform a simple query to check database connectivity
+      await this.prisma.$queryRaw`SELECT 1`;
+      const responseTime = Date.now() - startTime;
+
+      this.logger.log(`Database health check passed (${responseTime}ms)`);
+
+      return {
+        status: "connected",
+        responseTime,
+      };
+    } catch (error) {
+      const responseTime = Date.now() - startTime;
+      this.logger.error(
+        `Database health check failed: ${error.message}`,
+        error.stack
+      );
+
+      return {
+        status: "error",
+        responseTime,
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Check AI service health
+   */
+  private async checkAiServiceHealth() {
+    const startTime = Date.now();
+    try {
+      // Use the AI service's health check method
+      const aiHealth = await this.aiService.healthCheck();
+      const responseTime = Date.now() - startTime;
+
+      // Check if AI server responded successfully
+      if (aiHealth.ai_server_response) {
+        this.logger.log(`AI service health check passed (${responseTime}ms)`);
+        return {
+          status: "available",
+          url: aiHealth.ai_server_url,
+          responseTime,
+        };
+      } else {
+        this.logger.warn(`AI service health check degraded: ${aiHealth.error}`);
+        return {
+          status: "unavailable",
+          url: aiHealth.ai_server_url,
+          responseTime,
+          error: aiHealth.error,
+        };
+      }
+    } catch (error) {
+      const responseTime = Date.now() - startTime;
+      this.logger.error(
+        `AI service health check failed: ${error.message}`,
+        error.stack
+      );
+
+      return {
+        status: "error",
+        url: "unknown",
+        responseTime,
+        error: error.message,
+      };
+    }
+  }
 
   /**
    * Deletes ALL data associated with a user including:
