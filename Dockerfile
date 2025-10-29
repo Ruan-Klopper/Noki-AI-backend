@@ -17,8 +17,14 @@ RUN npx prisma generate
 # Build the application
 RUN npm run build
 
-# Remove dev dependencies to reduce image size
+# Verify dist directory was created
+RUN ls -la dist/ || (echo "Build failed - dist directory not found" && exit 1)
+
+# Remove dev dependencies to reduce image size (but keep dist)
 RUN npm prune --production
+
+# Verify dist still exists after prune
+RUN ls -la dist/ || (echo "Dist directory deleted after prune" && exit 1)
 
 # Make start script executable
 RUN chmod +x start.sh
