@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, UseGuards } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+  Param,
+  Patch,
+  Delete,
+} from "@nestjs/common";
 import {
   ApiTags,
   ApiOperation,
@@ -201,5 +210,251 @@ export class AiController {
     @Body() chatDto: ChatAiDto
   ): Promise<AIServerChatResponse> {
     return this.aiService.chat(currentUser.userId, chatDto);
+  }
+
+  @Post("new_conversation")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Create a new conversation",
+    description:
+      "Creates a new conversation for the current user. Returns only the conversation ID. " +
+      "The conversation title will be 'New Conversation' with the current date.",
+  })
+  @ApiResponse({
+    status: 201,
+    description: "Conversation created successfully",
+    schema: {
+      type: "object",
+      properties: {
+        conversation_id: {
+          type: "string",
+          description: "Unique identifier for the newly created conversation",
+          example: "123e4567-e89b-12d3-a456-426614174000",
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: "Unauthorized - Invalid or missing JWT token",
+  })
+  async createConversation(@CurrentUser() currentUser: any) {
+    return this.aiService.createConversation(currentUser.userId);
+  }
+
+  @Get("get_conversation_history/:conversation_id")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Get conversation history",
+    description:
+      "Returns the full conversation history including all messages for a specific conversation ID.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Conversation history retrieved successfully",
+    schema: {
+      type: "object",
+      properties: {
+        id: {
+          type: "string",
+          example: "123e4567-e89b-12d3-a456-426614174000",
+        },
+        title: {
+          type: "string",
+          example: "New Conversation - 2025-10-29",
+        },
+        description: { type: "string", nullable: true },
+        created_at: { type: "string", format: "date-time" },
+        updated_at: { type: "string", format: "date-time" },
+        messages: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              type: { type: "string", enum: ["Prompt", "Response"] },
+              prompt: { type: "string", nullable: true },
+              text: { type: "string", nullable: true },
+              blocks: { type: "object", nullable: true },
+              projects: { type: "array", nullable: true },
+              tasks: { type: "array", nullable: true },
+              todos: { type: "array", nullable: true },
+              created_at: { type: "string", format: "date-time" },
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: "Unauthorized - Invalid or missing JWT token",
+  })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - You do not have access to this conversation",
+  })
+  @ApiResponse({
+    status: 404,
+    description: "Conversation not found",
+  })
+  async getConversationHistory(
+    @CurrentUser() currentUser: any,
+    @Param("conversation_id") conversationId: string
+  ) {
+    return this.aiService.getConversationHistory(
+      currentUser.userId,
+      conversationId
+    );
+  }
+
+  @Get("get_all_conversations")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Get all conversations",
+    description:
+      "Returns all conversations for the current user with their IDs and titles.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Conversations retrieved successfully",
+    schema: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          id: {
+            type: "string",
+            example: "123e4567-e89b-12d3-a456-426614174000",
+          },
+          title: {
+            type: "string",
+            example: "New Conversation - 2025-10-29",
+          },
+          created_at: { type: "string", format: "date-time" },
+          updated_at: { type: "string", format: "date-time" },
+          message_count: {
+            type: "number",
+            description: "Total number of messages in the conversation",
+            example: 10,
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: "Unauthorized - Invalid or missing JWT token",
+  })
+  async getAllConversations(@CurrentUser() currentUser: any) {
+    return this.aiService.getAllConversations(currentUser.userId);
+  }
+
+  @Patch("rename_conversation/:conversation_id")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Rename a conversation",
+    description:
+      "Updates the title of an existing conversation. User must own the conversation.",
+  })
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        title: {
+          type: "string",
+          description: "New title for the conversation",
+          example: "My Study Plan",
+        },
+      },
+      required: ["title"],
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Conversation renamed successfully",
+    schema: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        title: { type: "string" },
+        updated_at: { type: "string", format: "date-time" },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: "Bad request - Invalid title or missing required field",
+  })
+  @ApiResponse({
+    status: 401,
+    description: "Unauthorized - Invalid or missing JWT token",
+  })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - You do not have access to this conversation",
+  })
+  @ApiResponse({
+    status: 404,
+    description: "Conversation not found",
+  })
+  async renameConversation(
+    @CurrentUser() currentUser: any,
+    @Param("conversation_id") conversationId: string,
+    @Body("title") title: string
+  ) {
+    return this.aiService.renameConversation(
+      currentUser.userId,
+      conversationId,
+      title
+    );
+  }
+
+  @Delete("delete_conversation/:conversation_id")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Delete a conversation",
+    description:
+      "Deletes a conversation and all its associated chat messages. This action cannot be undone. User must own the conversation.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Conversation and all messages deleted successfully",
+    schema: {
+      type: "object",
+      properties: {
+        message: {
+          type: "string",
+          example: "Conversation deleted successfully",
+        },
+        conversation_id: { type: "string" },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: "Unauthorized - Invalid or missing JWT token",
+  })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - You do not have access to this conversation",
+  })
+  @ApiResponse({
+    status: 404,
+    description: "Conversation not found",
+  })
+  async deleteConversation(
+    @CurrentUser() currentUser: any,
+    @Param("conversation_id") conversationId: string
+  ) {
+    return this.aiService.deleteConversation(
+      currentUser.userId,
+      conversationId
+    );
   }
 }

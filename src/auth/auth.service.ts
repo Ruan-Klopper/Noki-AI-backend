@@ -46,8 +46,9 @@ export class AuthService {
       },
     });
 
-    // Onboarding: create default General project and Explore task
+    // Onboarding: create default General project, Explore task, and sample conversation
     await this.createOnboardingProjectAndTask(user.id);
+    await this.createSampleConversation(user.id);
 
     // Send welcome email (non-blocking)
     this.emailService
@@ -147,6 +148,7 @@ export class AuthService {
 
         // Onboarding for new Google users
         await this.createOnboardingProjectAndTask(user.id);
+        await this.createSampleConversation(user.id);
 
         // Send welcome email (non-blocking)
         this.emailService
@@ -268,6 +270,21 @@ export class AuthService {
         priority: Priority.Medium,
       },
     });
+  }
+
+  private async createSampleConversation(userId: string): Promise<void> {
+    const today = new Date();
+    const formattedDate = today.toISOString().split("T")[0]; // YYYY-MM-DD
+
+    await this.prisma.conversation.create({
+      data: {
+        user_id: userId,
+        title: `New Conversation - ${formattedDate}`,
+        description: "Your first conversation with Noki AI",
+      },
+    });
+
+    this.logger.log(`Sample conversation created for user: ${userId}`);
   }
 
   async validateGoogleUser(googleUser: any) {

@@ -356,4 +356,180 @@ export class AiService {
 
     return todos;
   }
+
+  /**
+   * Create a new conversation for the user
+   * Returns only the conversation ID
+   */
+  async createConversation(userId: string) {
+    try {
+      this.logger.log(`Creating new conversation for user: ${userId}`);
+
+      const today = new Date();
+      const formattedDate = today.toISOString().split("T")[0]; // YYYY-MM-DD
+      const title = `New Conversation - ${formattedDate}`;
+
+      const conversation = await this.prismaService.conversation.create({
+        data: {
+          user_id: userId,
+          title: title,
+        },
+      });
+
+      this.logger.log(`Conversation created successfully: ${conversation.id}`);
+
+      return {
+        conversation_id: conversation.id,
+      };
+    } catch (error) {
+      this.logger.error("Failed to create conversation:", error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Get conversation history including all messages
+   */
+  async getConversationHistory(userId: string, conversationId: string) {
+    try {
+      this.logger.log(
+        `Fetching conversation history for conversation: ${conversationId}`
+      );
+
+      const conversation = await this.conversationsService.findOne(
+        conversationId,
+        userId
+      );
+
+      return conversation;
+    } catch (error) {
+      this.logger.error("Failed to fetch conversation history:", error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all conversations for the user
+   * Returns conversation IDs, titles, and message counts
+   */
+  async getAllConversations(userId: string) {
+    try {
+      this.logger.log(`Fetching all conversations for user: ${userId}`);
+
+      const conversations = await this.prismaService.conversation.findMany({
+        where: {
+          user_id: userId,
+        },
+        select: {
+          id: true,
+          title: true,
+          created_at: true,
+          updated_at: true,
+          _count: {
+            select: {
+              messages: true,
+            },
+          },
+        },
+        orderBy: {
+          updated_at: "desc",
+        },
+      });
+
+      // Format the response to match the expected structure
+      const formattedConversations = conversations.map((conv) => ({
+        id: conv.id,
+        title: conv.title,
+        created_at: conv.created_at,
+        updated_at: conv.updated_at,
+        message_count: conv._count.messages,
+      }));
+
+      this.logger.log(
+        `Found ${formattedConversations.length} conversations for user: ${userId}`
+      );
+
+      return formattedConversations;
+    } catch (error) {
+      this.logger.error("Failed to fetch conversations:", error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Rename a conversation
+   * Updates the title of an existing conversation
+   */
+  async renameConversation(
+    userId: string,
+    conversationId: string,
+    newTitle: string
+  ) {
+    try {
+      this.logger.log(
+        `Renaming conversation ${conversationId} for user: ${userId}`
+      );
+
+      // Verify the conversation exists and belongs to the user
+      await this.conversationsService.findOne(conversationId, userId);
+
+      // Update the conversation title
+      const updatedConversation = await this.prismaService.conversation.update({
+        where: {
+          id: conversationId,
+        },
+        data: {
+          title: newTitle,
+        },
+        select: {
+          id: true,
+          title: true,
+          updated_at: true,
+        },
+      });
+
+      this.logger.log(
+        `Conversation ${conversationId} renamed successfully to: ${newTitle}`
+      );
+
+      return updatedConversation;
+    } catch (error) {
+      this.logger.error("Failed to rename conversation:", error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a conversation and all its messages
+   * This is a cascading delete due to the Prisma schema configuration
+   */
+  async deleteConversation(userId: string, conversationId: string) {
+    try {
+      this.logger.log(
+        `Deleting conversation ${conversationId} for user: ${userId}`
+      );
+
+      // Verify the conversation exists and belongs to the user
+      await this.conversationsService.findOne(conversationId, userId);
+
+      // Delete the conversation (messages will be deleted automatically due to onDelete: Cascade)
+      await this.prismaService.conversation.delete({
+        where: {
+          id: conversationId,
+        },
+      });
+
+      this.logger.log(
+        `Conversation ${conversationId} and all messages deleted successfully`
+      );
+
+      return {
+        message: "Conversation deleted successfully",
+        conversation_id: conversationId,
+      };
+    } catch (error) {
+      this.logger.error("Failed to delete conversation:", error.message);
+      throw error;
+    }
+  }
 }
