@@ -54,7 +54,7 @@ COPY start.sh ./
 RUN chmod +x start.sh
 
 # Verify dist was copied correctly
-RUN test -f dist/main.js || (echo "ERROR: dist/main.js not found in production image!" && exit 1)
+RUN test -f dist/src/main.js || (echo "ERROR: dist/src/main.js not found in production image!" && exit 1)
 
 # Expose port
 EXPOSE 3000
