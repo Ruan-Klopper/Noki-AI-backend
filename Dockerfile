@@ -20,8 +20,11 @@ RUN npm run build
 # Remove dev dependencies to reduce image size
 RUN npm prune --production
 
+# Make start script executable
+RUN chmod +x start.sh
+
 # Expose port
 EXPOSE 3000
 
-# Start the application with migrations
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run start:prod"]
+# Start the application with migration handling
+CMD ["./start.sh"]
