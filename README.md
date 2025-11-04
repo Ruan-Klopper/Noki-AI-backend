@@ -1,6 +1,65 @@
 # Noki AI Backend
 
-Educational AI Platform Backend built with NestJS, Prisma, and PostgreSQL. This backend provides a comprehensive API for managing educational projects, tasks, AI-powered conversations, and integrations with Canvas LMS and Google OAuth.
+<div align="center">
+
+**Educational AI Platform Backend built with NestJS, Prisma, and PostgreSQL. This backend provides a comprehensive API for managing educational projects, tasks, AI-powered conversations, and integrations with Canvas LMS and Google OAuth.**
+</br>
+</br>
+**_By Ruan Klopper_**
+</br>
+**_Student no: 231280_**
+</br>
+</br>
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-app.noki.co.za-blue)](https://app.noki.co.za)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/Ruan-Klopper/Noki-AI-frontend)
+[![License](https://img.shields.io/badge/License-Private-red)](LICENSE)
+
+</div>
+
+<div align="start">
+
+### Tech Stack
+
+**Core Framework**
+<br>
+![NestJS](https://img.shields.io/badge/NestJS-11.0-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js&logoColor=white)
+
+**Database & ORM**
+<br>
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-6.16-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
+
+**Authentication & Security**
+<br>
+![JWT](https://img.shields.io/badge/JWT-11.0-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white)
+![Passport](https://img.shields.io/badge/Passport-0.7-34E27A?style=for-the-badge&logo=passport&logoColor=white)
+![bcryptjs](https://img.shields.io/badge/bcryptjs-2.4-008000?style=for-the-badge)
+
+**HTTP & Networking**
+<br>
+![Axios](https://img.shields.io/badge/Axios-1.12-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
+![@nestjs/axios](https://img.shields.io/badge/@nestjs/axios-4.0-5A29E4?style=for-the-badge)
+
+**API Documentation**
+<br>
+![Swagger](https://img.shields.io/badge/Swagger-11.0-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
+
+**Email**
+<br>
+![Nodemailer](https://img.shields.io/badge/Nodemailer-7.0-FF6600?style=for-the-badge&logo=nodemailer&logoColor=white)
+
+**Deployment & DevOps**
+<br>
+![Docker](https://img.shields.io/badge/Docker-Containerization-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+
+**Development Tools**
+<br>
+![ESLint](https://img.shields.io/badge/ESLint-9.18-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)
+![Prettier](https://img.shields.io/badge/Prettier-3.4-F7B93E?style=for-the-badge&logo=prettier&logoColor=white)
+
+</div>
 
 ## 📋 Table of Contents
 
@@ -87,9 +146,11 @@ Educational AI Platform Backend built with NestJS, Prisma, and PostgreSQL. This 
 
 ### AI-Powered Features
 
-- **Conversational AI**: Chat interface with context-aware responses
+- **AI Server Integration**: Acts as a proxy/client to a separate AI server (FastAPI-based)
+- **Conversational AI**: Chat interface that forwards requests to the external AI server with enriched context
 - **Conversation Management**: Create, rename, and manage multiple conversations
-- **Context Enrichment**: Automatic fetching of project, task, and todo details for AI context
+- **Context Enrichment**: Automatically fetches full project, task, and todo details from the database before sending to AI server
+- **Message Persistence**: Saves both user prompts and AI responses to the database
 
 ### Project Management
 
@@ -115,8 +176,9 @@ Educational AI Platform Backend built with NestJS, Prisma, and PostgreSQL. This 
   - [Passport](http://www.passportjs.org/) - Authentication middleware
   - [bcryptjs](https://www.npmjs.com/package/bcryptjs) - Password hashing
 - **AI Integration**:
-  - [OpenAI](https://openai.com/) - GPT models for AI features
-  - [LangChain](https://www.langchain.com/) - AI framework
+  - [@nestjs/axios](https://www.npmjs.com/package/@nestjs/axios) - HTTP client for AI server communication
+  - Acts as a client/proxy to a separate AI server (FastAPI-based)
+  - The external AI server handles OpenAI and LangChain integration
 - **API Documentation**: [Swagger/OpenAPI](https://swagger.io/) - Interactive API docs
 - **HTTP Client**: [Axios](https://axios-http.com/) - Promise-based HTTP client
 - **Email**: [Nodemailer](https://nodemailer.com/) - Email sending
@@ -137,7 +199,7 @@ npm run prisma:generate
 npm run prisma:migrate
 
 # Start development server
-npm run start:dev
+   npm run start:dev
 ```
 
 ### Using Docker
@@ -195,26 +257,23 @@ PORT=3000
 NODE_ENV="development"  # or "production"
 ```
 
-### AI Service Configuration
+### AI Server Configuration
+
+**Important**: This backend communicates with a separate AI server. The AI server handles OpenAI and LangChain integration.
 
 ```env
-# AI Server
-AI_SERVER_URL="https://your-ai-server-url.com"
-AI_SERVER_TOKEN="your-ai-server-bearer-token"
+# AI Server Connection (Required)
+# The backend acts as a client/proxy to the external AI server
+AI_SERVER_URL="https://noki-ai-aiserver-production.up.railway.app"  # Production AI server URL
+AI_SERVER_TOKEN="your-ai-server-bearer-token"  # Bearer token for AI server authentication
 
-# OpenAI (if using OpenAI directly)
-OPENAI_API_KEY="your-openai-api-key"
-OPENAI_MODEL="gpt-4"  # Default: "gpt-4"
-OPENAI_MAX_TOKENS="2000"  # Default: 2000
+# Alternative: Environment-based AI Server URLs
+# If NODE_ENV=development, uses AI_DEV_URL; otherwise uses AI_LIVE_URL
+AI_DEV_URL="http://localhost:8000/"  # Development AI server (default)
+AI_LIVE_URL="https://noidea.noki.co.za/"  # Production AI server (default)
+AI_BEARER_TOKEN="your-ai-bearer-token"  # Bearer token for authentication
 
-# LangChain Configuration
-LANGCHAIN_TEMPERATURE="0.7"  # Default: 0.7
-LANGCHAIN_MAX_RETRIES="3"  # Default: 3
-
-# AI Development URLs (optional)
-AI_DEV_URL="http://localhost:8000/"
-AI_LIVE_URL="https://your-production-ai-url.com/"
-AI_BEARER_TOKEN="your-ai-bearer-token"
+# Note: OpenAI and LangChain are configured in the separate AI server, not this backend
 ```
 
 ### Email Configuration (Optional)
@@ -306,6 +365,103 @@ To get your Canvas API token:
 5. Copy the generated token
 
 **Note**: Canvas tokens are stored securely but are not hashed (they're bearer tokens, not passwords).
+
+## 🤖 AI Server Integration
+
+### Architecture Overview
+
+This backend does **not** directly use OpenAI or LangChain. Instead, it acts as a **client/proxy** to a separate AI server (FastAPI-based) that handles all AI processing.
+
+```
+┌─────────────┐         HTTP REST API         ┌──────────────┐
+│   Frontend  │ ───────────────────────────► │  This Backend │
+│             │                                │  (NestJS)     │
+└─────────────┘                                └───────┬───────┘
+                                                       │
+                                                       │ HTTP POST
+                                                       │ /chat/chat
+                                                       │ Bearer Token
+                                                       ▼
+                                              ┌──────────────┐
+                                              │  AI Server   │
+                                              │  (FastAPI)   │
+                                              │              │
+                                              │  - OpenAI    │
+                                              │  - LangChain │
+                                              │  - Embeddings│
+                                              └──────────────┘
+```
+
+### How It Works
+
+1. **Client Request Flow**
+   - User sends a chat message via `POST /ai/chat`
+   - Backend extracts user ID from JWT token
+   - Backend fetches full project/task/todo details from database
+   - Backend enriches the request with complete context
+   - Backend saves the user's prompt to database
+
+2. **AI Server Communication**
+   - Backend sends HTTP POST request to AI server's `/chat/chat` endpoint
+   - Request includes: `user_id`, `conversation_id`, `prompt`, and enriched `projects`, `tasks`, `todos` arrays
+   - Authentication uses bearer token (`AI_BEARER_TOKEN`)
+   - AI server URL is environment-dependent (dev vs production)
+
+3. **Response Handling**
+   - AI server processes the request using OpenAI/LangChain
+   - AI server returns structured response with text, blocks, and token usage
+   - Backend saves the AI response to database
+   - Backend returns the AI server's response to the client
+
+### Key Components
+
+- **`AiService`**: Main service that orchestrates chat requests
+- **`ApiService`**: HTTP client service for communicating with AI server
+- **`AI_GLOBALS`**: Configuration for AI server URLs and authentication
+- **Context Enrichment**: Automatically fetches full details for projects, tasks, and todos
+
+### Data Enrichment
+
+The backend enriches requests by fetching complete details:
+
+- **Projects**: `project_id`, `title`, `description`, `instructor`
+- **Tasks**: `task_id`, `title`, `description`, `due_datetime`, `status`, `project_id`
+- **Todos**: `todo_id`, `title`, `description`, `due_date`, `status`, `project_id`, `task_id`, `priority`
+
+This ensures the AI server receives complete context rather than just IDs.
+
+### Environment Configuration
+
+The AI server URL is determined by:
+
+- **Development**: Uses `AI_DEV_URL` (default: `http://localhost:8000/`)
+- **Production**: Uses `AI_LIVE_URL` (default: `https://noidea.noki.co.za/`)
+- **Override**: Can use `AI_SERVER_URL` to specify a custom URL
+
+All requests to the AI server require bearer token authentication via `AI_BEARER_TOKEN` or `AI_SERVER_TOKEN`.
+
+### Health Check
+
+The backend provides a health check endpoint that also checks the AI server:
+
+```
+GET /ai/health
+```
+
+Returns:
+
+- Backend service status
+- AI server URL being used
+- AI server health status (if available)
+- Error information if AI server is unavailable
+
+### Benefits of This Architecture
+
+1. **Separation of Concerns**: AI processing is isolated in a separate service
+2. **Scalability**: AI server can be scaled independently
+3. **Technology Flexibility**: AI server can use any AI framework/technology
+4. **Data Enrichment**: Backend handles data fetching and enrichment before sending to AI
+5. **Message Persistence**: All conversations are stored in the backend database
 
 ## 📡 API Endpoints
 
