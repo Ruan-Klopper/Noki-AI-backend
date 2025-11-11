@@ -1,0 +1,398 @@
+import { ProjectsService } from "./projects.service";
+import { CreateProjectDto } from "./dtos/create-project.dto";
+import { UpdateProjectDto } from "./dtos/update-project.dto";
+import { CreateProjectAuthDto } from "./dtos/create-project-auth.dto";
+export declare class ProjectsController {
+    private readonly projectsService;
+    constructor(projectsService: ProjectsService);
+    create(createProjectDto: CreateProjectDto): Promise<{
+        tasks: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+            user_id: string;
+            due_date: Date | null;
+            is_all_day: boolean;
+            is_submitted: boolean;
+            type: import(".prisma/client").$Enums.TaskType;
+            priority: import(".prisma/client").$Enums.Priority | null;
+            project_id: string | null;
+        }[];
+        resources: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            user_id: string;
+            type: import(".prisma/client").$Enums.ResourceType;
+            project_id: string | null;
+            task_id: string | null;
+            url: string | null;
+            file_path: string | null;
+            metadata: import("@prisma/client/runtime/library").JsonValue | null;
+        }[];
+        user: {
+            id: string;
+            email: string;
+            firstname: string;
+            lastname: string;
+        };
+    } & {
+        id: string;
+        created_at: Date;
+        updated_at: Date;
+        title: string;
+        description: string | null;
+        source: import(".prisma/client").$Enums.ProjectSource;
+        external_id: string | null;
+        course_code: string | null;
+        color_hex: string | null;
+        time_zone: string | null;
+        start_at: Date | null;
+        end_at: Date | null;
+        raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+        user_id: string;
+    }>;
+    findAll(): Promise<({
+        tasks: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+            user_id: string;
+            due_date: Date | null;
+            is_all_day: boolean;
+            is_submitted: boolean;
+            type: import(".prisma/client").$Enums.TaskType;
+            priority: import(".prisma/client").$Enums.Priority | null;
+            project_id: string | null;
+        }[];
+        resources: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            user_id: string;
+            type: import(".prisma/client").$Enums.ResourceType;
+            project_id: string | null;
+            task_id: string | null;
+            url: string | null;
+            file_path: string | null;
+            metadata: import("@prisma/client/runtime/library").JsonValue | null;
+        }[];
+        user: {
+            id: string;
+            email: string;
+            firstname: string;
+            lastname: string;
+        };
+    } & {
+        id: string;
+        created_at: Date;
+        updated_at: Date;
+        title: string;
+        description: string | null;
+        source: import(".prisma/client").$Enums.ProjectSource;
+        external_id: string | null;
+        course_code: string | null;
+        color_hex: string | null;
+        time_zone: string | null;
+        start_at: Date | null;
+        end_at: Date | null;
+        raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+        user_id: string;
+    })[]>;
+    findOne(id: string): Promise<({
+        tasks: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+            user_id: string;
+            due_date: Date | null;
+            is_all_day: boolean;
+            is_submitted: boolean;
+            type: import(".prisma/client").$Enums.TaskType;
+            priority: import(".prisma/client").$Enums.Priority | null;
+            project_id: string | null;
+        }[];
+        resources: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            user_id: string;
+            type: import(".prisma/client").$Enums.ResourceType;
+            project_id: string | null;
+            task_id: string | null;
+            url: string | null;
+            file_path: string | null;
+            metadata: import("@prisma/client/runtime/library").JsonValue | null;
+        }[];
+        user: {
+            id: string;
+            email: string;
+            firstname: string;
+            lastname: string;
+        };
+    } & {
+        id: string;
+        created_at: Date;
+        updated_at: Date;
+        title: string;
+        description: string | null;
+        source: import(".prisma/client").$Enums.ProjectSource;
+        external_id: string | null;
+        course_code: string | null;
+        color_hex: string | null;
+        time_zone: string | null;
+        start_at: Date | null;
+        end_at: Date | null;
+        raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+        user_id: string;
+    }) | null>;
+    update(id: string, updateProjectDto: UpdateProjectDto): Promise<{
+        tasks: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+            user_id: string;
+            due_date: Date | null;
+            is_all_day: boolean;
+            is_submitted: boolean;
+            type: import(".prisma/client").$Enums.TaskType;
+            priority: import(".prisma/client").$Enums.Priority | null;
+            project_id: string | null;
+        }[];
+        resources: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            user_id: string;
+            type: import(".prisma/client").$Enums.ResourceType;
+            project_id: string | null;
+            task_id: string | null;
+            url: string | null;
+            file_path: string | null;
+            metadata: import("@prisma/client/runtime/library").JsonValue | null;
+        }[];
+        user: {
+            id: string;
+            email: string;
+            firstname: string;
+            lastname: string;
+        };
+    } & {
+        id: string;
+        created_at: Date;
+        updated_at: Date;
+        title: string;
+        description: string | null;
+        source: import(".prisma/client").$Enums.ProjectSource;
+        external_id: string | null;
+        course_code: string | null;
+        color_hex: string | null;
+        time_zone: string | null;
+        start_at: Date | null;
+        end_at: Date | null;
+        raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+        user_id: string;
+    }>;
+    remove(id: string): Promise<{
+        id: string;
+        created_at: Date;
+        updated_at: Date;
+        title: string;
+        description: string | null;
+        source: import(".prisma/client").$Enums.ProjectSource;
+        external_id: string | null;
+        course_code: string | null;
+        color_hex: string | null;
+        time_zone: string | null;
+        start_at: Date | null;
+        end_at: Date | null;
+        raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+        user_id: string;
+    }>;
+    findByUser(userId: string): Promise<({
+        tasks: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+            user_id: string;
+            due_date: Date | null;
+            is_all_day: boolean;
+            is_submitted: boolean;
+            type: import(".prisma/client").$Enums.TaskType;
+            priority: import(".prisma/client").$Enums.Priority | null;
+            project_id: string | null;
+        }[];
+        resources: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            user_id: string;
+            type: import(".prisma/client").$Enums.ResourceType;
+            project_id: string | null;
+            task_id: string | null;
+            url: string | null;
+            file_path: string | null;
+            metadata: import("@prisma/client/runtime/library").JsonValue | null;
+        }[];
+    } & {
+        id: string;
+        created_at: Date;
+        updated_at: Date;
+        title: string;
+        description: string | null;
+        source: import(".prisma/client").$Enums.ProjectSource;
+        external_id: string | null;
+        course_code: string | null;
+        color_hex: string | null;
+        time_zone: string | null;
+        start_at: Date | null;
+        end_at: Date | null;
+        raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+        user_id: string;
+    })[]>;
+    createProject(createProjectDto: CreateProjectAuthDto, currentUser: any): Promise<{
+        tasks: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+            user_id: string;
+            due_date: Date | null;
+            is_all_day: boolean;
+            is_submitted: boolean;
+            type: import(".prisma/client").$Enums.TaskType;
+            priority: import(".prisma/client").$Enums.Priority | null;
+            project_id: string | null;
+        }[];
+        resources: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            user_id: string;
+            type: import(".prisma/client").$Enums.ResourceType;
+            project_id: string | null;
+            task_id: string | null;
+            url: string | null;
+            file_path: string | null;
+            metadata: import("@prisma/client/runtime/library").JsonValue | null;
+        }[];
+        user: {
+            id: string;
+            email: string;
+            firstname: string;
+            lastname: string;
+        };
+    } & {
+        id: string;
+        created_at: Date;
+        updated_at: Date;
+        title: string;
+        description: string | null;
+        source: import(".prisma/client").$Enums.ProjectSource;
+        external_id: string | null;
+        course_code: string | null;
+        color_hex: string | null;
+        time_zone: string | null;
+        start_at: Date | null;
+        end_at: Date | null;
+        raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+        user_id: string;
+    }>;
+    updateProject(id: string, updateProjectDto: UpdateProjectDto, currentUser: any): Promise<{
+        tasks: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+            user_id: string;
+            due_date: Date | null;
+            is_all_day: boolean;
+            is_submitted: boolean;
+            type: import(".prisma/client").$Enums.TaskType;
+            priority: import(".prisma/client").$Enums.Priority | null;
+            project_id: string | null;
+        }[];
+        resources: {
+            id: string;
+            created_at: Date;
+            updated_at: Date;
+            title: string;
+            description: string | null;
+            user_id: string;
+            type: import(".prisma/client").$Enums.ResourceType;
+            project_id: string | null;
+            task_id: string | null;
+            url: string | null;
+            file_path: string | null;
+            metadata: import("@prisma/client/runtime/library").JsonValue | null;
+        }[];
+        user: {
+            id: string;
+            email: string;
+            firstname: string;
+            lastname: string;
+        };
+    } & {
+        id: string;
+        created_at: Date;
+        updated_at: Date;
+        title: string;
+        description: string | null;
+        source: import(".prisma/client").$Enums.ProjectSource;
+        external_id: string | null;
+        course_code: string | null;
+        color_hex: string | null;
+        time_zone: string | null;
+        start_at: Date | null;
+        end_at: Date | null;
+        raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+        user_id: string;
+    }>;
+    deleteProject(id: string, currentUser: any): Promise<{
+        id: string;
+        created_at: Date;
+        updated_at: Date;
+        title: string;
+        description: string | null;
+        source: import(".prisma/client").$Enums.ProjectSource;
+        external_id: string | null;
+        course_code: string | null;
+        color_hex: string | null;
+        time_zone: string | null;
+        start_at: Date | null;
+        end_at: Date | null;
+        raw_canvas_data: import("@prisma/client/runtime/library").JsonValue | null;
+        user_id: string;
+    }>;
+}
