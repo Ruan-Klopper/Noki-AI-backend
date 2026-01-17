@@ -1,4 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from "@nestjs/common";
 import { PrismaService } from "../database/prisma.service";
 import { CreateTodoDto } from "./dtos/create-todo.dto";
 import { UpdateTodoDto } from "./dtos/update-todo.dto";
@@ -131,7 +135,14 @@ export class TodosService {
    * Used by AI service for context gathering
    */
   async getTodoListForPeriod(
-    duration: "today" | "this_week" | "this_month" | "next_two_months" | "all",
+    userId: string,
+    duration:
+      | "today"
+      | "this_week"
+      | "this_month"
+      | "next_two_months"
+      | "all"
+      | "overdue",
     projectIds?: string[]
   ): Promise<any[]> {
     const now = new Date();
@@ -170,14 +181,28 @@ export class TodosService {
         break;
     }
 
-    const whereClause: any = {};
+    const whereClause: any = {
+      user_id: userId,
+      is_submitted: false, // Only get incomplete todos
+    };
 
     // Add date filtering if specified
-    if (startDate && endDate) {
+    if (duration === "overdue") {
+      whereClause.due_date = {
+        lt: now,
+      };
+    } else if (startDate && endDate) {
       whereClause.due_date = {
         gte: startDate,
         lt: endDate,
       };
+    } else if (duration !== "all") {
+      // For "all", include todos with or without due dates
+      if (startDate) {
+        whereClause.due_date = {
+          gte: startDate,
+        };
+      }
     }
 
     // Add project filtering if specified
@@ -408,11 +433,11 @@ export class TodosService {
     });
 
     if (!todo) {
-      throw new Error("Todo not found");
+      throw new NotFoundException("Todo not found");
     }
 
     if (todo.user_id !== userId) {
-      throw new Error("You can only complete your own todos");
+      throw new ForbiddenException("You can only complete your own todos");
     }
 
     return this.prisma.todo.update({

@@ -3,10 +3,12 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Body,
   Param,
   UseGuards,
+  Request,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -20,6 +22,11 @@ import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dtos/create-user.dto";
 import { UpdateUserDto } from "./dtos/update-user.dto";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
+
+export class ChangePasswordDto {
+  currentPassword: string;
+  newPassword: string;
+}
 
 @ApiTags("Users")
 @Controller("users")
@@ -42,6 +49,67 @@ export class UsersController {
   @ApiResponse({ status: 200, description: "Users retrieved successfully" })
   async findAll() {
     return this.usersService.findAll();
+  }
+
+  @Get("profile")
+  @ApiOperation({ summary: "Get current user profile" })
+  @ApiResponse({
+    status: 200,
+    description: "User profile retrieved successfully",
+  })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  async getProfile(@Request() req) {
+    return this.usersService.findOne(req.user.userId);
+  }
+
+  @Get("ai-usage")
+  @ApiOperation({ summary: "Get AI token usage statistics for current user" })
+  @ApiResponse({
+    status: 200,
+    description: "AI usage statistics retrieved successfully",
+  })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  async getAIUsage(@Request() req) {
+    return this.usersService.getAIUsage(req.user.userId);
+  }
+
+  @Patch("profile")
+  @ApiOperation({ summary: "Update current user profile" })
+  @ApiResponse({
+    status: 200,
+    description: "User profile updated successfully",
+  })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 404, description: "User not found" })
+  @ApiBody({ type: UpdateUserDto })
+  async updateProfile(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(req.user.userId, updateUserDto);
+  }
+
+  @Post("change-password")
+  @ApiOperation({ summary: "Change user password" })
+  @ApiResponse({ status: 200, description: "Password changed successfully" })
+  @ApiResponse({ status: 400, description: "Invalid current password" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiBody({ type: ChangePasswordDto })
+  async changePassword(
+    @Request() req,
+    @Body() changePasswordDto: ChangePasswordDto
+  ) {
+    return this.usersService.changePassword(
+      req.user.userId,
+      changePasswordDto.currentPassword,
+      changePasswordDto.newPassword
+    );
+  }
+
+  @Delete("account")
+  @ApiOperation({ summary: "Delete current user account" })
+  @ApiResponse({ status: 200, description: "Account deleted successfully" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 404, description: "User not found" })
+  async deleteAccount(@Request() req) {
+    return this.usersService.remove(req.user.userId);
   }
 
   @Get(":id")

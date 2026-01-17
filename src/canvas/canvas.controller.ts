@@ -169,6 +169,24 @@ export class CanvasController {
     return this.canvasService.syncData(currentUser.userId);
   }
 
+  @Get("provider")
+  @ApiOperation({
+    summary: "Get Canvas provider information",
+    description:
+      "Get Canvas integration details for the authenticated user. Returns null if Canvas is not connected.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Canvas provider information retrieved successfully",
+  })
+  @ApiResponse({
+    status: 401,
+    description: "Unauthorized - Invalid or missing token",
+  })
+  async getCanvasProvider(@CurrentUser() currentUser: any) {
+    return this.canvasService.getCanvasProvider(currentUser.userId);
+  }
+
   @Delete("delete-all")
   @ApiOperation({
     summary: "Delete all Canvas data",

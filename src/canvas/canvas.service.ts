@@ -210,6 +210,22 @@ export class CanvasService {
     }
   }
 
+  async getCanvasProvider(userId: string) {
+    const provider = await this.getCanvasAuthProvider(userId);
+    if (!provider) {
+      return null;
+    }
+
+    // Return provider info without sensitive token data
+    return {
+      id: provider.id,
+      base_url: provider.base_url,
+      metadata: provider.metadata,
+      created_at: provider.created_at,
+      hasToken: !!provider.access_token_hash,
+    };
+  }
+
   private async getCanvasAuthProvider(userId: string) {
     const authProviders = await this.authProviderService.findByUser(userId);
     return authProviders.find(

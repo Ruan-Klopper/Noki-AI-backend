@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Delete,
+  Request,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -17,6 +18,7 @@ import {
 } from "@nestjs/swagger";
 import { AiService, HealthResponse, AIServerChatResponse } from "./ai.service";
 import { ChatAiDto } from "./dtos/chat-ai.dto";
+import { AIDataRequestDto } from "./dtos/ai-data-request.dto";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
 
@@ -207,9 +209,16 @@ export class AiController {
   })
   async chat(
     @CurrentUser() currentUser: any,
+    @Request() req: any,
     @Body() chatDto: ChatAiDto
   ): Promise<AIServerChatResponse> {
-    return this.aiService.chat(currentUser.userId, chatDto);
+    // Extract auth token from request headers
+    const authHeader = req.headers.authorization;
+    const authToken = authHeader?.startsWith("Bearer ")
+      ? authHeader.substring(7)
+      : null;
+
+    return this.aiService.chat(currentUser.userId, chatDto, authToken);
   }
 
   @Post("new_conversation")
@@ -455,6 +464,73 @@ export class AiController {
     return this.aiService.deleteConversation(
       currentUser.userId,
       conversationId
+    );
+  }
+
+  @Post("fetch-data")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Fetch data for AI processing",
+    description:
+      "Endpoint for AI service to request specific user data. Returns projects, tasks, and/or todos based on the request parameters.",
+  })
+  @ApiBody({
+    schema: {
+      type: "object",
+      required: ["data_types"],
+      properties: {
+        data_types: {
+          type: "array",
+          items: {
+            type: "string",
+            enum: ["projects", "tasks", "todos"],
+          },
+          example: ["projects", "tasks"],
+        },
+        time_period: {
+          type: "string",
+          enum: [
+            "today",
+            "this_week",
+            "this_month",
+            "next_two_months",
+            "overdue",
+            "all",
+          ],
+          example: "this_week",
+        },
+        project_ids: {
+          type: "array",
+          items: { type: "string" },
+          example: ["project-123"],
+        },
+        include_completed: {
+          type: "boolean",
+          default: false,
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Data fetched successfully",
+    schema: {
+      type: "object",
+      properties: {
+        projects: { type: "array" },
+        tasks: { type: "array" },
+        todos: { type: "array" },
+      },
+    },
+  })
+  async fetchDataForAI(
+    @CurrentUser() currentUser: any,
+    @Body() dataRequest: AIDataRequestDto
+  ) {
+    return this.aiService.fetchDataForAI(
+      currentUser.userId,
+      dataRequest as any
     );
   }
 }

@@ -55,6 +55,12 @@ export interface AIServerChatRequest {
   todos: AITodo[];
   stage: string;
   metadata: Record<string, any>;
+  conversation_history?: Array<{
+    type: string;
+    prompt?: string;
+    text?: string;
+    created_at: string;
+  }>;
 }
 
 export interface AIServerChatResponse {
@@ -117,10 +123,12 @@ export class AiService {
   /**
    * Send chat message to AI server
    * Fetches full details for projects, tasks, and todos and sends to AI server
+   * Automatically enriches context based on query intent (e.g., "this week", "overdue", "all projects")
    */
   async chat(
     userId: string,
-    chatDto: ChatAiDto
+    chatDto: ChatAiDto,
+    authToken?: string
   ): Promise<AIServerChatResponse> {
     try {
       this.logger.log(`Processing chat request for user: ${userId}`);
@@ -155,20 +163,55 @@ export class AiService {
         });
       }
 
-      // Fetch full project details
-      const projects = await this.fetchProjectDetails(
-        chatDto.projects?.map((p) => p.project_id) || []
+      // Get conversation history for context
+      const conversationHistory = await this.getConversationHistoryForContext(
+        chatDto.conversation_id,
+        userId
       );
 
-      // Fetch full task details
-      const tasks = await this.fetchTaskDetails(
-        chatDto.tasks?.map((t) => t.task_id) || []
-      );
-
-      // Fetch full todo details
-      const todos = await this.fetchTodoDetails(
+      // Analyze prompt to determine if we need to auto-fetch data
+      const autoFetchedData = await this.analyzeAndFetchContext(
+        userId,
+        chatDto.prompt,
+        conversationHistory,
+        chatDto.projects?.map((p) => p.project_id) || [],
+        chatDto.tasks?.map((t) => t.task_id) || [],
         chatDto.todos?.map((t) => t.todo_id) || []
       );
+
+      // Use auto-fetched data if available, otherwise use provided IDs
+      const projectIds =
+        autoFetchedData.projects.length > 0
+          ? autoFetchedData.projects.map((p) => p.project_id)
+          : chatDto.projects?.map((p) => p.project_id) || [];
+
+      const taskIds =
+        autoFetchedData.tasks.length > 0
+          ? autoFetchedData.tasks.map((t) => t.task_id)
+          : chatDto.tasks?.map((t) => t.task_id) || [];
+
+      const todoIds =
+        autoFetchedData.todos.length > 0
+          ? autoFetchedData.todos.map((t) => t.todo_id)
+          : chatDto.todos?.map((t) => t.todo_id) || [];
+
+      // Fetch full project details
+      const projects =
+        autoFetchedData.projects.length > 0
+          ? autoFetchedData.projects
+          : await this.fetchProjectDetails(projectIds);
+
+      // Fetch full task details
+      const tasks =
+        autoFetchedData.tasks.length > 0
+          ? autoFetchedData.tasks
+          : await this.fetchTaskDetails(taskIds);
+
+      // Fetch full todo details
+      const todos =
+        autoFetchedData.todos.length > 0
+          ? autoFetchedData.todos
+          : await this.fetchTodoDetails(todoIds);
 
       // Save the user's prompt message
       await this.prismaService.chatMessage.create({
@@ -196,7 +239,10 @@ export class AiService {
         tasks,
         todos,
         stage: "thinking",
-        metadata: {},
+        metadata: {
+          auth_token: authToken, // Pass auth token so AI can call back to backend
+        },
+        conversation_history: conversationHistory,
       };
 
       this.logger.log(
@@ -317,6 +363,234 @@ export class AiService {
     }
 
     return tasks;
+  }
+
+  /**
+   * Analyze prompt and automatically fetch relevant context data
+   * Detects queries like "this week", "overdue", "all projects", etc.
+   */
+  private async analyzeAndFetchContext(
+    userId: string,
+    prompt: string,
+    conversationHistory: any[],
+    providedProjectIds: string[],
+    providedTaskIds: string[],
+    providedTodoIds: string[]
+  ): Promise<{
+    projects: AIProject[];
+    tasks: AITask[];
+    todos: AITodo[];
+  }> {
+    const promptLower = prompt.toLowerCase();
+
+    // If user provided specific IDs, don't auto-fetch
+    if (
+      providedProjectIds.length > 0 ||
+      providedTaskIds.length > 0 ||
+      providedTodoIds.length > 0
+    ) {
+      this.logger.log("User provided specific IDs, skipping auto-fetch");
+      return { projects: [], tasks: [], todos: [] };
+    }
+
+    // Keywords that indicate user wants comprehensive data
+    const comprehensiveKeywords = [
+      "all my",
+      "show me all",
+      "list all",
+      "give me all",
+      "what are all",
+      "what are my",
+      "complete list",
+      "full list",
+      "everything",
+      "entire",
+      "comprehensive",
+    ];
+
+    // Time-based keywords
+    const timeKeywords = {
+      today: ["today", "this day"],
+      this_week: [
+        "this week",
+        "this week's",
+        "week",
+        "weekly",
+        "upcoming week",
+      ],
+      this_month: ["this month", "monthly", "this month's"],
+      next_two_months: ["next month", "next two months", "upcoming months"],
+      overdue: ["overdue", "past due", "late", "missed", "expired"],
+    };
+
+    // Entity keywords
+    const projectKeywords = [
+      "project",
+      "projects",
+      "course",
+      "courses",
+      "class",
+      "classes",
+    ];
+    const taskKeywords = [
+      "task",
+      "tasks",
+      "assignment",
+      "assignments",
+      "homework",
+      "deadline",
+      "deadlines",
+      "due date",
+      "due dates",
+    ];
+    const todoKeywords = [
+      "todo",
+      "todos",
+      "to-do",
+      "to-dos",
+      "item",
+      "items",
+      "checklist",
+    ];
+
+    // Check if user wants comprehensive data
+    const wantsComprehensive = comprehensiveKeywords.some((keyword) =>
+      promptLower.includes(keyword)
+    );
+
+    // Determine time period
+    let timePeriod:
+      | "today"
+      | "this_week"
+      | "this_month"
+      | "next_two_months"
+      | "all"
+      | "overdue"
+      | null = null;
+    for (const [period, keywords] of Object.entries(timeKeywords)) {
+      if (keywords.some((keyword) => promptLower.includes(keyword))) {
+        timePeriod = period as any;
+        break;
+      }
+    }
+
+    // Determine what entities user is asking about
+    const wantsProjects = projectKeywords.some((keyword) =>
+      promptLower.includes(keyword)
+    );
+    const wantsTasks = taskKeywords.some((keyword) =>
+      promptLower.includes(keyword)
+    );
+    const wantsTodos = todoKeywords.some((keyword) =>
+      promptLower.includes(keyword)
+    );
+
+    // If no specific entity mentioned, assume they want tasks/todos (most common)
+    const shouldFetchTasks = wantsTasks || (!wantsProjects && !wantsTodos);
+    const shouldFetchTodos = wantsTodos || (!wantsProjects && !wantsTasks);
+    const shouldFetchProjects = wantsProjects || wantsComprehensive;
+
+    this.logger.log(
+      `Auto-fetch analysis: projects=${shouldFetchProjects}, tasks=${shouldFetchTasks}, todos=${shouldFetchTodos}, period=${timePeriod}`
+    );
+
+    const result: {
+      projects: AIProject[];
+      tasks: AITask[];
+      todos: AITodo[];
+    } = {
+      projects: [],
+      tasks: [],
+      todos: [],
+    };
+
+    try {
+      // Fetch projects if needed
+      if (shouldFetchProjects) {
+        const allProjects = await this.projectsService.findByUser(userId);
+        result.projects = allProjects.map((p) => ({
+          project_id: p.id,
+          title: p.title || "",
+          description: p.description || "",
+          instructor: "", // Not available in schema
+        }));
+      }
+
+      // Fetch tasks if needed
+      if (shouldFetchTasks) {
+        const period = timePeriod || "all";
+        const fetchedTasks = await this.tasksService.getTaskListForPeriod(
+          userId,
+          period
+        );
+        result.tasks = fetchedTasks.map((t) => ({
+          task_id: t.id,
+          title: t.title || "",
+          description: t.description || "",
+          due_datetime: t.due_date?.toISOString() || "",
+          status: t.is_submitted ? "done" : "not_started",
+          project_id: t.project_id || "",
+        }));
+      }
+
+      // Fetch todos if needed
+      if (shouldFetchTodos) {
+        const period = timePeriod || "all";
+        const fetchedTodos = await this.todosService.getTodoListForPeriod(
+          userId,
+          period
+        );
+        result.todos = fetchedTodos.map((t) => ({
+          todo_id: t.id,
+          title: t.title || "",
+          description: t.description || "",
+          due_date: t.due_date?.toISOString() || "",
+          status: t.is_submitted ? "done" : "not_started",
+          project_id: t.task?.project_id || "",
+          task_id: t.task_id || "",
+          priority: t.priority || "",
+          estimated_duration: "", // Not available in schema
+        }));
+      }
+
+      this.logger.log(
+        `Auto-fetched: ${result.projects.length} projects, ${result.tasks.length} tasks, ${result.todos.length} todos`
+      );
+    } catch (error) {
+      this.logger.error("Error in auto-fetch context:", error.message);
+      // Return empty arrays on error - will fall back to provided IDs
+    }
+
+    return result;
+  }
+
+  /**
+   * Get conversation history for context (recent messages)
+   */
+  private async getConversationHistoryForContext(
+    conversationId: string,
+    userId: string
+  ): Promise<any[]> {
+    try {
+      const conversation = await this.conversationsService.findOne(
+        conversationId,
+        userId
+      );
+
+      // Return last 10 messages for context
+      const messages = conversation.messages || [];
+      return messages.slice(-10).map((msg: any) => ({
+        type: msg.type,
+        prompt: msg.prompt,
+        text: msg.text,
+        created_at: msg.created_at,
+      }));
+    } catch (error) {
+      this.logger.warn(
+        `Could not fetch conversation history: ${error.message}`
+      );
+      return [];
+    }
   }
 
   /**
@@ -529,6 +803,130 @@ export class AiService {
       };
     } catch (error) {
       this.logger.error("Failed to delete conversation:", error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Fetch data for AI processing based on specific request
+   * Called by AI service when it needs specific data
+   */
+  async fetchDataForAI(
+    userId: string,
+    dataRequest: {
+      data_types: string[];
+      time_period?: string;
+      project_ids?: string[];
+      include_completed?: boolean;
+    }
+  ) {
+    try {
+      this.logger.log(
+        `Fetching AI data for user: ${userId}, types: ${dataRequest.data_types.join(", ")}, period: ${dataRequest.time_period || "all"}`
+      );
+
+      const result: {
+        projects: AIProject[];
+        tasks: AITask[];
+        todos: AITodo[];
+      } = {
+        projects: [],
+        tasks: [],
+        todos: [],
+      };
+
+      // Fetch projects if requested
+      if (dataRequest.data_types.includes("projects")) {
+        const allProjects = await this.projectsService.findByUser(userId);
+        result.projects = allProjects.map((p) => ({
+          project_id: p.id,
+          title: p.title || "",
+          description: p.description || "",
+          instructor: "", // Not available in schema
+        }));
+
+        // Filter by project_ids if provided
+        if (dataRequest.project_ids && dataRequest.project_ids.length > 0) {
+          result.projects = result.projects.filter((p) =>
+            dataRequest.project_ids!.includes(p.project_id)
+          );
+        }
+      }
+
+      // Fetch tasks if requested
+      if (dataRequest.data_types.includes("tasks")) {
+        const period =
+          (dataRequest.time_period as any) ||
+          ("all" as
+            | "today"
+            | "this_week"
+            | "this_month"
+            | "next_two_months"
+            | "all"
+            | "overdue");
+        const fetchedTasks = await this.tasksService.getTaskListForPeriod(
+          userId,
+          period,
+          dataRequest.project_ids
+        );
+
+        result.tasks = fetchedTasks.map((t) => ({
+          task_id: t.id,
+          title: t.title || "",
+          description: t.description || "",
+          due_datetime: t.due_date?.toISOString() || "",
+          status: t.is_submitted ? "done" : "not_started",
+          project_id: t.project_id || "",
+        }));
+
+        // Filter completed if needed
+        if (!dataRequest.include_completed) {
+          result.tasks = result.tasks.filter((t) => t.status !== "done");
+        }
+      }
+
+      // Fetch todos if requested
+      if (dataRequest.data_types.includes("todos")) {
+        const period =
+          (dataRequest.time_period as any) ||
+          ("all" as
+            | "today"
+            | "this_week"
+            | "this_month"
+            | "next_two_months"
+            | "all"
+            | "overdue");
+        const fetchedTodos = await this.todosService.getTodoListForPeriod(
+          userId,
+          period,
+          dataRequest.project_ids
+        );
+
+        result.todos = fetchedTodos.map((t) => ({
+          todo_id: t.id,
+          title: t.title || "",
+          description: t.description || "",
+          due_date: t.due_date?.toISOString() || "",
+          status: t.is_submitted ? "done" : "not_started",
+          project_id: t.task?.project_id || "",
+          task_id: t.task_id || "",
+          priority: t.priority || "",
+          estimated_duration: "", // Not available in schema
+        }));
+
+        // Filter completed if needed
+        if (!dataRequest.include_completed) {
+          result.todos = result.todos.filter((t) => t.status !== "done");
+        }
+      }
+
+      this.logger.log(
+        `AI data fetched: ${result.projects.length} projects, ${result.tasks.length} tasks, ${result.todos.length} todos`
+      );
+
+      return result;
+    } catch (error) {
+      this.logger.error("Failed to fetch data for AI:", error.message);
       throw error;
     }
   }
