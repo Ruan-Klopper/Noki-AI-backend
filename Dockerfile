@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -28,7 +28,7 @@ RUN echo "=== Contents of dist directory ===" && \
 RUN test -f dist/main.js || test -f dist/src/main.js || (echo "ERROR: main.js not found in dist/ or dist/src/!" && exit 1)
 
 # Production stage
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 

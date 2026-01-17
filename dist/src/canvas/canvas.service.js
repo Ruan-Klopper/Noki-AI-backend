@@ -150,6 +150,19 @@ let CanvasService = class CanvasService {
             throw new common_1.HttpException("Failed to link Canvas data", common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    async getCanvasProvider(userId) {
+        const provider = await this.getCanvasAuthProvider(userId);
+        if (!provider) {
+            return null;
+        }
+        return {
+            id: provider.id,
+            base_url: provider.base_url,
+            metadata: provider.metadata,
+            created_at: provider.created_at,
+            hasToken: !!provider.access_token_hash,
+        };
+    }
     async getCanvasAuthProvider(userId) {
         const authProviders = await this.authProviderService.findByUser(userId);
         return authProviders.find((provider) => provider.type === interfaces_1.AuthProviderType.Canvas);

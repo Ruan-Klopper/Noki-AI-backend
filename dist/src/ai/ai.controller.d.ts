@@ -1,10 +1,11 @@
 import { AiService, HealthResponse, AIServerChatResponse } from "./ai.service";
 import { ChatAiDto } from "./dtos/chat-ai.dto";
+import { AIDataRequestDto } from "./dtos/ai-data-request.dto";
 export declare class AiController {
     private readonly aiService;
     constructor(aiService: AiService);
     healthCheck(): Promise<HealthResponse>;
-    chat(currentUser: any, chatDto: ChatAiDto): Promise<AIServerChatResponse>;
+    chat(currentUser: any, req: any, chatDto: ChatAiDto): Promise<AIServerChatResponse>;
     createConversation(currentUser: any): Promise<{
         conversation_id: string;
     }>;
@@ -56,5 +57,10 @@ export declare class AiController {
     deleteConversation(currentUser: any, conversationId: string): Promise<{
         message: string;
         conversation_id: string;
+    }>;
+    fetchDataForAI(currentUser: any, dataRequest: AIDataRequestDto): Promise<{
+        projects: import("./ai.service").AIProject[];
+        tasks: import("./ai.service").AITask[];
+        todos: import("./ai.service").AITodo[];
     }>;
 }

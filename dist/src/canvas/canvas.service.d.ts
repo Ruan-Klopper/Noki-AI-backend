@@ -25,6 +25,13 @@ export declare class CanvasService {
         message: string;
     }>;
     linkCanvasData(userId: string): Promise<LinkCanvasDataResponseDto>;
+    getCanvasProvider(userId: string): Promise<{
+        id: string;
+        base_url: string | null;
+        metadata: import("@prisma/client/runtime/library").JsonValue;
+        created_at: Date;
+        hasToken: boolean;
+    } | null>;
     private getCanvasAuthProvider;
     private linkCanvasCourses;
     private linkCanvasAssignments;

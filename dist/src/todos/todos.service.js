@@ -129,7 +129,7 @@ let TodosService = class TodosService {
             where: { id },
         });
     }
-    async getTodoListForPeriod(duration, projectIds) {
+    async getTodoListForPeriod(userId, duration, projectIds) {
         const now = new Date();
         let startDate;
         let endDate;
@@ -155,12 +155,27 @@ let TodosService = class TodosService {
             case "all":
                 break;
         }
-        const whereClause = {};
-        if (startDate && endDate) {
+        const whereClause = {
+            user_id: userId,
+            is_submitted: false,
+        };
+        if (duration === "overdue") {
+            whereClause.due_date = {
+                lt: now,
+            };
+        }
+        else if (startDate && endDate) {
             whereClause.due_date = {
                 gte: startDate,
                 lt: endDate,
             };
+        }
+        else if (duration !== "all") {
+            if (startDate) {
+                whereClause.due_date = {
+                    gte: startDate,
+                };
+            }
         }
         if (projectIds && projectIds.length > 0) {
             whereClause.task = {
@@ -340,10 +355,10 @@ let TodosService = class TodosService {
             where: { id },
         });
         if (!todo) {
-            throw new Error("Todo not found");
+            throw new common_1.NotFoundException("Todo not found");
         }
         if (todo.user_id !== userId) {
-            throw new Error("You can only complete your own todos");
+            throw new common_1.ForbiddenException("You can only complete your own todos");
         }
         return this.prisma.todo.update({
             where: { id },

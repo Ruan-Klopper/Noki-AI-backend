@@ -153,6 +153,93 @@ let TasksService = class TasksService {
             },
         });
     }
+    async getTaskListForPeriod(userId, duration, projectIds) {
+        const now = new Date();
+        let startDate;
+        let endDate;
+        switch (duration) {
+            case "today":
+                startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+                break;
+            case "this_week":
+                const startOfWeek = new Date(now);
+                startOfWeek.setDate(now.getDate() - now.getDay());
+                startDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate());
+                endDate = new Date(startOfWeek.getTime() + 7 * 24 * 60 * 60 * 1000);
+                break;
+            case "this_month":
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+                break;
+            case "next_two_months":
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                endDate = new Date(now.getFullYear(), now.getMonth() + 3, 1);
+                break;
+            case "overdue":
+                endDate = now;
+                break;
+            case "all":
+                break;
+        }
+        const whereClause = {
+            user_id: userId,
+            is_submitted: false,
+        };
+        if (duration === "overdue") {
+            whereClause.due_date = {
+                lt: endDate,
+            };
+        }
+        else if (startDate && endDate) {
+            whereClause.due_date = {
+                gte: startDate,
+                lt: endDate,
+            };
+        }
+        else if (duration !== "all") {
+            if (startDate) {
+                whereClause.due_date = {
+                    gte: startDate,
+                };
+            }
+        }
+        if (projectIds && projectIds.length > 0) {
+            whereClause.project_id = {
+                in: projectIds,
+            };
+        }
+        return this.prisma.task.findMany({
+            where: whereClause,
+            include: {
+                project: {
+                    select: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        course_code: true,
+                        color_hex: true,
+                    },
+                },
+                todos: {
+                    select: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        priority: true,
+                        due_date: true,
+                        is_submitted: true,
+                        created_at: true,
+                    },
+                },
+            },
+            orderBy: [
+                { due_date: "asc" },
+                { priority: "desc" },
+                { created_at: "desc" },
+            ],
+        });
+    }
     async updateByUser(id, userId, updateTaskDto) {
         const task = await this.prisma.task.findUnique({
             where: { id },
@@ -200,10 +287,10 @@ let TasksService = class TasksService {
             where: { id },
         });
         if (!task) {
-            throw new Error("Task not found");
+            throw new common_1.NotFoundException("Task not found");
         }
         if (task.user_id !== userId) {
-            throw new Error("You can only complete your own tasks");
+            throw new common_1.ForbiddenException("You can only complete your own tasks");
         }
         return this.prisma.task.update({
             where: { id },

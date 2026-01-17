@@ -388,6 +388,7 @@ export declare class TasksService {
         project_id: string | null;
     }>;
     getAllTasksForProject(projectIds: string[]): Promise<any[]>;
+    getTaskListForPeriod(userId: string, duration: "today" | "this_week" | "this_month" | "next_two_months" | "all" | "overdue", projectIds?: string[]): Promise<any[]>;
     updateByUser(id: string, userId: string, updateTaskDto: UpdateTaskDto): Promise<{
         todos: {
             id: string;

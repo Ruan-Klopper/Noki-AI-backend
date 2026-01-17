@@ -60,7 +60,7 @@ let AiService = AiService_1 = class AiService {
             return baseResponse;
         }
     }
-    async chat(userId, chatDto) {
+    async chat(userId, chatDto, authToken) {
         try {
             this.logger.log(`Processing chat request for user: ${userId}`);
             if (!userId) {
@@ -81,9 +81,26 @@ let AiService = AiService_1 = class AiService {
                     },
                 });
             }
-            const projects = await this.fetchProjectDetails(chatDto.projects?.map((p) => p.project_id) || []);
-            const tasks = await this.fetchTaskDetails(chatDto.tasks?.map((t) => t.task_id) || []);
-            const todos = await this.fetchTodoDetails(chatDto.todos?.map((t) => t.todo_id) || []);
+            const conversationHistory = await this.getConversationHistoryForContext(chatDto.conversation_id, userId);
+            const autoFetchedData = await this.analyzeAndFetchContext(userId, chatDto.prompt, conversationHistory, chatDto.projects?.map((p) => p.project_id) || [], chatDto.tasks?.map((t) => t.task_id) || [], chatDto.todos?.map((t) => t.todo_id) || []);
+            const projectIds = autoFetchedData.projects.length > 0
+                ? autoFetchedData.projects.map((p) => p.project_id)
+                : chatDto.projects?.map((p) => p.project_id) || [];
+            const taskIds = autoFetchedData.tasks.length > 0
+                ? autoFetchedData.tasks.map((t) => t.task_id)
+                : chatDto.tasks?.map((t) => t.task_id) || [];
+            const todoIds = autoFetchedData.todos.length > 0
+                ? autoFetchedData.todos.map((t) => t.todo_id)
+                : chatDto.todos?.map((t) => t.todo_id) || [];
+            const projects = autoFetchedData.projects.length > 0
+                ? autoFetchedData.projects
+                : await this.fetchProjectDetails(projectIds);
+            const tasks = autoFetchedData.tasks.length > 0
+                ? autoFetchedData.tasks
+                : await this.fetchTaskDetails(taskIds);
+            const todos = autoFetchedData.todos.length > 0
+                ? autoFetchedData.todos
+                : await this.fetchTodoDetails(todoIds);
             await this.prismaService.chatMessage.create({
                 data: {
                     conversation_id: chatDto.conversation_id,
@@ -104,7 +121,10 @@ let AiService = AiService_1 = class AiService {
                 tasks,
                 todos,
                 stage: "thinking",
-                metadata: {},
+                metadata: {
+                    auth_token: authToken,
+                },
+                conversation_history: conversationHistory,
             };
             this.logger.log(`Sending chat request to AI server - User: ${userId}, Conversation: ${chatDto.conversation_id}, Projects: ${projects.length}, Tasks: ${tasks.length}, Todos: ${todos.length}`);
             console.log("=== AI Server Payload ===");
@@ -185,6 +205,148 @@ let AiService = AiService_1 = class AiService {
             }
         }
         return tasks;
+    }
+    async analyzeAndFetchContext(userId, prompt, conversationHistory, providedProjectIds, providedTaskIds, providedTodoIds) {
+        const promptLower = prompt.toLowerCase();
+        if (providedProjectIds.length > 0 ||
+            providedTaskIds.length > 0 ||
+            providedTodoIds.length > 0) {
+            this.logger.log("User provided specific IDs, skipping auto-fetch");
+            return { projects: [], tasks: [], todos: [] };
+        }
+        const comprehensiveKeywords = [
+            "all my",
+            "show me all",
+            "list all",
+            "give me all",
+            "what are all",
+            "what are my",
+            "complete list",
+            "full list",
+            "everything",
+            "entire",
+            "comprehensive",
+        ];
+        const timeKeywords = {
+            today: ["today", "this day"],
+            this_week: [
+                "this week",
+                "this week's",
+                "week",
+                "weekly",
+                "upcoming week",
+            ],
+            this_month: ["this month", "monthly", "this month's"],
+            next_two_months: ["next month", "next two months", "upcoming months"],
+            overdue: ["overdue", "past due", "late", "missed", "expired"],
+        };
+        const projectKeywords = [
+            "project",
+            "projects",
+            "course",
+            "courses",
+            "class",
+            "classes",
+        ];
+        const taskKeywords = [
+            "task",
+            "tasks",
+            "assignment",
+            "assignments",
+            "homework",
+            "deadline",
+            "deadlines",
+            "due date",
+            "due dates",
+        ];
+        const todoKeywords = [
+            "todo",
+            "todos",
+            "to-do",
+            "to-dos",
+            "item",
+            "items",
+            "checklist",
+        ];
+        const wantsComprehensive = comprehensiveKeywords.some((keyword) => promptLower.includes(keyword));
+        let timePeriod = null;
+        for (const [period, keywords] of Object.entries(timeKeywords)) {
+            if (keywords.some((keyword) => promptLower.includes(keyword))) {
+                timePeriod = period;
+                break;
+            }
+        }
+        const wantsProjects = projectKeywords.some((keyword) => promptLower.includes(keyword));
+        const wantsTasks = taskKeywords.some((keyword) => promptLower.includes(keyword));
+        const wantsTodos = todoKeywords.some((keyword) => promptLower.includes(keyword));
+        const shouldFetchTasks = wantsTasks || (!wantsProjects && !wantsTodos);
+        const shouldFetchTodos = wantsTodos || (!wantsProjects && !wantsTasks);
+        const shouldFetchProjects = wantsProjects || wantsComprehensive;
+        this.logger.log(`Auto-fetch analysis: projects=${shouldFetchProjects}, tasks=${shouldFetchTasks}, todos=${shouldFetchTodos}, period=${timePeriod}`);
+        const result = {
+            projects: [],
+            tasks: [],
+            todos: [],
+        };
+        try {
+            if (shouldFetchProjects) {
+                const allProjects = await this.projectsService.findByUser(userId);
+                result.projects = allProjects.map((p) => ({
+                    project_id: p.id,
+                    title: p.title || "",
+                    description: p.description || "",
+                    instructor: "",
+                }));
+            }
+            if (shouldFetchTasks) {
+                const period = timePeriod || "all";
+                const fetchedTasks = await this.tasksService.getTaskListForPeriod(userId, period);
+                result.tasks = fetchedTasks.map((t) => ({
+                    task_id: t.id,
+                    title: t.title || "",
+                    description: t.description || "",
+                    due_datetime: t.due_date?.toISOString() || "",
+                    status: t.is_submitted ? "done" : "not_started",
+                    project_id: t.project_id || "",
+                }));
+            }
+            if (shouldFetchTodos) {
+                const period = timePeriod || "all";
+                const fetchedTodos = await this.todosService.getTodoListForPeriod(userId, period);
+                result.todos = fetchedTodos.map((t) => ({
+                    todo_id: t.id,
+                    title: t.title || "",
+                    description: t.description || "",
+                    due_date: t.due_date?.toISOString() || "",
+                    status: t.is_submitted ? "done" : "not_started",
+                    project_id: t.task?.project_id || "",
+                    task_id: t.task_id || "",
+                    priority: t.priority || "",
+                    estimated_duration: "",
+                }));
+            }
+            this.logger.log(`Auto-fetched: ${result.projects.length} projects, ${result.tasks.length} tasks, ${result.todos.length} todos`);
+        }
+        catch (error) {
+            this.logger.error("Error in auto-fetch context:", error.message);
+        }
+        return result;
+    }
+    async getConversationHistoryForContext(conversationId, userId) {
+        try {
+            const conversation = await this.conversationsService.findOne(conversationId, userId);
+            const messages = conversation.messages || [];
+            return messages.slice(-10).map((msg) => ({
+                type: msg.type,
+                prompt: msg.prompt,
+                text: msg.text,
+                created_at: msg.created_at,
+            }));
+        }
+        catch (error) {
+            this.logger.warn(`Could not fetch conversation history: ${error.message}`);
+            return [];
+        }
     }
     async fetchTodoDetails(todoIds) {
         if (!todoIds || todoIds.length === 0) {
@@ -328,6 +490,69 @@ let AiService = AiService_1 = class AiService {
         }
         catch (error) {
             this.logger.error("Failed to delete conversation:", error.message);
+            throw error;
+        }
+    }
+    async fetchDataForAI(userId, dataRequest) {
+        try {
+            this.logger.log(`Fetching AI data for user: ${userId}, types: ${dataRequest.data_types.join(", ")}, period: ${dataRequest.time_period || "all"}`);
+            const result = {
+                projects: [],
+                tasks: [],
+                todos: [],
+            };
+            if (dataRequest.data_types.includes("projects")) {
+                const allProjects = await this.projectsService.findByUser(userId);
+                result.projects = allProjects.map((p) => ({
+                    project_id: p.id,
+                    title: p.title || "",
+                    description: p.description || "",
+                    instructor: "",
+                }));
+                if (dataRequest.project_ids && dataRequest.project_ids.length > 0) {
+                    result.projects = result.projects.filter((p) => dataRequest.project_ids.includes(p.project_id));
+                }
+            }
+            if (dataRequest.data_types.includes("tasks")) {
+                const period = dataRequest.time_period ||
+                    "all";
+                const fetchedTasks = await this.tasksService.getTaskListForPeriod(userId, period, dataRequest.project_ids);
+                result.tasks = fetchedTasks.map((t) => ({
+                    task_id: t.id,
+                    title: t.title || "",
+                    description: t.description || "",
+                    due_datetime: t.due_date?.toISOString() || "",
+                    status: t.is_submitted ? "done" : "not_started",
+                    project_id: t.project_id || "",
+                }));
+                if (!dataRequest.include_completed) {
+                    result.tasks = result.tasks.filter((t) => t.status !== "done");
+                }
+            }
+            if (dataRequest.data_types.includes("todos")) {
+                const period = dataRequest.time_period ||
+                    "all";
+                const fetchedTodos = await this.todosService.getTodoListForPeriod(userId, period, dataRequest.project_ids);
+                result.todos = fetchedTodos.map((t) => ({
+                    todo_id: t.id,
+                    title: t.title || "",
+                    description: t.description || "",
+                    due_date: t.due_date?.toISOString() || "",
+                    status: t.is_submitted ? "done" : "not_started",
+                    project_id: t.task?.project_id || "",
+                    task_id: t.task_id || "",
+                    priority: t.priority || "",
+                    estimated_duration: "",
+                }));
+                if (!dataRequest.include_completed) {
+                    result.todos = result.todos.filter((t) => t.status !== "done");
+                }
+            }
+            this.logger.log(`AI data fetched: ${result.projects.length} projects, ${result.tasks.length} tasks, ${result.todos.length} todos`);
+            return result;
+        }
+        catch (error) {
+            this.logger.error("Failed to fetch data for AI:", error.message);
             throw error;
         }
     }

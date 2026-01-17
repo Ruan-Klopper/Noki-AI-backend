@@ -47,6 +47,12 @@ export interface AIServerChatRequest {
     todos: AITodo[];
     stage: string;
     metadata: Record<string, any>;
+    conversation_history?: Array<{
+        type: string;
+        prompt?: string;
+        text?: string;
+        created_at: string;
+    }>;
 }
 export interface AIServerChatResponse {
     [key: string]: any;
@@ -61,9 +67,11 @@ export declare class AiService {
     private readonly logger;
     constructor(apiService: ApiService, tasksService: TasksService, todosService: TodosService, projectsService: ProjectsService, conversationsService: ConversationsService, prismaService: PrismaService);
     healthCheck(): Promise<HealthResponse>;
-    chat(userId: string, chatDto: ChatAiDto): Promise<AIServerChatResponse>;
+    chat(userId: string, chatDto: ChatAiDto, authToken?: string): Promise<AIServerChatResponse>;
     private fetchProjectDetails;
     private fetchTaskDetails;
+    private analyzeAndFetchContext;
+    private getConversationHistoryForContext;
     private fetchTodoDetails;
     createConversation(userId: string): Promise<{
         conversation_id: string;
@@ -116,5 +124,15 @@ export declare class AiService {
     deleteConversation(userId: string, conversationId: string): Promise<{
         message: string;
         conversation_id: string;
+    }>;
+    fetchDataForAI(userId: string, dataRequest: {
+        data_types: string[];
+        time_period?: string;
+        project_ids?: string[];
+        include_completed?: boolean;
+    }): Promise<{
+        projects: AIProject[];
+        tasks: AITask[];
+        todos: AITodo[];
     }>;
 }

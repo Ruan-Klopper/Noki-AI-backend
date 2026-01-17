@@ -67,4 +67,32 @@ export declare class UsersService {
         updated_at: Date;
     }>;
     validatePassword(user: any, password: string): Promise<boolean>;
+    changePassword(userId: string, currentPassword: string, newPassword: string): Promise<{
+        message: string;
+    }>;
+    getAIUsage(userId: string): Promise<{
+        totals: {
+            prompt_tokens: number;
+            completion_tokens: number;
+            total_tokens: number;
+            embedding_tokens: number;
+            total_cost_usd: number;
+        };
+        monthly: {
+            prompt_tokens: number;
+            completion_tokens: number;
+            total_tokens: number;
+            embedding_tokens: number;
+            cost_usd: number;
+            change_percentage: number;
+        };
+        limits: {
+            token_limit: number;
+            tokens_remaining: number;
+            tokens_used: number;
+            usage_percentage: number;
+            is_premium: boolean;
+        };
+        message_count: number;
+    }>;
 }

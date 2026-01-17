@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const ai_service_1 = require("./ai.service");
 const chat_ai_dto_1 = require("./dtos/chat-ai.dto");
+const ai_data_request_dto_1 = require("./dtos/ai-data-request.dto");
 const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
 const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
 let AiController = class AiController {
@@ -27,8 +28,12 @@ let AiController = class AiController {
     async healthCheck() {
         return this.aiService.healthCheck();
     }
-    async chat(currentUser, chatDto) {
-        return this.aiService.chat(currentUser.userId, chatDto);
+    async chat(currentUser, req, chatDto) {
+        const authHeader = req.headers.authorization;
+        const authToken = authHeader?.startsWith("Bearer ")
+            ? authHeader.substring(7)
+            : null;
+        return this.aiService.chat(currentUser.userId, chatDto, authToken);
     }
     async createConversation(currentUser) {
         return this.aiService.createConversation(currentUser.userId);
@@ -44,6 +49,9 @@ let AiController = class AiController {
     }
     async deleteConversation(currentUser, conversationId) {
         return this.aiService.deleteConversation(currentUser.userId, conversationId);
+    }
+    async fetchDataForAI(currentUser, dataRequest) {
+        return this.aiService.fetchDataForAI(currentUser.userId, dataRequest);
     }
 };
 exports.AiController = AiController;
@@ -221,9 +229,10 @@ __decorate([
         description: "Bad Gateway - AI server is not available or returned an error",
     }),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
-    __param(1, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
+    __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, chat_ai_dto_1.ChatAiDto]),
+    __metadata("design:paramtypes", [Object, Object, chat_ai_dto_1.ChatAiDto]),
     __metadata("design:returntype", Promise)
 ], AiController.prototype, "chat", null);
 __decorate([
@@ -461,6 +470,69 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], AiController.prototype, "deleteConversation", null);
+__decorate([
+    (0, common_1.Post)("fetch-data"),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)("JWT-auth"),
+    (0, swagger_1.ApiOperation)({
+        summary: "Fetch data for AI processing",
+        description: "Endpoint for AI service to request specific user data. Returns projects, tasks, and/or todos based on the request parameters.",
+    }),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: "object",
+            required: ["data_types"],
+            properties: {
+                data_types: {
+                    type: "array",
+                    items: {
+                        type: "string",
+                        enum: ["projects", "tasks", "todos"],
+                    },
+                    example: ["projects", "tasks"],
+                },
+                time_period: {
+                    type: "string",
+                    enum: [
+                        "today",
+                        "this_week",
+                        "this_month",
+                        "next_two_months",
+                        "overdue",
+                        "all",
+                    ],
+                    example: "this_week",
+                },
+                project_ids: {
+                    type: "array",
+                    items: { type: "string" },
+                    example: ["project-123"],
+                },
+                include_completed: {
+                    type: "boolean",
+                    default: false,
+                },
+            },
+        },
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: "Data fetched successfully",
+        schema: {
+            type: "object",
+            properties: {
+                projects: { type: "array" },
+                tasks: { type: "array" },
+                todos: { type: "array" },
+            },
+        },
+    }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, ai_data_request_dto_1.AIDataRequestDto]),
+    __metadata("design:returntype", Promise)
+], AiController.prototype, "fetchDataForAI", null);
 exports.AiController = AiController = __decorate([
     (0, swagger_1.ApiTags)("AI"),
     (0, common_1.Controller)("ai"),

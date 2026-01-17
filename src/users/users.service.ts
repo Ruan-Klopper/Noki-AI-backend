@@ -143,7 +143,7 @@ export class UsersService {
         user_id: userId,
         type: MessageType.Response,
         token_usage: {
-          not: null,
+          not: undefined as any,
         },
       },
       select: {

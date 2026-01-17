@@ -16,6 +16,13 @@ export declare class CanvasController {
     syncData(currentUser: any): Promise<{
         message: string;
     }>;
+    getCanvasProvider(currentUser: any): Promise<{
+        id: string;
+        base_url: string | null;
+        metadata: import("@prisma/client/runtime/library").JsonValue;
+        created_at: Date;
+        hasToken: boolean;
+    } | null>;
     deleteAllCanvasData(currentUser: any): Promise<{
         message: string;
         deleted: {

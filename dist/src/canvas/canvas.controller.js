@@ -41,6 +41,9 @@ let CanvasController = class CanvasController {
     async syncData(currentUser) {
         return this.canvasService.syncData(currentUser.userId);
     }
+    async getCanvasProvider(currentUser) {
+        return this.canvasService.getCanvasProvider(currentUser.userId);
+    }
     async deleteAllCanvasData(currentUser) {
         return this.canvasService.deleteAllCanvasData(currentUser.userId);
     }
@@ -193,6 +196,25 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CanvasController.prototype, "syncData", null);
+__decorate([
+    (0, common_1.Get)("provider"),
+    (0, swagger_1.ApiOperation)({
+        summary: "Get Canvas provider information",
+        description: "Get Canvas integration details for the authenticated user. Returns null if Canvas is not connected.",
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: "Canvas provider information retrieved successfully",
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 401,
+        description: "Unauthorized - Invalid or missing token",
+    }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CanvasController.prototype, "getCanvasProvider", null);
 __decorate([
     (0, common_1.Delete)("delete-all"),
     (0, swagger_1.ApiOperation)({
