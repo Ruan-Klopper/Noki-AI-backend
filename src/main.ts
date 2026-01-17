@@ -52,8 +52,19 @@ async function bootstrap() {
     },
   });
 
-  // Enable CORS for development
-  app.enableCors();
+  // Enable CORS
+  app.enableCors({
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://app.noki.co.za",
+      "https://www.app.noki.co.za",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+    exposedHeaders: ["Authorization"],
+  });
 
   await app.listen(process.env.PORT ?? 3000);
   console.log(
